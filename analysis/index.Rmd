@@ -34,6 +34,8 @@ Example, first commit:
 
 **VERY IMPORTANT NOTE:** here I'm adding the `data/metadata.csv` and `data/phenotype.csv`. These are small files and I want them available to workshop users. DO NOT make a habit of this. GitHub max size is 25 Mb. ESPECIALLY DO NOT add genomic data files to your Git version control.
 
+![](images/paste-90E446A0.png)
+
 ## Customize `workflowR` project
 
 ### Inline chunk output
