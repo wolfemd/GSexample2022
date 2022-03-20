@@ -36,6 +36,20 @@ Example, first commit:
 
 ![](images/paste-90E446A0.png)
 
+## Publishing to GitHub Pages
+
+Follow the manual's instructions at: <https://wolfemd.github.io/GenomicSelectionManual/create_project.html#publishing-on-github-pages>
+
+In addition, edit repository details, adding the GitHub pages web address and a short description, like so:
+
+![](images/paste-CB5D91AC.png)
+
+![](images/paste-AD7AEEAC.png)
+
+Consider modifying the `README.md` file in the main project folder, as it will display to anyone viewing the repository directly on GitHub.
+
+![](images/paste-2F34C15B.png)
+
 ## Customize `workflowR` project
 
 ### Inline chunk output
