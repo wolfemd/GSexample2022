@@ -20,7 +20,7 @@ Create the "download.Rmd"
 wflow_open("analysis/download.Rmd")
 ```
 
-Link to it: [Data Download Stage](analysis/download.html)
+Link to it: [Data Download Stage](docs/download.html)
 
 Add it to the top navigation bar, via the `_site.yml` file:
 
