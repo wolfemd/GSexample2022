@@ -64,7 +64,7 @@ Re-validate the list. **List passes validation! Success!**
 
 Set list to public so everyone in workshop can use.
 
-## Download  genotype data
+## Download genotype data
 
 Follow manual to download. It will not be quick, do *outside* of workshop demo!
 
