@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Marnin Wolfe" />
+
+<meta name="date" content="2022-03-25" />
+
+<title>Prepare phenotype data</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">GSexample2022</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="download.html">Download</a>
+</li>
+<li>
+  <a href="clean_phenos.html">Clean phenos</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Prepare phenotype data</h1>
+<h4 class="author">Marnin Wolfe</h4>
+<h4 class="date">2022-03-25</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2022-03-25
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>GSexample2022/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version 1.7.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20220320code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20220320)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20220320code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20220320)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree11eeb7936bf59e7438091a822bb16f38d42bce44targetblank11eeb79a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/11eeb7936bf59e7438091a822bb16f38d42bce44" target="_blank">11eeb79</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree11eeb7936bf59e7438091a822bb16f38d42bce44targetblank11eeb79a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/11eeb7936bf59e7438091a822bb16f38d42bce44" target="_blank">11eeb79</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  .DS_Store
+    Untracked:  Icon
+    Untracked:  analysis/.DS_Store
+    Untracked:  analysis/Icon
+    Untracked:  analysis/images/Icon
+    Untracked:  analysis/images/paste-2F34C15B.png
+    Untracked:  analysis/images/paste-AD7AEEAC.png
+    Untracked:  analysis/images/paste-CB5D91AC.png
+    Untracked:  code/Icon
+    Untracked:  data/BreedBaseGenotypesDownload.vcf
+    Untracked:  data/Icon
+    Untracked:  output/Icon
+    Untracked:  output/phenotypes_cleaned.rds
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/clean_phenos.Rmd</code>) and HTML (<code>docs/clean_phenos.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/11eeb7936bf59e7438091a822bb16f38d42bce44/analysis/clean_phenos.Rmd" target="_blank">11eeb79</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-03-25
+</td>
+<td>
+Publish cleaned phenotypes.
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<pre class="r"><code>library(tidyverse);</code></pre>
+<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
+<pre><code>✓ ggplot2 3.3.5     ✓ purrr   0.3.4
+✓ tibble  3.1.6     ✓ dplyr   1.0.7
+✓ tidyr   1.1.4     ✓ stringr 1.4.0
+✓ readr   2.1.1     ✓ forcats 0.5.1</code></pre>
+<pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(genomicMateSelectR)</code></pre>
+<div id="read-db-data" class="section level2">
+<h2>Read DB data</h2>
+<pre class="r"><code>here::here(&quot;data&quot;,&quot;phenotype.csv&quot;)</code></pre>
+<pre><code>[1] &quot;/Users/mw489/My Drive/Teaching/GSworkshop_2022/GSexample2022/data/phenotype.csv&quot;</code></pre>
+<pre class="r"><code>dbdata&lt;-readDBdata(phenotypeFile = here::here(&quot;data&quot;,&quot;phenotype.csv&quot;),
+                   metadataFile = here::here(&quot;data&quot;,&quot;metadata.csv&quot;))</code></pre>
+<pre><code>Joining, by = c(&quot;studyYear&quot;, &quot;programDbId&quot;, &quot;programName&quot;, &quot;programDescription&quot;, &quot;studyDbId&quot;, &quot;studyName&quot;, &quot;studyDescription&quot;, &quot;studyDesign&quot;, &quot;plotWidth&quot;, &quot;plotLength&quot;, &quot;fieldSize&quot;, &quot;fieldTrialIsPlannedToBeGenotyped&quot;, &quot;fieldTrialIsPlannedToCross&quot;, &quot;plantingDate&quot;, &quot;harvestDate&quot;, &quot;locationDbId&quot;, &quot;locationName&quot;)</code></pre>
+</div>
+<div id="check-experimental-designs" class="section level2">
+<h2>Check experimental designs</h2>
+<p>Checklist: Are the data plot-basis, plant-basis or a mixture? If plant-basis data are present, should they be converted to plot-basis for further analysis?</p>
+<pre class="r"><code>dbdata %&gt;% count(observationLevel)</code></pre>
+<pre><code>  observationLevel    n
+1             plot 2515</code></pre>
+<p>What experimental designs are present? How are they represented by the variables in the dataset? Are all designs consistent with your expectations, for example relative to the reported “trialType,” “studyName” and/or “studyDesign?”</p>
+<pre class="r"><code>dbdata %&gt;% 
+     count(studyName,trialType, studyDesign, numberBlocks,numberReps,entryType) %&gt;% 
+     spread(entryType,n) </code></pre>
+<pre><code>                 studyName               trialType studyDesign numberBlocks
+1     17.GS.GeneticGain.UB      genetic_gain_trial   Augmented           11
+2 19.GS.C1.C2.C3.AYT.42.UB                    &lt;NA&gt;       Alpha           NA
+3  19.GS.C2.UYT.36.setA.IB     Uniform Yield Trial       Alpha            6
+4  19.GS.C2.UYT.36.setA.UB     Uniform Yield Trial       Alpha            6
+5  19.GS.C2.UYT.36.setB.IB     Uniform Yield Trial        RCBD            6
+6  19.GS.C2.UYT.36.setB.UB     Uniform Yield Trial       Alpha            6
+7     19.GS.C4B.PYT.135.UB Preliminary Yield Trial       Alpha           30
+8     19.GS.C4B.PYT.140.IB Preliminary Yield Trial       Alpha           28
+9      19.GS.C4C.CE.822.IB       Clonal Evaluation        RCBD           42
+  numberReps check test
+1          1    18  774
+2         NA    15  110
+3          2    10   58
+4          2    10   62
+5          2    10   56
+6          2    10   62
+7          2    12  258
+8          2    31  242
+9          1   132  645</code></pre>
+<p>Next, I’ll check if the replicate and blockNumber columns reliably distinguish complete and incomplete blocks in the data.</p>
+<pre class="r"><code>dbdata %&gt;% 
+     group_by(studyName) %&gt;% 
+     summarize(N_replicate=length(unique(replicate)),
+               N_blockNumber=length(unique(blockNumber)))</code></pre>
+<pre><code># A tibble: 9 × 3
+  studyName                N_replicate N_blockNumber
+  &lt;chr&gt;                          &lt;int&gt;         &lt;int&gt;
+1 17.GS.GeneticGain.UB               1            11
+2 19.GS.C1.C2.C3.AYT.42.UB           3             3
+3 19.GS.C2.UYT.36.setA.IB            2             6
+4 19.GS.C2.UYT.36.setA.UB            2             6
+5 19.GS.C2.UYT.36.setB.IB            2             6
+6 19.GS.C2.UYT.36.setB.UB            2             6
+7 19.GS.C4B.PYT.135.UB               2            30
+8 19.GS.C4B.PYT.140.IB               2            28
+9 19.GS.C4C.CE.822.IB                1            42</code></pre>
+<p>The question is, are complete replications of the experiment indicated by replicate and incomplete sub-blocks represented by blockNumber</p>
+<pre class="r"><code>dbdata %&gt;% 
+     group_by(studyName) %&gt;% 
+     summarize(N_replicate=length(unique(replicate)),
+               N_blockNumber=length(unique(blockNumber)),
+               doRepsEqualBlocks=all(replicate==blockNumber))</code></pre>
+<pre><code># A tibble: 9 × 4
+  studyName                N_replicate N_blockNumber doRepsEqualBlocks
+  &lt;chr&gt;                          &lt;int&gt;         &lt;int&gt; &lt;lgl&gt;            
+1 17.GS.GeneticGain.UB               1            11 FALSE            
+2 19.GS.C1.C2.C3.AYT.42.UB           3             3 TRUE             
+3 19.GS.C2.UYT.36.setA.IB            2             6 FALSE            
+4 19.GS.C2.UYT.36.setA.UB            2             6 FALSE            
+5 19.GS.C2.UYT.36.setB.IB            2             6 FALSE            
+6 19.GS.C2.UYT.36.setB.UB            2             6 FALSE            
+7 19.GS.C4B.PYT.135.UB               2            30 FALSE            
+8 19.GS.C4B.PYT.140.IB               2            28 FALSE            
+9 19.GS.C4C.CE.822.IB                1            42 FALSE            </code></pre>
+<p>Next, I decided to check that the replicate column definitely means complete blocks. The below might look a bit complicated, but I basically merge two summaries: (1) he overall number of accessions per trial, and (2) the average number of accessions per replicate per trial.</p>
+<pre class="r"><code>dbdata %&gt;% 
+     group_by(studyName) %&gt;% 
+     summarize(N_accession=length(unique(germplasmName)))</code></pre>
+<pre><code># A tibble: 9 × 2
+  studyName                N_accession
+  &lt;chr&gt;                          &lt;int&gt;
+1 17.GS.GeneticGain.UB             753
+2 19.GS.C1.C2.C3.AYT.42.UB          42
+3 19.GS.C2.UYT.36.setA.IB           35
+4 19.GS.C2.UYT.36.setA.UB           36
+5 19.GS.C2.UYT.36.setB.IB           36
+6 19.GS.C2.UYT.36.setB.UB           36
+7 19.GS.C4B.PYT.135.UB             135
+8 19.GS.C4B.PYT.140.IB             129
+9 19.GS.C4C.CE.822.IB              657</code></pre>
+<pre class="r"><code>dbdata %&gt;% 
+     group_by(studyName,replicate) %&gt;% 
+     summarize(N_accession=length(unique(germplasmName))) %&gt;% 
+     group_by(studyName) %&gt;% 
+     summarize(avgAccessionsPerReplicate=ceiling(mean(N_accession)))</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;studyName&#39;. You can override using the `.groups` argument.</code></pre>
+<pre><code># A tibble: 9 × 2
+  studyName                avgAccessionsPerReplicate
+  &lt;chr&gt;                                        &lt;dbl&gt;
+1 17.GS.GeneticGain.UB                           753
+2 19.GS.C1.C2.C3.AYT.42.UB                        42
+3 19.GS.C2.UYT.36.setA.IB                         34
+4 19.GS.C2.UYT.36.setA.UB                         36
+5 19.GS.C2.UYT.36.setB.IB                         33
+6 19.GS.C2.UYT.36.setB.UB                         36
+7 19.GS.C4B.PYT.135.UB                           135
+8 19.GS.C4B.PYT.140.IB                           127
+9 19.GS.C4C.CE.822.IB                            657</code></pre>
+<pre class="r"><code># the overall number of accessions per trial
+dbdata %&gt;% 
+     group_by(studyName) %&gt;% 
+     summarize(N_accession=length(unique(germplasmName))) %&gt;% 
+     # the average number of accessions per replicate per trial
+     left_join(dbdata %&gt;% 
+                    group_by(studyName,replicate) %&gt;% 
+                    summarize(N_accession=length(unique(germplasmName))) %&gt;% 
+                    group_by(studyName) %&gt;% 
+                    summarize(avgAccessionsPerReplicate=ceiling(mean(N_accession))))</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;studyName&#39;. You can override using the `.groups` argument.</code></pre>
+<pre><code>Joining, by = &quot;studyName&quot;</code></pre>
+<pre><code># A tibble: 9 × 3
+  studyName                N_accession avgAccessionsPerReplicate
+  &lt;chr&gt;                          &lt;int&gt;                     &lt;dbl&gt;
+1 17.GS.GeneticGain.UB             753                       753
+2 19.GS.C1.C2.C3.AYT.42.UB          42                        42
+3 19.GS.C2.UYT.36.setA.IB           35                        34
+4 19.GS.C2.UYT.36.setA.UB           36                        36
+5 19.GS.C2.UYT.36.setB.IB           36                        33
+6 19.GS.C2.UYT.36.setB.UB           36                        36
+7 19.GS.C4B.PYT.135.UB             135                       135
+8 19.GS.C4B.PYT.140.IB             129                       127
+9 19.GS.C4C.CE.822.IB              657                       657</code></pre>
+<p>One more: look at the min, mean and max number of accessions per blockNumber</p>
+<pre class="r"><code>dbdata %&gt;% 
+     group_by(studyName,replicate,blockNumber) %&gt;% 
+     summarize(N_accession=length(unique(germplasmName))) %&gt;% ungroup() %&gt;% 
+     group_by(studyName) %&gt;% 
+     summarize(minAccessionsPerBlock=ceiling(min(N_accession)),
+               avgAccessionsPerBlock=ceiling(mean(N_accession)),
+               maxAccessionsPerBlock=ceiling(max(N_accession)))</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;studyName&#39;, &#39;replicate&#39;. You can override using the `.groups` argument.</code></pre>
+<pre><code># A tibble: 9 × 4
+  studyName                minAccessionsPer… avgAccessionsPer… maxAccessionsPer…
+  &lt;chr&gt;                                &lt;dbl&gt;             &lt;dbl&gt;             &lt;dbl&gt;
+1 17.GS.GeneticGain.UB                    53                72                76
+2 19.GS.C1.C2.C3.AYT.42.UB                41                42                42
+3 19.GS.C2.UYT.36.setA.IB                 11                12                12
+4 19.GS.C2.UYT.36.setA.UB                 12                12                12
+5 19.GS.C2.UYT.36.setB.IB                  9                11                12
+6 19.GS.C2.UYT.36.setB.UB                 12                12                12
+7 19.GS.C4B.PYT.135.UB                     9                 9                 9
+8 19.GS.C4B.PYT.140.IB                     8                10                10
+9 19.GS.C4C.CE.822.IB                     10                19                20</code></pre>
+<p><code>CMD+I</code></p>
+<pre class="r"><code>dbdata %&gt;% 
+     group_by(studyName) %&gt;% 
+     summarize(N_accession=length(unique(germplasmName))) %&gt;% 
+     left_join(dbdata %&gt;% 
+                    group_by(studyName,replicate,blockNumber) %&gt;% 
+                    summarize(N_accession=length(unique(germplasmName))) %&gt;% ungroup() %&gt;% 
+                    group_by(studyName) %&gt;% 
+                    summarize(minAccessionsPerBlock=ceiling(min(N_accession)),
+                              avgAccessionsPerBlock=ceiling(mean(N_accession)),
+                              maxAccessionsPerBlock=ceiling(max(N_accession))))</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;studyName&#39;, &#39;replicate&#39;. You can override using the `.groups` argument.</code></pre>
+<pre><code>Joining, by = &quot;studyName&quot;</code></pre>
+<pre><code># A tibble: 9 × 5
+  studyName    N_accession minAccessionsPer… avgAccessionsPer… maxAccessionsPer…
+  &lt;chr&gt;              &lt;int&gt;             &lt;dbl&gt;             &lt;dbl&gt;             &lt;dbl&gt;
+1 17.GS.Genet…         753                53                72                76
+2 19.GS.C1.C2…          42                41                42                42
+3 19.GS.C2.UY…          35                11                12                12
+4 19.GS.C2.UY…          36                12                12                12
+5 19.GS.C2.UY…          36                 9                11                12
+6 19.GS.C2.UY…          36                12                12                12
+7 19.GS.C4B.P…         135                 9                 9                 9
+8 19.GS.C4B.P…         129                 8                10                10
+9 19.GS.C4C.C…         657                10                19                20</code></pre>
+<p>AYT trial does not have incomplete blocks… only complete blocks.</p>
+<p>Now I will ad hoc create two variables (CompleteBlocks and IncompleteBlocks), indicating (TRUE/FALSE) whether to model using the replicate and/or blockNumber variable.</p>
+<p>I also like to create explicitly nested design variables (yearInLoc, trialInLocYr, repInTrial, blockInRep).</p>
+<pre class="r"><code>dbdata %&lt;&gt;% 
+     group_by(studyName) %&gt;% 
+     summarize(N_replicate=length(unique(replicate)),
+               N_blockNumber=length(unique(blockNumber)),
+               doRepsEqualBlocks=all(replicate==blockNumber)) %&gt;% 
+     ungroup() %&gt;% 
+     mutate(CompleteBlocks=ifelse(N_replicate&gt;1,TRUE,FALSE),
+            IncompleteBlocks=ifelse(N_blockNumber&gt;1 &amp; !doRepsEqualBlocks,TRUE,FALSE)) %&gt;% 
+     left_join(dbdata) %&gt;% 
+     mutate(yearInLoc=paste0(programName,&quot;_&quot;,locationName,&quot;_&quot;,studyYear),
+            trialInLocYr=paste0(yearInLoc,&quot;_&quot;,studyName),
+            repInTrial=paste0(trialInLocYr,&quot;_&quot;,replicate),
+            blockInRep=paste0(repInTrial,&quot;_&quot;,blockNumber))</code></pre>
+<pre><code>Joining, by = &quot;studyName&quot;</code></pre>
+<pre class="r"><code>dbdata %&gt;% 
+     count(studyName,CompleteBlocks,IncompleteBlocks) %&gt;% 
+     left_join(dbdata %&gt;% 
+                    group_by(studyName) %&gt;% 
+                    summarize(nRepInTrial=length(unique(repInTrial)),
+                              nBlockInRep=length(unique(blockInRep))))</code></pre>
+<pre><code>Joining, by = &quot;studyName&quot;</code></pre>
+<pre><code># A tibble: 9 × 6
+  studyName        CompleteBlocks IncompleteBlocks     n nRepInTrial nBlockInRep
+  &lt;chr&gt;            &lt;lgl&gt;          &lt;lgl&gt;            &lt;int&gt;       &lt;int&gt;       &lt;int&gt;
+1 17.GS.GeneticGa… FALSE          TRUE               792           1          11
+2 19.GS.C1.C2.C3.… TRUE           FALSE              125           3           3
+3 19.GS.C2.UYT.36… TRUE           TRUE                68           2           6
+4 19.GS.C2.UYT.36… TRUE           TRUE                72           2           6
+5 19.GS.C2.UYT.36… TRUE           TRUE                66           2           6
+6 19.GS.C2.UYT.36… TRUE           TRUE                72           2           6
+7 19.GS.C4B.PYT.1… TRUE           TRUE               270           2          30
+8 19.GS.C4B.PYT.1… TRUE           TRUE               273           2          28
+9 19.GS.C4C.CE.82… FALSE          TRUE               777           1          42</code></pre>
+</div>
+<div id="traits-and-trait-abbreviations" class="section level2">
+<h2>Traits and Trait Abbreviations</h2>
+<pre class="r"><code>traitabbrevs&lt;-tribble(~TraitAbbrev,~TraitName,
+        &quot;CMD1S&quot;,&quot;cassava.mosaic.disease.severity.1.month.evaluation.CO_334.0000191&quot;,
+        &quot;CMD3S&quot;,&quot;cassava.mosaic.disease.severity.3.month.evaluation.CO_334.0000192&quot;,
+        &quot;CMD6S&quot;,&quot;cassava.mosaic.disease.severity.6.month.evaluation.CO_334.0000194&quot;,
+        &quot;DM&quot;,&quot;dry.matter.content.percentage.CO_334.0000092&quot;,
+        &quot;RTWT&quot;,&quot;fresh.storage.root.weight.per.plot.CO_334.0000012&quot;,
+        &quot;NOHAV&quot;,&quot;plant.stands.harvested.counting.CO_334.0000010&quot;)
+traitabbrevs</code></pre>
+<pre><code># A tibble: 6 × 2
+  TraitAbbrev TraitName                                                        
+  &lt;chr&gt;       &lt;chr&gt;                                                            
+1 CMD1S       cassava.mosaic.disease.severity.1.month.evaluation.CO_334.0000191
+2 CMD3S       cassava.mosaic.disease.severity.3.month.evaluation.CO_334.0000192
+3 CMD6S       cassava.mosaic.disease.severity.6.month.evaluation.CO_334.0000194
+4 DM          dry.matter.content.percentage.CO_334.0000092                     
+5 RTWT        fresh.storage.root.weight.per.plot.CO_334.0000012                
+6 NOHAV       plant.stands.harvested.counting.CO_334.0000010                   </code></pre>
+<pre class="r"><code>dbdata&lt;-renameAndSelectCols(traitabbrevs,
+                            indata=dbdata,
+                            customColsToKeep = c(&quot;observationUnitName&quot;,
+                                                 &quot;CompleteBlocks&quot;,
+                                                 &quot;IncompleteBlocks&quot;,
+                                                 &quot;yearInLoc&quot;,
+                                                 &quot;trialInLocYr&quot;,
+                                                 &quot;repInTrial&quot;,&quot;blockInRep&quot;))</code></pre>
+<pre><code>Joining, by = &quot;TraitName&quot;</code></pre>
+</div>
+<div id="qc-trait-values" class="section level2">
+<h2>QC Trait Values</h2>
+<pre class="r"><code># comment out the traits not present in this dataset
+dbdata&lt;-dbdata %&gt;% 
+     dplyr::mutate(CMD1S=ifelse(CMD1S&lt;1 | CMD1S&gt;5,NA,CMD1S),
+                   CMD3S=ifelse(CMD3S&lt;1 | CMD3S&gt;5,NA,CMD3S),
+                   # CMD6S=ifelse(CMD6S&lt;1 | CMD6S&gt;5,NA,CMD6S), 
+                   # CMD9S=ifelse(CMD9S&lt;1 | CMD9S&gt;5,NA,CMD9S),
+                   # CGM=ifelse(CGM&lt;1 | CGM&gt;5,NA,CGM),
+                   # CGMS1=ifelse(CGMS1&lt;1 | CGMS1&gt;5,NA,CGMS1),
+                   # CGMS2=ifelse(CGMS2&lt;1 | CGMS2&gt;5,NA,CGMS2),
+                   DM=ifelse(DM&gt;100 | DM&lt;=0,NA,DM),
+                   RTWT=ifelse(RTWT==0 | NOHAV==0 | is.na(NOHAV),NA,RTWT),
+                   # SHTWT=ifelse(SHTWT==0 | NOHAV==0 | is.na(NOHAV),NA,SHTWT),
+                   # RTNO=ifelse(RTNO==0 | NOHAV==0 | is.na(NOHAV),NA,RTNO),
+                   NOHAV=ifelse(NOHAV==0,NA,NOHAV),
+                   NOHAV=ifelse(NOHAV&gt;42,NA,NOHAV)
+                   # RTNO=ifelse(!RTNO %in% 1:10000,NA,RTNO)
+     )</code></pre>
+</div>
+<div id="post-qc-composite-traits" class="section level2">
+<h2>Post-QC: composite traits</h2>
+<div id="season-wide-mean-disease-severity" class="section level3">
+<h3>Season-wide mean disease severity</h3>
+<pre class="r"><code>dbdata&lt;-dbdata %&gt;% 
+  mutate(MCMDS=rowMeans(.[,colnames(.) %in% c(&quot;CMD1S&quot;,&quot;CMD3S&quot;,&quot;CMD6S&quot;,&quot;CMD9S&quot;)], na.rm = T)) %&gt;% 
+  select(-any_of(c(&quot;CMD1S&quot;,&quot;CMD3S&quot;,&quot;CMD6S&quot;,&quot;CMD9S&quot;)))</code></pre>
+</div>
+<div id="fresh-root-yield-fyld" class="section level3">
+<h3>Fresh root yield (FYLD)</h3>
+<pre class="r"><code>dbdata %&gt;% 
+     count(studyYear,studyName,studyDesign,plotWidth,plotLength,plantsPerPlot) %&gt;% 
+     mutate(plotArea=plotWidth*plotLength)</code></pre>
+<pre><code># A tibble: 9 × 8
+  studyYear studyName       studyDesign plotWidth plotLength plantsPerPlot     n
+      &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;           &lt;int&gt;      &lt;dbl&gt; &lt;lgl&gt;         &lt;int&gt;
+1      2017 17.GS.GeneticG… Augmented           1        5   NA              792
+2      2019 19.GS.C1.C2.C3… Alpha               4        4   NA              125
+3      2019 19.GS.C2.UYT.3… Alpha               4        4   NA               68
+4      2019 19.GS.C2.UYT.3… Alpha               4        4   NA               72
+5      2019 19.GS.C2.UYT.3… RCBD                4        4   NA               66
+6      2019 19.GS.C2.UYT.3… Alpha               4        4   NA               72
+7      2019 19.GS.C4B.PYT.… Alpha               2        4   NA              270
+8      2019 19.GS.C4B.PYT.… Alpha               3        2.5 NA              273
+9      2019 19.GS.C4C.CE.8… RCBD                1        2.5 NA              777
+# … with 1 more variable: plotArea &lt;dbl&gt;</code></pre>
+<pre class="r"><code>dbdata %&gt;% 
+     ggplot(.,aes(x=NOHAV, fill=studyName)) + geom_density(alpha=0.75)</code></pre>
+<pre><code>Warning: Removed 903 rows containing non-finite values (stat_density).</code></pre>
+<p><img src="figure/clean_phenos.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>dbdata %&gt;% 
+     # plot area in meters squared
+     mutate(plotArea=plotWidth*plotLength) %&gt;% 
+     ggplot(.,aes(x=plotArea,y=NOHAV, fill=studyName)) + 
+     geom_boxplot() + theme(axis.text.x = element_blank())</code></pre>
+<pre><code>Warning: Removed 903 rows containing non-finite values (stat_boxplot).</code></pre>
+<p><img src="figure/clean_phenos.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plantsPerPlot_choices&lt;-dbdata %&gt;% 
+     distinct(studyYear,studyName,plotWidth,plotLength,plantsPerPlot) %&gt;% 
+     left_join(dbdata %&gt;% 
+                    group_by(studyName) %&gt;% 
+                    summarize(MaxNOHAV=max(NOHAV, na.rm=T))) %&gt;% 
+          # plot area in meters squared
+     mutate(plotArea=plotWidth*plotLength,
+            # Number of plants per plot
+            plantsPerPlot=MaxNOHAV,
+            plantsPerPlot=ifelse(studyName==&quot;19.GS.C2.UYT.36.setA.UB&quot;,20,plantsPerPlot)) %&gt;% 
+     # exclude the empty genetic gain trial
+     filter(studyName!=&quot;19geneticgainUB&quot;) %&gt;% 
+     select(studyName,plotArea,MaxNOHAV,plantsPerPlot)</code></pre>
+<pre><code>Warning in max(NOHAV, na.rm = T): no non-missing arguments to max; returning
+-Inf</code></pre>
+<pre><code>Joining, by = &quot;studyName&quot;</code></pre>
+<pre class="r"><code>plantsPerPlot_choices</code></pre>
+<pre><code># A tibble: 9 × 4
+  studyName                plotArea MaxNOHAV plantsPerPlot
+  &lt;chr&gt;                       &lt;dbl&gt;    &lt;dbl&gt;         &lt;dbl&gt;
+1 17.GS.GeneticGain.UB          5       -Inf          -Inf
+2 19.GS.C1.C2.C3.AYT.42.UB     16         10            10
+3 19.GS.C2.UYT.36.setA.IB      16         20            20
+4 19.GS.C2.UYT.36.setA.UB      16         18            20
+5 19.GS.C2.UYT.36.setB.IB      16         20            20
+6 19.GS.C2.UYT.36.setB.UB      16         20            20
+7 19.GS.C4B.PYT.135.UB          8         10            10
+8 19.GS.C4B.PYT.140.IB          7.5        9             9
+9 19.GS.C4C.CE.822.IB           2.5        7             7</code></pre>
+<pre class="r"><code>dbdata %&lt;&gt;%
+     select(-plantsPerPlot) %&gt;% 
+     # join plantsPerPlot_choices to the trial data
+     left_join(plantsPerPlot_choices) %&gt;% 
+     # compute fresh root yield (FYLD) in tons per hectare
+     mutate(PlantSpacing=plotArea/plantsPerPlot,
+            FYLD=RTWT/(plantsPerPlot*PlantSpacing)*10)</code></pre>
+<pre><code>Joining, by = &quot;studyName&quot;</code></pre>
+<pre class="r"><code>dbdata %&gt;% ggplot(.,aes(x=FYLD,fill=studyName)) + geom_density(alpha=0.75)</code></pre>
+<pre><code>Warning: Removed 925 rows containing non-finite values (stat_density).</code></pre>
+<p><img src="figure/clean_phenos.Rmd/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># I log transform yield traits 
+# to satisfy homoskedastic residuals assumption 
+# of linear mixed models
+dbdata %&lt;&gt;% 
+     mutate(DYLD=FYLD*(DM/100),
+            logFYLD=log(FYLD),
+            logDYLD=log(DYLD),
+            PropNOHAV=NOHAV/plantsPerPlot) 
+# remove non transformed / per-plot (instead of per area) traits
+dbdata %&lt;&gt;% select(-RTWT,-FYLD,-DYLD)
+dbdata %&gt;% ggplot(.,aes(x=logFYLD,fill=studyName)) + geom_density(alpha=0.75)</code></pre>
+<pre><code>Warning: Removed 925 rows containing non-finite values (stat_density).</code></pre>
+<p><img src="figure/clean_phenos.Rmd/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="save-cleaned-phenos" class="section level2">
+<h2>Save cleaned phenos</h2>
+<pre class="r"><code>saveRDS(dbdata,file=here::here(&quot;output&quot;,&quot;phenotypes_cleaned.rds&quot;))</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.1.1 (2021-08-10)
+Platform: x86_64-apple-darwin17.0 (64-bit)
+Running under: macOS Big Sur 10.16
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] genomicMateSelectR_0.2.0 forcats_0.5.1            stringr_1.4.0           
+ [4] dplyr_1.0.7              purrr_0.3.4              readr_2.1.1             
+ [7] tidyr_1.1.4              tibble_3.1.6             ggplot2_3.3.5           
+[10] tidyverse_1.3.1          workflowr_1.7.0         
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.7       here_1.0.1       lubridate_1.8.0  getPass_0.2-2   
+ [5] ps_1.6.0         assertthat_0.2.1 rprojroot_2.0.2  digest_0.6.29   
+ [9] utf8_1.2.2       R6_2.5.1         cellranger_1.1.0 backports_1.4.1 
+[13] reprex_2.0.1     evaluate_0.14    highr_0.9        httr_1.4.2      
+[17] pillar_1.6.4     rlang_0.4.12     readxl_1.3.1     rstudioapi_0.13 
+[21] whisker_0.4      callr_3.7.0      jquerylib_0.1.4  rmarkdown_2.11  
+[25] labeling_0.4.2   munsell_0.5.0    broom_0.7.11     compiler_4.1.1  
+[29] httpuv_1.6.5     modelr_0.1.8     xfun_0.29        pkgconfig_2.0.3 
+[33] htmltools_0.5.2  tidyselect_1.1.1 fansi_0.5.0      crayon_1.4.2    
+[37] tzdb_0.2.0       dbplyr_2.1.1     withr_2.4.3      later_1.3.0     
+[41] grid_4.1.1       jsonlite_1.7.2   gtable_0.3.0     lifecycle_1.0.1 
+[45] DBI_1.1.2        git2r_0.29.0     magrittr_2.0.1   scales_1.1.1    
+[49] cli_3.1.0        stringi_1.7.6    farver_2.1.0     fs_1.5.2        
+[53] promises_1.2.0.1 xml2_1.3.3       bslib_0.3.1      ellipsis_0.3.2  
+[57] generics_0.1.1   vctrs_0.3.8      tools_4.1.1      glue_1.6.0      
+[61] hms_1.1.1        processx_3.5.2   fastmap_1.1.0    yaml_2.2.1      
+[65] colorspace_2.0-2 rvest_1.0.2      knitr_1.37       haven_2.4.3     
+[69] sass_0.4.0      </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
