@@ -26,6 +26,11 @@ Add it to the top navigation bar, via the `_site.yml` file:
 
 ![](images/paste-72D2779D.png)
 
+## Table of Contents
+
+1. [Data Download Stage](download.html)
+2. [Clean phenotype data](clean_phenos.html): standard procedures to prepare phenotypes for analysis.
+
 ## Committing and publishing 
 
 Example, first commit:

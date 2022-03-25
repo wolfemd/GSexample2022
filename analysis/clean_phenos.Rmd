@@ -1,0 +1,272 @@
+---
+title: "Prepare phenotype data"
+author: "Marnin Wolfe"
+date: "2022-03-25"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r}
+library(tidyverse);
+library(genomicMateSelectR)
+```
+
+## Read DB data
+```{r}
+here::here("data","phenotype.csv")
+```
+
+```{r}
+dbdata<-readDBdata(phenotypeFile = here::here("data","phenotype.csv"),
+                   metadataFile = here::here("data","metadata.csv"))
+```
+
+## Check experimental designs
+
+Checklist: Are the data plot-basis, plant-basis or a mixture? If plant-basis data are present, should they be converted to plot-basis for further analysis?
+
+```{r}
+dbdata %>% count(observationLevel)
+```
+
+What experimental designs are present? How are they represented by the variables in the dataset? Are all designs consistent with your expectations, for example relative to the reported “trialType,” “studyName” and/or “studyDesign?”
+
+
+```{r}
+dbdata %>% 
+     count(studyName,trialType, studyDesign, numberBlocks,numberReps,entryType) %>% 
+     spread(entryType,n) 
+```
+
+Next, I’ll check if the replicate and blockNumber columns reliably distinguish complete and incomplete blocks in the data.
+
+```{r}
+dbdata %>% 
+     group_by(studyName) %>% 
+     summarize(N_replicate=length(unique(replicate)),
+               N_blockNumber=length(unique(blockNumber)))
+```
+
+The question is, are complete replications of the experiment indicated by replicate and incomplete sub-blocks represented by blockNumber
+
+```{r}
+dbdata %>% 
+     group_by(studyName) %>% 
+     summarize(N_replicate=length(unique(replicate)),
+               N_blockNumber=length(unique(blockNumber)),
+               doRepsEqualBlocks=all(replicate==blockNumber))
+```
+Next, I decided to check that the replicate column definitely means complete blocks. The below might look a bit complicated, but I basically merge two summaries: (1) he overall number of accessions per trial, and (2) the average number of accessions per replicate per trial.
+
+```{r}
+dbdata %>% 
+     group_by(studyName) %>% 
+     summarize(N_accession=length(unique(germplasmName)))
+```
+```{r}
+dbdata %>% 
+     group_by(studyName,replicate) %>% 
+     summarize(N_accession=length(unique(germplasmName))) %>% 
+     group_by(studyName) %>% 
+     summarize(avgAccessionsPerReplicate=ceiling(mean(N_accession)))
+```
+
+```{r}
+# the overall number of accessions per trial
+dbdata %>% 
+     group_by(studyName) %>% 
+     summarize(N_accession=length(unique(germplasmName))) %>% 
+     # the average number of accessions per replicate per trial
+     left_join(dbdata %>% 
+                    group_by(studyName,replicate) %>% 
+                    summarize(N_accession=length(unique(germplasmName))) %>% 
+                    group_by(studyName) %>% 
+                    summarize(avgAccessionsPerReplicate=ceiling(mean(N_accession))))
+```
+
+One more: look at the min, mean and max number of accessions per blockNumber
+
+```{r}
+dbdata %>% 
+     group_by(studyName,replicate,blockNumber) %>% 
+     summarize(N_accession=length(unique(germplasmName))) %>% ungroup() %>% 
+     group_by(studyName) %>% 
+     summarize(minAccessionsPerBlock=ceiling(min(N_accession)),
+               avgAccessionsPerBlock=ceiling(mean(N_accession)),
+               maxAccessionsPerBlock=ceiling(max(N_accession)))
+
+```
+`CMD+I`
+```{r}
+dbdata %>% 
+     group_by(studyName) %>% 
+     summarize(N_accession=length(unique(germplasmName))) %>% 
+     left_join(dbdata %>% 
+                    group_by(studyName,replicate,blockNumber) %>% 
+                    summarize(N_accession=length(unique(germplasmName))) %>% ungroup() %>% 
+                    group_by(studyName) %>% 
+                    summarize(minAccessionsPerBlock=ceiling(min(N_accession)),
+                              avgAccessionsPerBlock=ceiling(mean(N_accession)),
+                              maxAccessionsPerBlock=ceiling(max(N_accession))))
+```
+
+AYT trial does not have incomplete blocks... only complete blocks.
+
+Now I will ad hoc create two variables (CompleteBlocks and IncompleteBlocks), indicating (TRUE/FALSE) whether to model using the replicate and/or blockNumber variable.
+
+I also like to create explicitly nested design variables (yearInLoc, trialInLocYr, repInTrial, blockInRep).
+
+```{r}
+dbdata %<>% 
+     group_by(studyName) %>% 
+     summarize(N_replicate=length(unique(replicate)),
+               N_blockNumber=length(unique(blockNumber)),
+               doRepsEqualBlocks=all(replicate==blockNumber)) %>% 
+     ungroup() %>% 
+     mutate(CompleteBlocks=ifelse(N_replicate>1,TRUE,FALSE),
+            IncompleteBlocks=ifelse(N_blockNumber>1 & !doRepsEqualBlocks,TRUE,FALSE)) %>% 
+     left_join(dbdata) %>% 
+     mutate(yearInLoc=paste0(programName,"_",locationName,"_",studyYear),
+            trialInLocYr=paste0(yearInLoc,"_",studyName),
+            repInTrial=paste0(trialInLocYr,"_",replicate),
+            blockInRep=paste0(repInTrial,"_",blockNumber))
+```
+
+```{r}
+dbdata %>% 
+     count(studyName,CompleteBlocks,IncompleteBlocks) %>% 
+     left_join(dbdata %>% 
+                    group_by(studyName) %>% 
+                    summarize(nRepInTrial=length(unique(repInTrial)),
+                              nBlockInRep=length(unique(blockInRep))))
+```
+
+## Traits and Trait Abbreviations
+
+```{r}
+traitabbrevs<-tribble(~TraitAbbrev,~TraitName,
+        "CMD1S","cassava.mosaic.disease.severity.1.month.evaluation.CO_334.0000191",
+        "CMD3S","cassava.mosaic.disease.severity.3.month.evaluation.CO_334.0000192",
+        "CMD6S","cassava.mosaic.disease.severity.6.month.evaluation.CO_334.0000194",
+        "DM","dry.matter.content.percentage.CO_334.0000092",
+        "RTWT","fresh.storage.root.weight.per.plot.CO_334.0000012",
+        "NOHAV","plant.stands.harvested.counting.CO_334.0000010")
+traitabbrevs
+```
+
+```{r}
+dbdata<-renameAndSelectCols(traitabbrevs,
+                            indata=dbdata,
+                            customColsToKeep = c("observationUnitName",
+                                                 "CompleteBlocks",
+                                                 "IncompleteBlocks",
+                                                 "yearInLoc",
+                                                 "trialInLocYr",
+                                                 "repInTrial","blockInRep"))
+```
+
+## QC Trait Values
+
+```{r}
+# comment out the traits not present in this dataset
+dbdata<-dbdata %>% 
+     dplyr::mutate(CMD1S=ifelse(CMD1S<1 | CMD1S>5,NA,CMD1S),
+                   CMD3S=ifelse(CMD3S<1 | CMD3S>5,NA,CMD3S),
+                   # CMD6S=ifelse(CMD6S<1 | CMD6S>5,NA,CMD6S), 
+                   # CMD9S=ifelse(CMD9S<1 | CMD9S>5,NA,CMD9S),
+                   # CGM=ifelse(CGM<1 | CGM>5,NA,CGM),
+                   # CGMS1=ifelse(CGMS1<1 | CGMS1>5,NA,CGMS1),
+                   # CGMS2=ifelse(CGMS2<1 | CGMS2>5,NA,CGMS2),
+                   DM=ifelse(DM>100 | DM<=0,NA,DM),
+                   RTWT=ifelse(RTWT==0 | NOHAV==0 | is.na(NOHAV),NA,RTWT),
+                   # SHTWT=ifelse(SHTWT==0 | NOHAV==0 | is.na(NOHAV),NA,SHTWT),
+                   # RTNO=ifelse(RTNO==0 | NOHAV==0 | is.na(NOHAV),NA,RTNO),
+                   NOHAV=ifelse(NOHAV==0,NA,NOHAV),
+                   NOHAV=ifelse(NOHAV>42,NA,NOHAV)
+                   # RTNO=ifelse(!RTNO %in% 1:10000,NA,RTNO)
+     )
+```
+
+## Post-QC: composite traits
+
+### Season-wide mean disease severity
+```{r}
+dbdata<-dbdata %>% 
+  mutate(MCMDS=rowMeans(.[,colnames(.) %in% c("CMD1S","CMD3S","CMD6S","CMD9S")], na.rm = T)) %>% 
+  select(-any_of(c("CMD1S","CMD3S","CMD6S","CMD9S")))
+```
+
+### Fresh root yield (FYLD)
+
+```{r}
+dbdata %>% 
+     count(studyYear,studyName,studyDesign,plotWidth,plotLength,plantsPerPlot) %>% 
+     mutate(plotArea=plotWidth*plotLength)
+```
+
+```{r}
+dbdata %>% 
+     ggplot(.,aes(x=NOHAV, fill=studyName)) + geom_density(alpha=0.75)
+```
+
+```{r}
+dbdata %>% 
+     # plot area in meters squared
+     mutate(plotArea=plotWidth*plotLength) %>% 
+     ggplot(.,aes(x=plotArea,y=NOHAV, fill=studyName)) + 
+     geom_boxplot() + theme(axis.text.x = element_blank())
+```
+
+```{r}
+plantsPerPlot_choices<-dbdata %>% 
+     distinct(studyYear,studyName,plotWidth,plotLength,plantsPerPlot) %>% 
+     left_join(dbdata %>% 
+                    group_by(studyName) %>% 
+                    summarize(MaxNOHAV=max(NOHAV, na.rm=T))) %>% 
+          # plot area in meters squared
+     mutate(plotArea=plotWidth*plotLength,
+            # Number of plants per plot
+            plantsPerPlot=MaxNOHAV,
+            plantsPerPlot=ifelse(studyName=="19.GS.C2.UYT.36.setA.UB",20,plantsPerPlot)) %>% 
+     # exclude the empty genetic gain trial
+     filter(studyName!="19geneticgainUB") %>% 
+     select(studyName,plotArea,MaxNOHAV,plantsPerPlot)
+plantsPerPlot_choices
+```
+```{r}
+dbdata %<>%
+     select(-plantsPerPlot) %>% 
+     # join plantsPerPlot_choices to the trial data
+     left_join(plantsPerPlot_choices) %>% 
+     # compute fresh root yield (FYLD) in tons per hectare
+     mutate(PlantSpacing=plotArea/plantsPerPlot,
+            FYLD=RTWT/(plantsPerPlot*PlantSpacing)*10)
+```
+
+```{r}
+dbdata %>% ggplot(.,aes(x=FYLD,fill=studyName)) + geom_density(alpha=0.75)
+
+```
+
+```{r}
+# I log transform yield traits 
+# to satisfy homoskedastic residuals assumption 
+# of linear mixed models
+dbdata %<>% 
+     mutate(DYLD=FYLD*(DM/100),
+            logFYLD=log(FYLD),
+            logDYLD=log(DYLD),
+            PropNOHAV=NOHAV/plantsPerPlot) 
+# remove non transformed / per-plot (instead of per area) traits
+dbdata %<>% select(-RTWT,-FYLD,-DYLD)
+dbdata %>% ggplot(.,aes(x=logFYLD,fill=studyName)) + geom_density(alpha=0.75)
+```
+
+
+## Save cleaned phenos
+
+```{r}
+saveRDS(dbdata,file=here::here("output","phenotypes_cleaned.rds"))
+```
+
