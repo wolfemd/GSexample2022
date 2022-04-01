@@ -339,6 +339,9 @@ div.tocify {
   <a href="clean_phenos.html">Clean phenos</a>
 </li>
 <li>
+  <a href="prep_genos.html">Prep genos</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
 <li>
@@ -383,7 +386,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-03-25
+<strong>Last updated:</strong> 2022-04-01
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -474,16 +477,16 @@ This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysi
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree11eeb7936bf59e7438091a822bb16f38d42bce44targetblank11eeb79a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/11eeb7936bf59e7438091a822bb16f38d42bce44" target="_blank">11eeb79</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treee3d8e656fa9569396dbd5ea381bc87edf99da39dtargetblanke3d8e65a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/e3d8e656fa9569396dbd5ea381bc87edf99da39d" target="_blank">e3d8e65</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree11eeb7936bf59e7438091a822bb16f38d42bce44targetblank11eeb79a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treee3d8e656fa9569396dbd5ea381bc87edf99da39dtargetblanke3d8e65a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/11eeb7936bf59e7438091a822bb16f38d42bce44" target="_blank">11eeb79</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/e3d8e656fa9569396dbd5ea381bc87edf99da39d" target="_blank">e3d8e65</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -501,9 +504,14 @@ Untracked files:
     Untracked:  analysis/images/paste-2F34C15B.png
     Untracked:  analysis/images/paste-AD7AEEAC.png
     Untracked:  analysis/images/paste-CB5D91AC.png
+    Untracked:  analysis/troubleshooting.Rmd
     Untracked:  code/Icon
+    Untracked:  data/.DS_Store
     Untracked:  data/BreedBaseGenotypesDownload.vcf
     Untracked:  data/Icon
+    Untracked:  data/metadata_cynthia.csv
+    Untracked:  data/phenotype_cynthia.csv
+    Untracked:  output/.DS_Store
     Untracked:  output/Icon
     Untracked:  output/phenotypes_cleaned.rds
 
@@ -544,6 +552,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/e3d8e656fa9569396dbd5ea381bc87edf99da39d/analysis/clean_phenos.Rmd" target="_blank">e3d8e65</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-04-01
+</td>
+<td>
+update everything
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/4d5fb817a885621aa8c263f74cfa5f0ceb94b787/docs/clean_phenos.html" target="_blank">4d5fb81</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-03-25
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -871,6 +913,43 @@ dbdata&lt;-dbdata %&gt;%
      ggplot(.,aes(x=NOHAV, fill=studyName)) + geom_density(alpha=0.75)</code></pre>
 <pre><code>Warning: Removed 903 rows containing non-finite values (stat_density).</code></pre>
 <p><img src="figure/clean_phenos.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-20-1">
+Past versions of unnamed-chunk-20-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-20-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/4d5fb817a885621aa8c263f74cfa5f0ceb94b787/docs/figure/clean_phenos.Rmd/unnamed-chunk-20-1.png" target="_blank">4d5fb81</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>dbdata %&gt;% 
      # plot area in meters squared
      mutate(plotArea=plotWidth*plotLength) %&gt;% 
@@ -878,6 +957,43 @@ dbdata&lt;-dbdata %&gt;%
      geom_boxplot() + theme(axis.text.x = element_blank())</code></pre>
 <pre><code>Warning: Removed 903 rows containing non-finite values (stat_boxplot).</code></pre>
 <p><img src="figure/clean_phenos.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-21-1">
+Past versions of unnamed-chunk-21-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-21-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/4d5fb817a885621aa8c263f74cfa5f0ceb94b787/docs/figure/clean_phenos.Rmd/unnamed-chunk-21-1.png" target="_blank">4d5fb81</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plantsPerPlot_choices&lt;-dbdata %&gt;% 
      distinct(studyYear,studyName,plotWidth,plotLength,plantsPerPlot) %&gt;% 
      left_join(dbdata %&gt;% 
@@ -918,6 +1034,43 @@ dbdata&lt;-dbdata %&gt;%
 <pre class="r"><code>dbdata %&gt;% ggplot(.,aes(x=FYLD,fill=studyName)) + geom_density(alpha=0.75)</code></pre>
 <pre><code>Warning: Removed 925 rows containing non-finite values (stat_density).</code></pre>
 <p><img src="figure/clean_phenos.Rmd/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-24-1">
+Past versions of unnamed-chunk-24-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-24-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/4d5fb817a885621aa8c263f74cfa5f0ceb94b787/docs/figure/clean_phenos.Rmd/unnamed-chunk-24-1.png" target="_blank">4d5fb81</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># I log transform yield traits 
 # to satisfy homoskedastic residuals assumption 
 # of linear mixed models
@@ -931,6 +1084,43 @@ dbdata %&lt;&gt;% select(-RTWT,-FYLD,-DYLD)
 dbdata %&gt;% ggplot(.,aes(x=logFYLD,fill=studyName)) + geom_density(alpha=0.75)</code></pre>
 <pre><code>Warning: Removed 925 rows containing non-finite values (stat_density).</code></pre>
 <p><img src="figure/clean_phenos.Rmd/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-25-1">
+Past versions of unnamed-chunk-25-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-25-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/4d5fb817a885621aa8c263f74cfa5f0ceb94b787/docs/figure/clean_phenos.Rmd/unnamed-chunk-25-1.png" target="_blank">4d5fb81</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-03-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="save-cleaned-phenos" class="section level2">
