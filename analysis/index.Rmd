@@ -30,6 +30,9 @@ Add it to the top navigation bar, via the `_site.yml` file:
 
 1. [Data Download Stage](download.html)
 2. [Clean phenotype data](clean_phenos.html): standard procedures to prepare phenotypes for analysis.
+3. [Prepare genotypic data](prep_genos.html): standard procedures to prepare genotypic inputs (e.g. haplotype matrices) for genomic mate selection analyses.
+
+**TROUBLESHOOTING RMD:** [Troubleshooting each step](troubleshooting.html)
 
 ## Committing and publishing 
 
