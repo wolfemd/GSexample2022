@@ -9,8 +9,8 @@ navbar:
     href: download.html
   - text: Clean phenos
     href: clean_phenos.html 
-  - text: Clean genos
-    href: clean_genos.html
+  - text: Prep genos
+    href: prep_genos.html
   - text: About
     href: about.html
   - text: License
