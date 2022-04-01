@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Marnin Wolfe" />
+
+<meta name="date" content="2022-04-01" />
+
+<title>Prepare genotypic data</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">GSexample2022</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="download.html">Download</a>
+</li>
+<li>
+  <a href="clean_phenos.html">Clean phenos</a>
+</li>
+<li>
+  <a href="clean_genos.html">Clean genos</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Prepare genotypic data</h1>
+<h4 class="author">Marnin Wolfe</h4>
+<h4 class="date">2022-04-01</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2022-04-01
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>GSexample2022/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version 1.7.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20220320code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20220320)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20220320code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20220320)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treeb62cd6d4b3a93bcc0db9fb11e0366c9d6b311fdbtargetblankb62cd6da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/b62cd6d4b3a93bcc0db9fb11e0366c9d6b311fdb" target="_blank">b62cd6d</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treeb62cd6d4b3a93bcc0db9fb11e0366c9d6b311fdbtargetblankb62cd6da" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/b62cd6d4b3a93bcc0db9fb11e0366c9d6b311fdb" target="_blank">b62cd6d</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  .DS_Store
+    Untracked:  Icon
+    Untracked:  analysis/.DS_Store
+    Untracked:  analysis/Icon
+    Untracked:  analysis/images/Icon
+    Untracked:  analysis/images/paste-2F34C15B.png
+    Untracked:  analysis/images/paste-AD7AEEAC.png
+    Untracked:  analysis/images/paste-CB5D91AC.png
+    Untracked:  analysis/troubleshooting.Rmd
+    Untracked:  code/Icon
+    Untracked:  data/.DS_Store
+    Untracked:  data/BreedBaseGenotypesDownload.vcf
+    Untracked:  data/Icon
+    Untracked:  data/metadata_cynthia.csv
+    Untracked:  data/phenotype_cynthia.csv
+    Untracked:  output/.DS_Store
+    Untracked:  output/Icon
+    Untracked:  output/phenotypes_cleaned.rds
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/prep_genos.Rmd</code>) and HTML (<code>docs/prep_genos.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/b62cd6d4b3a93bcc0db9fb11e0366c9d6b311fdb/analysis/prep_genos.Rmd" target="_blank">b62cd6d</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-04-01
+</td>
+<td>
+Add the ‘prep genos’ steps
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<ol start="0" style="list-style-type: decimal">
+<li>Objectives</li>
+<li>Any major issues setting up to login to server?</li>
+<li>Plan: next Tuesday additional server time</li>
+<li>Process map</li>
+<li>vcf and bcftools manuals</li>
+<li>Get started</li>
+</ol>
+<div id="remote-access-the-server" class="section level2">
+<h2>Remote access the server</h2>
+<div id="if-on-cornell-network" class="section level3">
+<h3>If on Cornell network</h3>
+<pre class="bash"><code>ssh mw489@cbsumm21.biohpc.cornell.edu</code></pre>
+</div>
+<div id="external-to-cornell-network" class="section level3">
+<h3>External to Cornell network</h3>
+<p>First, <code>ssh</code> the “login” server</p>
+<pre class="bash"><code>ssh userid@cbsulogin2.biohpc.cornell.edu</code></pre>
+<p>Enter password</p>
+<p>Now <code>ssh</code> from login to the reserved server</p>
+<pre class="bash"><code>ssh userid@cbsumm21.biohpc.cornell.edu</code></pre>
+</div>
+</div>
+<div id="create-a-directory-on-workdir-for-days-work" class="section level2">
+<h2>Create a directory on <code>/workdir/</code> for days work</h2>
+<p>Go to <code>/workdir/</code></p>
+<pre class="bash"><code>cd /workdir/</code></pre>
+<p>Create a directory with <em>your</em> username:</p>
+<p>Example:</p>
+<pre class="bash"><code>mkdir mw489/;</code></pre>
+<p>Create a sub-directory for <em>this</em> analysis.</p>
+<p>Example:</p>
+<pre class="bash"><code>mkdir /workdir/mw489/GSexample2022</code></pre>
+<p>Navigate into your subdirectory on <code>/workdir/</code> (empty now).</p>
+<p>Example:</p>
+<pre class="bash"><code>cd /workdir/youruserid/GSexample2022</code></pre>
+<p>Copy the <code>data/</code> and <code>output/</code> from <em>my</em> <code>/workdir/mw489/GSexample2022/</code> location, into yours.</p>
+<p>Example:</p>
+<pre class="bash"><code>cp -r /workdir/mw489/GSexample2022/data /workdir/youruserid/GSexample2022/
+cp -r /workdir/mw489/GSexample2022/output /workdir/youruserid/GSexample2022/</code></pre>
+<p>Check that its there. Example:</p>
+<pre class="bash"><code>ls /workdir/youruserid/GSexample2022/data/</code></pre>
+</div>
+<div id="check-the-vcf" class="section level2">
+<h2>Check the VCF</h2>
+<pre class="bash"><code>vcftools --vcf data/BreedBaseGenotypesDownload.vcf
+cat data/BreedBaseGenotypesDownload.vcf | head -n50 | cut -c1-100</code></pre>
+</div>
+<div id="subset-vcf" class="section level2">
+<h2>Subset VCF</h2>
+<div id="remove-duplicates" class="section level3">
+<h3>Remove duplicates</h3>
+<pre class="bash"><code>bcftools query --list-samples data/BreedBaseGenotypesDownload.vcf</code></pre>
+<p>Manual solution</p>
+<pre class="bash"><code>egrep &quot;^#CHROM&quot; data/BreedBaseGenotypesDownload.vcf | head -n1 &gt; data/vcf_colnames.txt</code></pre>
+<pre class="r"><code>library(genomicMateSelectR)
+vcf_sample_names&lt;-readLines(&quot;data/vcf_colnames.txt&quot;) %&gt;% 
+     strsplit(.,&quot;\t&quot;) %&gt;% unlist() %&gt;% 
+     .[10:length(.)]
+table(duplicated(vcf_sample_names))</code></pre>
+<pre class="r"><code># create unique names for each VCF
+unique_names_for_vcf&lt;-tibble(vcfName=vcf_sample_names) %&gt;% 
+     # create an overall index to ensure I can recover the original column order
+     mutate(vcfIndex=1:n()) %&gt;% 
+     # now for each vcfName create an sub-index, to distinguish among duplicates
+     group_by(vcfName) %&gt;% 
+     # sub-index
+     mutate(vcfNameIndex=1:n(),
+            # For the first (or only) instance of each unique vcfName
+            vcfName_Unique=ifelse(vcfNameIndex==1,
+                                  # return the original name
+                                  vcfName,
+                                  # for all subsequent (duplicate) names, 
+                                  #put a unique-ified name by pasting the sub-index
+                                  paste0(vcfName,&quot;.&quot;,vcfNameIndex)))
+# Write the &quot;unique_names_for_vcf.txt&quot; to disk
+write.table(unique_names_for_vcf$vcfName_Unique,file = &quot;data/unique_names_for_vcf.txt&quot;,
+            row.names = F, col.names = F, quote = F)
+# Create also a list containing only one instance of each unique name, the first instance 
+subset_unique_names_for_vcf&lt;-unique_names_for_vcf %&gt;% 
+     filter(vcfNameIndex==1) %$%
+     vcfName_Unique
+# Write that list to disk for subsetting the VCF downstream
+write.table(subset_unique_names_for_vcf,file = &quot;data/subset_unique_names_for_vcf.txt&quot;,
+            row.names = F, col.names = F, quote = F)</code></pre>
+<p>Show what this did:</p>
+<pre class="r"><code>unique_names_for_vcf%&gt;%filter(vcfName==&quot;TMS18F1294P0011&quot;)</code></pre>
+<pre class="bash"><code># replace sample names in original VCF with unique ones (creates a new VCF)
+bcftools reheader --samples data/unique_names_for_vcf.txt data/BreedBaseGenotypesDownload.vcf &gt; data/BreedBaseGenotypesDownload_1.vcf; 
+# overwrite the original VCF with the new  that has unique names
+mv data/BreedBaseGenotypesDownload_1.vcf data/BreedBaseGenotypesDownload.vcf;
+# check that the names are now unique by printing sample list
+bcftools query --list-samples data/BreedBaseGenotypesDownload.vcf</code></pre>
+<pre class="bash"><code>vcftools --vcf data/BreedBaseGenotypesDownload.vcf --keep data/subset_unique_names_for_vcf.txt --recode --stdout | bgzip -c &gt; data/BreedBaseGenotypes_subset.vcf.gz</code></pre>
+<pre class="bash"><code>vcftools --gzvcf data/BreedBaseGenotypes_subset.vcf.gz</code></pre>
+</div>
+<div id="check-genotype-to-phenotype-matches" class="section level3">
+<h3>Check genotype-to-phenotype matches</h3>
+<pre class="r"><code>phenos&lt;-readRDS(here::here(&quot;output&quot;,&quot;phenotypes_cleaned.rds&quot;))
+
+# vector of the unique germplasmName in the field trial data
+germplasm_with_phenos&lt;-unique(phenos$germplasmName)
+length(germplasm_with_phenos)</code></pre>
+<pre class="r"><code>subset_unique_names_for_vcf&lt;-read.table(file = &quot;data/subset_unique_names_for_vcf.txt&quot;, 
+                                        stringsAsFactors = F)$V1
+
+table(germplasm_with_phenos %in% subset_unique_names_for_vcf)</code></pre>
+<pre class="r"><code># geno and pheno
+subset_unique_names_for_vcf[subset_unique_names_for_vcf %in% germplasm_with_phenos]
+# pheno not geno
+germplasm_with_phenos[!germplasm_with_phenos %in% subset_unique_names_for_vcf]
+# geno not pheno
+subset_unique_names_for_vcf[!subset_unique_names_for_vcf %in% germplasm_with_phenos]</code></pre>
+</div>
+<div id="subset-snps-for-tutorial-purposes" class="section level3">
+<h3>Subset SNPs (for tutorial purposes)</h3>
+<pre class="bash"><code># write the positions list
+# first two columns (chrom. and position) of the VCF 
+# ignoring the header rows
+cat data/BreedBaseGenotypesDownload.vcf | grep -v &quot;^#&quot; | cut -f1-2 &gt; data/BreedBaseGenotypesDownload.positions</code></pre>
+<p>Read into R, sample 4000 at random</p>
+<pre class="r"><code>library(genomicMateSelectR)
+set.seed(1234)
+read.table(here::here(&quot;data&quot;,&quot;BreedBaseGenotypesDownload.positions&quot;), 
+           header = F, stringsAsFactors = F) %&gt;% 
+     dplyr::slice_sample(n=4000) %&gt;% 
+     arrange(V1,V2) %&gt;% 
+     write.table(.,file = &quot;data/BreedBaseGenotypes_subset.positions&quot;,
+                 row.names = F, col.names = F, quote = F)</code></pre>
+<pre class="bash"><code>vcftools --vcf data/BreedBaseGenotypesDownload.vcf \
+--keep data/subset_unique_names_for_vcf.txt \
+--positions data/BreedBaseGenotypes_subset.positions \
+--recode --stdout | bgzip -c &gt; data/BreedBaseGenotypes_subset.vcf.gz</code></pre>
+<pre class="bash"><code>vcftools --gzvcf data/BreedBaseGenotypes_subset.vcf.gz</code></pre>
+</div>
+</div>
+<div id="haplotype-matrix-from-vcf" class="section level2">
+<h2>Haplotype matrix from VCF</h2>
+<p>Extract haplotypes from VCF with <code>bcftools convert --hapsample</code></p>
+<pre class="bash"><code>bcftools convert --hapsample data/BreedBaseGenotypes_subset data/BreedBaseGenotypes_subset.vcf.gz</code></pre>
+<p>Read haps to R and format them.</p>
+<pre class="r"><code>library(genomicMateSelectR)
+library(data.table)
+vcfName&lt;-&quot;BreedBaseGenotypes_subset&quot;
+haps&lt;-fread(paste0(&quot;data/&quot;,vcfName,&quot;.hap.gz&quot;),
+            stringsAsFactors = F,header = F) %&gt;% 
+  as.data.frame
+sampleids&lt;-fread(paste0(&quot;data/&quot;,vcfName,&quot;.samples&quot;),
+                 stringsAsFactors = F,header = F,skip = 2) %&gt;% 
+  as.data.frame</code></pre>
+<p>Add sample ID’s.</p>
+<pre class="r"><code>hapids&lt;-sampleids %&gt;% 
+     select(V1,V2) %&gt;% 
+     mutate(SampleIndex=1:nrow(.)) %&gt;% 
+     rename(HapA=V1,HapB=V2) %&gt;% 
+     pivot_longer(cols=c(HapA,HapB),
+                  names_to = &quot;Haplo&quot;,values_to = &quot;SampleID&quot;) %&gt;% 
+     mutate(HapID=paste0(SampleID,&quot;_&quot;,Haplo)) %&gt;% 
+     arrange(SampleIndex)
+colnames(haps)&lt;-c(&quot;Chr&quot;,&quot;HAP_ID&quot;,&quot;Pos&quot;,&quot;REF&quot;,&quot;ALT&quot;,hapids$HapID)
+dim(haps)</code></pre>
+<p>Format, transpose, convert to matrix.</p>
+<pre class="r"><code>haps %&lt;&gt;% 
+     mutate(HAP_ID=gsub(&quot;:&quot;,&quot;_&quot;,HAP_ID)) %&gt;% 
+     column_to_rownames(var = &quot;HAP_ID&quot;) %&gt;% 
+     select(-Chr,-Pos,-REF,-ALT) %&gt;% 
+     t(.) %&gt;% 
+     as.matrix(.)
+dim(haps)</code></pre>
+</div>
+<div id="dosage-matrix-from-haps" class="section level2">
+<h2>Dosage matrix from haps</h2>
+<pre class="r"><code>dosages&lt;-haps %&gt;%
+     as.data.frame(.) %&gt;% 
+     rownames_to_column(var = &quot;GID&quot;) %&gt;% 
+     separate(GID,c(&quot;SampleID&quot;,&quot;Haplo&quot;),&quot;_Hap&quot;,remove = T) %&gt;% 
+     select(-Haplo) %&gt;% 
+     group_by(SampleID) %&gt;% 
+     summarise(across(everything(),~sum(.))) %&gt;% 
+     ungroup() %&gt;% 
+     column_to_rownames(var = &quot;SampleID&quot;) %&gt;% 
+     as.matrix %&gt;% 
+     # preserve same order as in haps
+     .[sampleids$V1,]
+dim(dosages)
+# [1]  963 4000
+
+dosages[1:5,1:5]</code></pre>
+<pre class="r"><code>haps[1:10,1:5]</code></pre>
+</div>
+<div id="variant-filters" class="section level2">
+<h2>Variant filters</h2>
+<pre class="r"><code># use function built into genomicMateSelectR
+dosages&lt;-maf_filter(dosages,thresh = 0.01)
+dim(dosages)
+# subset haps to match
+haps&lt;-haps[,colnames(dosages)]</code></pre>
+<div id="save-dosages-and-haps" class="section level3">
+<h3>Save dosages and haps</h3>
+<pre class="r"><code>saveRDS(dosages,file=here::here(&quot;data&quot;,&quot;dosages.rds&quot;))
+saveRDS(haps,file=here::here(&quot;data&quot;,&quot;haplotypes.rds&quot;))</code></pre>
+</div>
+</div>
+<div id="genomic-relationship-matrices-grms" class="section level2">
+<h2>Genomic Relationship Matrices (GRMs)</h2>
+<pre class="r"><code>A&lt;-kinship(dosages,type=&quot;add&quot;)
+D&lt;-kinship(dosages,type=&quot;domGenotypic&quot;)
+saveRDS(A,file=here::here(&quot;output&quot;,&quot;kinship_add.rds&quot;))
+saveRDS(D,file=here::here(&quot;output&quot;,&quot;kinship_dom.rds&quot;))</code></pre>
+</div>
+<div id="recombination-frequency-matrix" class="section level2">
+<h2>Recombination Frequency Matrix</h2>
+<div id="source-a-genetic-map" class="section level3">
+<h3>Source a genetic map</h3>
+<pre class="r"><code>genmap&lt;-read.table(&quot;https://cassavabase.org/ftp/marnin_datasets/NGC_BigData/CassavaGeneticMap/cassava_cM_pred.v6.allchr.txt&quot;,
+                   header = F, sep=&#39;;&#39;, stringsAsFactors = F) %&gt;% 
+     rename(SNP_ID=V1,Pos=V2,cM=V3) %&gt;% 
+  as_tibble
+genmap %&gt;% dim</code></pre>
+<p>120K positions.</p>
+<pre class="r"><code>genmap %&gt;% head</code></pre>
+<pre class="r"><code>snps_genmap&lt;-tibble(DoseSNP_ID=colnames(dosages)) %&gt;% 
+     separate(DoseSNP_ID,c(&quot;Chr&quot;,&quot;Pos&quot;,&quot;Ref&quot;,&quot;Alt&quot;),remove = F) %&gt;% 
+     mutate(SNP_ID=paste0(&quot;S&quot;,Chr,&quot;_&quot;,Pos)) %&gt;% 
+     full_join(genmap %&gt;% 
+                    separate(SNP_ID,c(&quot;Chr&quot;,&quot;POS&quot;),&quot;_&quot;,remove = F) %&gt;% 
+                    select(-POS) %&gt;% 
+                    mutate(Chr=gsub(&quot;S&quot;,&quot;&quot;,Chr)) %&gt;% 
+                    mutate(across(everything(),as.character)))</code></pre>
+</div>
+<div id="interpolate-genetic-map" class="section level3">
+<h3>Interpolate genetic map</h3>
+<pre class="r"><code>interpolate_genmap&lt;-function(data){
+  # for each chromosome map
+  # find and _decrements_ in the genetic map distance
+  # fix them to the cumulative max to force map to be only increasing
+  # fit a spline for each chromosome
+  # Use it to predict values for positions not previously on the map
+  # fix them AGAIN (in case) to the cumulative max, forcing map to only increase
+  data_forspline&lt;-data %&gt;% 
+    filter(!is.na(cM)) %&gt;% 
+    mutate(cumMax=cummax(cM),
+           cumIncrement=cM-cumMax) %&gt;% 
+    filter(cumIncrement&gt;=0) %&gt;% 
+    select(-cumMax,-cumIncrement)
+  
+  spline&lt;-data_forspline %$% smooth.spline(x=Pos,y=cM,spar = 0.75)
+  
+  splinemap&lt;-predict(spline,x = data$Pos) %&gt;% 
+    as_tibble(.) %&gt;% 
+    rename(Pos=x,cM=y) %&gt;% 
+    mutate(cumMax=cummax(cM),
+           cumIncrement=cM-cumMax) %&gt;% 
+    mutate(cM=cumMax) %&gt;% 
+    select(-cumMax,-cumIncrement)
+  
+  return(splinemap) 
+}</code></pre>
+<pre class="r"><code>splined_snps_genmap&lt;-snps_genmap %&gt;% 
+  select(-cM) %&gt;% 
+  mutate(Pos=as.numeric(Pos)) %&gt;% 
+  left_join(snps_genmap %&gt;% 
+              mutate(across(c(Pos,cM),as.numeric)) %&gt;% 
+              arrange(Chr,Pos) %&gt;% 
+              nest(-Chr) %&gt;% 
+              mutate(data=map(data,interpolate_genmap)) %&gt;% 
+              unnest(data)) %&gt;% 
+  distinct</code></pre>
+<pre class="r"><code>all(colnames(dosages) %in% splined_snps_genmap$DoseSNP_ID)</code></pre>
+<p>Save the interpolated map, just for the marker loci to-be-used downstream.</p>
+<pre class="r"><code>splined_snps_genmap %&gt;% 
+     filter(DoseSNP_ID %in% colnames(dosages)) %&gt;% 
+     saveRDS(.,file=here::here(&quot;output&quot;,&quot;interpolated_genmap.rds&quot;))</code></pre>
+</div>
+<div id="recomb.-freq.-matrix" class="section level3">
+<h3>Recomb. freq. matrix</h3>
+<pre class="r"><code>genmap&lt;-readRDS(file=here::here(&quot;output&quot;,&quot;interpolated_genmap.rds&quot;))
+m&lt;-genmap$cM;
+names(m)&lt;-genmap$DoseSNP_ID
+recombFreqMat&lt;-1-(2*genmap2recombfreq(m,nChr = 18))
+saveRDS(recombFreqMat,file=here::here(&quot;output&quot;,&quot;recombFreqMat_1minus2c.rds&quot;))</code></pre>
+</div>
+</div>
+<div id="copy-files-back-to-your-computer" class="section level2">
+<h2>Copy files back to your computer</h2>
+<p>Option 1) FileZilla</p>
+<p>Option 2) Command line:</p>
+<p>On my local computer, on your command line.</p>
+<p>Navigate to the project directory containing the <code>data/</code> and <code>output/</code> directories.</p>
+<pre class="bash"><code>scp mw489@cbsumm21.biohpc.cornell.edu:/workdir/youruserid/yourprojectname/data/BreedBaseGenotypes_subset.vcf.gz data/
+scp mw489@cbsumm21.biohpc.cornell.edu:/workdir/youruserid/yourprojectname/data/dosages.rds data/
+scp mw489@cbsumm21.biohpc.cornell.edu:/workdir/youruserid/yourprojectname/data/haplotypes.rds data/
+scp mw489@cbsumm21.biohpc.cornell.edu:/workdir/youruserid/yourprojectname/output/kinship_add.rds output/
+scp mw489@cbsumm21.biohpc.cornell.edu:/workdir/youruserid/yourprojectname/output/kinship_dom.rds output/
+scp mw489@cbsumm21.biohpc.cornell.edu:/workdir/youruserid/yourprojectname/output/recombFreqMat_1minus2c.rds output/
+scp mw489@cbsumm21.biohpc.cornell.edu:/workdir/youruserid/yourprojectname/output/interpolated_genmap.rds output/</code></pre>
+<p>Option 3) I’ll provide Google Drive links to download the big files, and post the small ones to my GitHub repo</p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
