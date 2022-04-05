@@ -386,7 +386,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-04-01
+<strong>Last updated:</strong> 2022-04-05
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -477,22 +477,23 @@ This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysi
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treee3d8e656fa9569396dbd5ea381bc87edf99da39dtargetblanke3d8e65a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/e3d8e656fa9569396dbd5ea381bc87edf99da39d" target="_blank">e3d8e65</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree3cd87fe72191e0fe5fb12507e1fb1682afa2b4c0targetblank3cd87fea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/3cd87fe72191e0fe5fb12507e1fb1682afa2b4c0" target="_blank">3cd87fe</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treee3d8e656fa9569396dbd5ea381bc87edf99da39dtargetblanke3d8e65a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree3cd87fe72191e0fe5fb12507e1fb1682afa2b4c0targetblank3cd87fea" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/e3d8e656fa9569396dbd5ea381bc87edf99da39d" target="_blank">e3d8e65</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/3cd87fe72191e0fe5fb12507e1fb1682afa2b4c0" target="_blank">3cd87fe</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .Rhistory
     Ignored:    .Rproj.user/
 
 Untracked files:
@@ -552,6 +553,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/3cd87fe72191e0fe5fb12507e1fb1682afa2b4c0/analysis/prep_genos.Rmd" target="_blank">3cd87fe</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-04-05
+</td>
+<td>
+read.table instead of fread version added
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/065ed11e011658a7627dacec5d72604779417326/docs/prep_genos.html" target="_blank">065ed11</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-04-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -751,6 +786,19 @@ read.table(here::here(&quot;data&quot;,&quot;BreedBaseGenotypesDownload.position
 <p>Extract haplotypes from VCF with <code>bcftools convert --hapsample</code></p>
 <pre class="bash"><code>bcftools convert --hapsample data/BreedBaseGenotypes_subset data/BreedBaseGenotypes_subset.vcf.gz</code></pre>
 <p>Read haps to R and format them.</p>
+<div id="version-using-read.table" class="section level3">
+<h3>Version using <code>read.table()</code></h3>
+<pre class="r"><code>library(genomicMateSelectR)
+vcfName&lt;-&quot;BreedBaseGenotypes_subset&quot;
+haps&lt;-read.table(paste0(&quot;data/&quot;,vcfName,&quot;.hap.gz&quot;),
+            stringsAsFactors = F,header = F)
+
+sampleids&lt;-read.table(paste0(&quot;data/&quot;,vcfName,&quot;.samples&quot;),
+                 stringsAsFactors = F,header = F,skip = 2)</code></pre>
+</div>
+<div id="version-using-data.tablefread" class="section level3">
+<h3>Version using <code>data.table::fread()</code></h3>
+<p><code>data.table</code> helps you read BIG files into R <em>fast</em>!</p>
 <pre class="r"><code>library(genomicMateSelectR)
 library(data.table)
 vcfName&lt;-&quot;BreedBaseGenotypes_subset&quot;
@@ -779,6 +827,7 @@ dim(haps)</code></pre>
      t(.) %&gt;% 
      as.matrix(.)
 dim(haps)</code></pre>
+</div>
 </div>
 <div id="dosage-matrix-from-haps" class="section level2">
 <h2>Dosage matrix from haps</h2>
