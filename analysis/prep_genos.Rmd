@@ -233,6 +233,19 @@ bcftools convert --hapsample data/BreedBaseGenotypes_subset data/BreedBaseGenoty
 
 Read haps to R and format them.
 
+### Version using `read.table()`
+```{r}
+library(genomicMateSelectR)
+vcfName<-"BreedBaseGenotypes_subset"
+haps<-read.table(paste0("data/",vcfName,".hap.gz"),
+            stringsAsFactors = F,header = F)
+
+sampleids<-read.table(paste0("data/",vcfName,".samples"),
+                 stringsAsFactors = F,header = F,skip = 2)
+```
+
+### Version using `data.table::fread()`
+`data.table` helps you read BIG files into R _fast_!
 ```{r}
 library(genomicMateSelectR)
 library(data.table)
