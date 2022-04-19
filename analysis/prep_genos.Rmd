@@ -111,6 +111,7 @@ Manual solution
 egrep "^#CHROM" data/BreedBaseGenotypesDownload.vcf | head -n1 > data/vcf_colnames.txt
 ```
 
+Now enter "R": type "R" + Enter
 ```{r}
 library(genomicMateSelectR)
 vcf_sample_names<-readLines(here::here("data","vcf_colnames.txt")) %>% 
@@ -152,6 +153,7 @@ Show what this did:
 unique_names_for_vcf%>%filter(vcfName=="TMS18F1294P0011")
 ```
 
+No quit R: type `q()`. Back to command line.
 ```{bash}
 # replace sample names in original VCF with unique ones (creates a new VCF)
 bcftools reheader --samples data/unique_names_for_vcf.txt data/BreedBaseGenotypesDownload.vcf > data/BreedBaseGenotypesDownload_1.vcf; 
@@ -171,6 +173,7 @@ vcftools --gzvcf data/BreedBaseGenotypes_subset.vcf.gz
 
 ### Check genotype-to-phenotype matches
 
+Now enter "R": type "R" + Enter
 ```{r}
 phenos<-readRDS(here::here("output","phenotypes_cleaned.rds"))
 
@@ -195,7 +198,10 @@ germplasm_with_phenos[!germplasm_with_phenos %in% subset_unique_names_for_vcf]
 subset_unique_names_for_vcf[!subset_unique_names_for_vcf %in% germplasm_with_phenos]
 ```
 
+No quit R: type `q()`. Back to command line.
+
 ### Subset SNPs (for tutorial purposes)
+
 
 ```{bash, eval=F}
 # write the positions list
@@ -204,7 +210,11 @@ subset_unique_names_for_vcf[!subset_unique_names_for_vcf %in% germplasm_with_phe
 cat data/BreedBaseGenotypesDownload.vcf | grep -v "^#" | cut -f1-2 > data/BreedBaseGenotypesDownload.positions
 ```
 
+
+Now enter "R": type "R" + Enter
+
 Read into R, sample 4000 at random
+
 
 ```{r}
 library(genomicMateSelectR)
@@ -217,6 +227,8 @@ read.table(here::here("data","BreedBaseGenotypesDownload.positions"),
                  row.names = F, col.names = F, quote = F)
 
 ```
+
+Quit R. Back to command line.
 
 ```{bash}
 vcftools --vcf data/BreedBaseGenotypesDownload.vcf \
@@ -240,6 +252,8 @@ bcftools convert --hapsample data/BreedBaseGenotypes_subset data/BreedBaseGenoty
 Read haps to R and format them.
 
 ### Version using `read.table()`
+
+Enter R, type "R"
 ```{r}
 library(genomicMateSelectR)
 vcfName<-"BreedBaseGenotypes_subset"
@@ -436,7 +450,11 @@ recombFreqMat<-1-(2*genmap2recombfreq(m,nChr = 18))
 saveRDS(recombFreqMat,file=here::here("output","recombFreqMat_1minus2c.rds"))
 ```
 
+Quit R.
+
 ## Copy files back to your computer
+
+Steps in command line.
 
 Option 1) FileZilla
 
