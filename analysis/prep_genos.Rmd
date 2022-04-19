@@ -60,7 +60,7 @@ Create a directory with _your_ username:
 
 Example:
 ```{bash, eval=F}
-mkdir mw489/;
+mkdir youruserid/;
 ```
 
 Create a sub-directory for _this_ analysis.
@@ -68,7 +68,7 @@ Create a sub-directory for _this_ analysis.
 Example:
 
 ```{bash, eval=F}
-mkdir /workdir/mw489/GSexample2022
+mkdir /workdir/youruserid/GSexample2022
 ```
 
 Navigate into your subdirectory on `/workdir/` (empty now).
@@ -113,11 +113,10 @@ egrep "^#CHROM" data/BreedBaseGenotypesDownload.vcf | head -n1 > data/vcf_colnam
 
 ```{r}
 library(genomicMateSelectR)
-vcf_sample_names<-readLines("data/vcf_colnames.txt") %>% 
+vcf_sample_names<-readLines(here::here("data","vcf_colnames.txt")) %>% 
      strsplit(.,"\t") %>% unlist() %>% 
      .[10:length(.)]
 table(duplicated(vcf_sample_names))
-
 ```
 
 ```{r}
@@ -137,14 +136,14 @@ unique_names_for_vcf<-tibble(vcfName=vcf_sample_names) %>%
                                   #put a unique-ified name by pasting the sub-index
                                   paste0(vcfName,".",vcfNameIndex)))
 # Write the "unique_names_for_vcf.txt" to disk
-write.table(unique_names_for_vcf$vcfName_Unique,file = "data/unique_names_for_vcf.txt",
+write.table(unique_names_for_vcf$vcfName_Unique,file = here::here("data","unique_names_for_vcf.txt"),
             row.names = F, col.names = F, quote = F)
 # Create also a list containing only one instance of each unique name, the first instance 
 subset_unique_names_for_vcf<-unique_names_for_vcf %>% 
      filter(vcfNameIndex==1) %$%
      vcfName_Unique
 # Write that list to disk for subsetting the VCF downstream
-write.table(subset_unique_names_for_vcf,file = "data/subset_unique_names_for_vcf.txt",
+write.table(subset_unique_names_for_vcf,file = here::here("data","subset_unique_names_for_vcf.txt"),
             row.names = F, col.names = F, quote = F)
 ```
 
@@ -181,7 +180,7 @@ length(germplasm_with_phenos)
 ```
 
 ```{r}
-subset_unique_names_for_vcf<-read.table(file = "data/subset_unique_names_for_vcf.txt", 
+subset_unique_names_for_vcf<-read.table(file = here::here("data","subset_unique_names_for_vcf.txt"), 
                                         stringsAsFactors = F)$V1
 
 table(germplasm_with_phenos %in% subset_unique_names_for_vcf)
@@ -214,7 +213,7 @@ read.table(here::here("data","BreedBaseGenotypesDownload.positions"),
            header = F, stringsAsFactors = F) %>% 
      dplyr::slice_sample(n=4000) %>% 
      arrange(V1,V2) %>% 
-     write.table(.,file = "data/BreedBaseGenotypes_subset.positions",
+     write.table(.,file = here::here("data","BreedBaseGenotypes_subset.positions"),
                  row.names = F, col.names = F, quote = F)
 
 ```
@@ -244,10 +243,10 @@ Read haps to R and format them.
 ```{r}
 library(genomicMateSelectR)
 vcfName<-"BreedBaseGenotypes_subset"
-haps<-read.table(paste0("data/",vcfName,".hap.gz"),
+haps<-read.table(here::here("data",paste0(vcfName,".hap.gz")),
             stringsAsFactors = F,header = F)
 
-sampleids<-read.table(paste0("data/",vcfName,".samples"),
+sampleids<-read.table(here::here("data",paste0(vcfName,".samples")),
                  stringsAsFactors = F,header = F,skip = 2)
 ```
 
@@ -257,10 +256,10 @@ sampleids<-read.table(paste0("data/",vcfName,".samples"),
 library(genomicMateSelectR)
 library(data.table)
 vcfName<-"BreedBaseGenotypes_subset"
-haps<-fread(paste0("data/",vcfName,".hap.gz"),
+haps<-fread(here::here("data",paste0(vcfName,".hap.gz")),
             stringsAsFactors = F,header = F) %>% 
   as.data.frame
-sampleids<-fread(paste0("data/",vcfName,".samples"),
+sampleids<-fread(here::here("data",paste0(vcfName,".samples")),
                  stringsAsFactors = F,header = F,skip = 2) %>% 
   as.data.frame
 ```
