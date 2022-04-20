@@ -1,0 +1,258 @@
+---
+title: "Prelminary field trial analysis"
+author: "wolfemd"
+date: "2022-04-20"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: inline
+---
+
+Follow this worked example _and_ reference the 
+["Genomic Selection Manual" - Chapter 9](https://wolfemd.github.io/GenomicSelectionManual/preliminary-field-trial-analysis.html).
+
+# Load packages
+```{r}
+suppressMessages(library(tidyverse)); 
+suppressMessages(library(genomicMateSelectR)); 
+suppressMessages(library(sommer));
+```
+
+# Set-up the training data
+
+```{r}
+phenos<-readRDS(here::here("output","phenotypes_cleaned.rds"))
+```
+
+```{r}
+phenos %>% 
+     count(CompleteBlocks,IncompleteBlocks,locationName) %>% 
+     spread(locationName,n)
+```
+
+Convert the data to “long format” . Remove missing values. “Nest” the data by Trait.
+
+```{r}
+traits<-c("DM","MCMDS","logFYLD","logDYLD")
+phenos<-phenos %>% 
+     # Convert the data to "long format" 
+     pivot_longer(cols = all_of(traits), 
+                  names_to = "Trait", values_to = "Value") %>%
+     # Remove missing values
+     filter(!is.na(Value)) %>%
+     # Nest the MultiEnvironmentTrial data by trait
+     nest(METdata=c(-Trait))
+```
+
+```{r}
+phenos %>% 
+     mutate(N_plots=map_dbl(METdata,nrow))
+```
+
+```{r}
+phenos$METdata[[1]] %>% head
+```
+
+# Comparison of models
+
+```{r}
+# grab just one chunk of the data to "experiment" on
+METdata<-phenos$METdata[[1]] %>% 
+     # sommer doesn't recognize logical T/F variables
+     mutate(CompleteBlocks=as.character(CompleteBlocks), 
+            IncompleteBlocks=as.character(IncompleteBlocks))
+```
+
+How to run a single, simple model, _not_ using future.
+
+This next step takes at least 25 minutes to run on my laptop.
+
+```{r, eval=F}
+library(sommer)
+library(future);
+plan(multisession)
+
+# the model I've applied to NextGen predictions the last several years
+conv_model %<-% { mmer(Value~yearInLoc,
+                       random=~germplasmName + 
+                            vs(at(CompleteBlocks,"TRUE"),repInTrial) + 
+                            vs(at(IncompleteBlocks,"TRUE"),blockInRep),
+                       data=METdata, 
+                       verbose = FALSE) }
+# add heterogeneous-error variance for each trial (studyName)
+conv_het_error_model %<-% { mmer(Value~yearInLoc,
+                                 random=~germplasmName + 
+                                      vs(at(CompleteBlocks,"TRUE"),repInTrial) + 
+                                      vs(at(IncompleteBlocks,"TRUE"),blockInRep),
+                                 rcov=~vs(ds(studyName),units),
+                                 data=METdata, 
+                                 verbose = FALSE) }
+# simplify: no het. error, no at() variance structure
+simple_model %<-% { mmer(Value~yearInLoc,
+                         random=~germplasmName + repInTrial + blockInRep,
+                         data=METdata, 
+                         verbose = FALSE) }
+# no at() variance structure, include het. error variance by trial
+simple_het_error_model %<-% { mmer(Value~yearInLoc,
+                                   random=~germplasmName + repInTrial + blockInRep,
+                                   rcov=~vs(ds(studyName),units),
+                                   data=METdata, 
+                                   verbose = FALSE) }
+```
+
+```{r, eval=F}
+# Save output of above so the above models don't need to be re-run
+## if and when I reformat or otherwise re-knit this doc to HTML
+save(conv_model,conv_het_error_model,simple_model,simple_het_error_model,
+     file=here::here("output","models_compared.Rdata"))
+```
+
+Load the fitted model outputs.
+
+```{r}
+# load the output from the models from where I stored it
+load(here::here("output","models_compared.Rdata"))
+```
+
+Which model fits best? How to compare?
+
+sommer provides `anova()` for pairwise comparisons of models using a likelihood ratio test and by AIC, BIC.
+
+```{r}
+anova(conv_model,conv_het_error_model)
+```
+
+Here’s a very not-pretty not-high-throughput way to set-up a table comparing the AIC for all 4 models.
+
+```{r}
+tibble(Model=c("conv_model","conv_het_error_model",
+               "simple_model","simple_het_error_model"),
+       AIC=c(conv_model$AIC,conv_het_error_model$AIC,
+             simple_model$AIC,simple_het_error_model$AIC)) %>% 
+     arrange(AIC)
+```
+
+The “simple” heterogeneous error model fits the data best, I’ll go ahead and use it for this demonstration. 
+
+## ACTIVITY
+
+Run the simple model, examine the results. 
+
+Option 1) Use `sommer`. Takes ~9 mins on my laptop.
+
+```{r, eval=F}
+simple_model<-mmer(Value~yearInLoc,
+                   random=~germplasmName + repInTrial + blockInRep,
+                   data=METdata, 
+                   verbose = TRUE)
+```
+
+Option 2) Use package `lme4`'s `lmer()` function... takes seconds. Same result.
+
+Again, note that `sommer` advantage is flexible modeling. 
+
+Plus, `sommer` can do genomic prediction, `lmer` can't do that.
+```{r}
+library(lme4)
+simple_model_lmer<-lmer(Value~yearInLoc + (1|germplasmName) + (1|repInTrial) + (1|blockInRep),
+                        data=METdata)
+
+summary(simple_model_lmer)
+```
+
+# Analyze all traits
+
+Next we will fit the “best” model from the previous step, but to all traits.
+
+We have four data chunks set-up in the tibble `phenos`
+
+```{r}
+phenos
+```
+
+The manual, starting [here](https://wolfemd.github.io/GenomicSelectionManual/preliminary-field-trial-analysis.html#test-code-for-function) walks you through the steps creating and debugging a function to analyze all traits. That function is in an R script called `get_blups.R` in the `code/` folder. 
+We will use it below.
+
+```{r}
+# Source the R script
+source(here::here("code","get_blups.R"))
+# Set-up inputs for the function
+phenos %<>% 
+     mutate(fixedFormula=ifelse(Trait %in% c("logDYLD","logFYLD","logRTNO","logTOPYLD"),
+                                "Value ~ yearInLoc + PropNOHAV",
+                                "Value ~ yearInLoc"),
+            randFormula="~germplasmName + repInTrial + blockInRep",
+            rcovFormula="~vs(ds(studyName),units)")
+```
+
+This next step took ***45 minutes*** on my laptop.
+```{r, eval=F}
+starttime<-proc.time()[3]
+require(furrr); plan(multisession, workers = 4)
+blups<-phenos %>%
+     mutate(modelOut=future_pmap(.,get_blups)) %>% 
+     unnest(modelOut)
+stoptime<-proc.time()[3]; elapsed<-stoptime-starttime; elapsed/60
+#  elapsed 
+# 44.86077
+# Save
+saveRDS(blups,file = here::here("output","blups.rds"))
+```
+
+```{r}
+blups<-readRDS(here::here("output","blups.rds"))
+# Print the output, add a few summaries, like H2
+blups %>% 
+     dplyr::select(Trait,H2,meanHetVarE,meanNreps,outliers) %>% 
+     mutate(H2=round(H2,3),
+            meanNreps=round(meanNreps,3),
+            outliers=map_dbl(outliers,length))
+```
+
+
+That's the end of the core steps.
+
+The rest of the manual chapter includes some exploration of the results _and_ explanation of BLUPs, de-regressed BLUPs and weighted analysis. 
+
+I will try to cover that with some slides to give you intuition.
+
+
+# Study material
+
+## Learn functions and iteration
+
+At this point, taking a moment to familiarize yourself with some R packages and programming concepts might be adviseable.
+
+1.  Learn to read and write your own functions in R
+2.  Learn to iterate procedures in R
+
+### Write functions in R
+
+<https://swcarpentry.github.io/r-novice-inflammation/02-func-R/>
+
+<https://r4ds.had.co.nz/functions.html>
+
+### Iteration in the tidyverse
+
+Packages `purrr` and (for parallel processing) `furrr`.
+
+<https://r4ds.had.co.nz/iteration.html>
+
+<https://www.r-bloggers.com/2021/09/tidy-parallel-processing-in-r-with-furrr/>
+
+<https://purrr.tidyverse.org/>
+
+<https://dcl-prog.stanford.edu/purrr-mutate.html>
+
+<https://dcl-prog.stanford.edu/purrr-parallel.html>
+
+<https://furrr.futureverse.org/>
+
+## Learn mixed-models
+
+<https://si.biostat.washington.edu/sites/default/files/modules/Seattle-SISG-18-IntroQG-Lecture08.pdf>
+
+<https://towardsdatascience.com/how-linear-mixed-model-works-350950a82911>
+
+<https://stats.oarc.ucla.edu/other/mult-pkg/introduction-to-linear-mixed-models/>
+
+[Excellence in Breeding - Basics of GS - 2021 YouTube Video Series with Eduardo Covarrubias](https://www.youtube.com/playlist?list=PLZ0lafzH_UmfHsoePj0t7xQglKSOpzbDp)

@@ -11,6 +11,8 @@ navbar:
     href: clean_phenos.html 
   - text: Prep genos
     href: prep_genos.html
+  - text: Get BLUPs
+    href: get_blups.html
   - text: About
     href: about.html
   - text: License
