@@ -483,16 +483,16 @@ This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysi
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treeacd7ed55418e569a295cd90a5404e7e8d8133bdbtargetblankacd7ed5a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/acd7ed55418e569a295cd90a5404e7e8d8133bdb" target="_blank">acd7ed5</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treed3f15dfdc9a2a2758879da54a361fea6eae5e10ctargetblankd3f15dfa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/d3f15dfdc9a2a2758879da54a361fea6eae5e10c" target="_blank">d3f15df</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treeacd7ed55418e569a295cd90a5404e7e8d8133bdbtargetblankacd7ed5a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treed3f15dfdc9a2a2758879da54a361fea6eae5e10ctargetblankd3f15dfa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/acd7ed55418e569a295cd90a5404e7e8d8133bdb" target="_blank">acd7ed5</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/d3f15dfdc9a2a2758879da54a361fea6eae5e10c" target="_blank">d3f15df</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -507,7 +507,6 @@ Untracked files:
     Untracked:  Icon
     Untracked:  analysis/.DS_Store
     Untracked:  analysis/Icon
-    Untracked:  analysis/figure/
     Untracked:  analysis/images/Icon
     Untracked:  analysis/images/paste-2F34C15B.png
     Untracked:  analysis/images/paste-AD7AEEAC.png
@@ -568,6 +567,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/d3f15dfdc9a2a2758879da54a361fea6eae5e10c/analysis/get_blups.Rmd" target="_blank">d3f15df</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-04-26
+</td>
+<td>
+Add Q&amp;A on Augmented Design
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/176b527de592e875f34a446c60c765f327c67eb6/docs/get_blups.html" target="_blank">176b527</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-04-26
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -919,6 +952,209 @@ blups %&gt;%
 <p><a href="https://towardsdatascience.com/how-linear-mixed-model-works-350950a82911" class="uri">https://towardsdatascience.com/how-linear-mixed-model-works-350950a82911</a></p>
 <p><a href="https://stats.oarc.ucla.edu/other/mult-pkg/introduction-to-linear-mixed-models/" class="uri">https://stats.oarc.ucla.edu/other/mult-pkg/introduction-to-linear-mixed-models/</a></p>
 <p><a href="https://www.youtube.com/playlist?list=PLZ0lafzH_UmfHsoePj0t7xQglKSOpzbDp">Excellence in Breeding - Basics of GS - 2021 YouTube Video Series with Eduardo Covarrubias</a></p>
+</div>
+</div>
+<div id="qa" class="section level1">
+<h1>Q&amp;A</h1>
+<div id="augmented-design" class="section level2">
+<h2>Augmented design</h2>
+<p>Example from sommer manual, excellent explanation by Moshood Bakare!</p>
+<pre class="r"><code>data(DT_augment)
+DT_augment</code></pre>
+<pre><code>   Plot Entry  Genotype Block   TSW Check Check.Gen
+1   101     8        31     1  9.25     1       999
+2   102    45       126     1  9.43     1       999
+3   103    90     MF183     1 10.30     0        90
+4   104     9        34     1  9.02     1       999
+5   105    27        89     1 10.97     1       999
+6   106    28        90     1 10.52     1       999
+7   107    89      Ross     1  9.86     0        89
+8   108    42       121     1 10.56     1       999
+9   109    18        68     1 10.39     1       999
+10  110    14        57     1 10.97     1       999
+11  111    41       118     1 10.32     1       999
+12  112    91 Starlight     1 10.44     0        91
+13  113    31        96     2 11.58     1       999
+14  114     3        15     2  9.95     1       999
+15  115    90     MF183     2  9.24     0        90
+16  116    36       105     2 10.27     1       999
+17  117    44       125     2  9.34     1       999
+18  118    30        95     2 11.01     1       999
+19  119     5        27     2 10.05     1       999
+20  120    13        47     2  9.84     1       999
+21  121     7        30     2  8.81     1       999
+22  122    91 Starlight     2  9.40     0        91
+23  123    11        39     2 10.98     1       999
+24  124    89      Ross     2  9.18     0        89
+25  125    24        77     3 10.35     1       999
+26  126    34       102     3 11.01     1       999
+27  127    50       149     3  9.39     1       999
+28  128    49       143     3  9.30     1       999
+29  129     4        23     3 10.31     1       999
+30  130    89      Ross     3 10.32     0        89
+31  131    20        71     3 10.86     1       999
+32  132     2        12     3  9.86     1       999
+33  133    35       104     3  8.29     1       999
+34  134    19        70     3 10.54     1       999
+35  135    90     MF183     3 10.27     0        90
+36  136    91 Starlight     3 10.50     0        91
+37  137    47       135     4 11.15     1       999
+38  138    32       100     4  9.63     1       999
+39  139    16        61     4 10.35     1       999
+40  140    22        74     4 10.40     1       999
+41  141    89      Ross     4 10.06     0        89
+42  142    48       141     4  9.91     1       999
+43  143    40       113     4 10.88     1       999
+44  144    90     MF183     4 10.02     0        90
+45  145    15        58     4  9.84     1       999
+46  146    23        75     4 11.34     1       999
+47  147     1         9     4 10.72     1       999
+48  148    91 Starlight     4 10.61     0        91
+49  149     6        28     5  9.60     1       999
+50  150    12        44     5 10.53     1       999
+51  151    89      Ross     5  9.48     0        89
+52  152    43       123     5 10.27     1       999
+53  153    39       111     5 10.85     1       999
+54  154    29        92     5 10.64     1       999
+55  155    38       110     5 10.76     1       999
+56  156    37       109     5 10.73     1       999
+57  157    91 Starlight     5  9.92     0        91
+58  158    10        35     5 10.05     1       999
+59  159    21        72     5 10.29     1       999
+60  160    90     MF183     5 10.40     0        90
+61  161    91 Starlight     6 10.15     0        91
+62  162    89      Ross     6 10.44     0        89
+63  163    25        85     6 10.85     1       999
+64  164    46       132     6  9.52     1       999
+65  165    90     MF183     6 10.14     0        90
+66  166    26        87     6 10.73     1       999
+67  167    33       101     6  9.24     1       999
+68  168    17        66     6  8.79     1       999</code></pre>
+<pre class="r"><code>DT_augment %&gt;% count(Check.Gen)</code></pre>
+<pre><code>  Check.Gen  n
+1        89  6
+2        90  6
+3        91  6
+4       999 50</code></pre>
+<pre class="r"><code>DT_augment %&gt;% count(Check)</code></pre>
+<pre><code>  Check  n
+1     0 18
+2     1 50</code></pre>
+<pre class="r"><code>mix1 &lt;- mmer(TSW ~ Check.Gen,
+random = ~ Block + Genotype:Check,
+data=DT_augment)</code></pre>
+<pre><code>Version out of date. Please update sommer to the newest version using:
+install.packages(&#39;sommer&#39;) in a new session
+ Use the &#39;date.warning&#39; argument to disable the warning message.iteration    LogLik     wall    cpu(sec)   restrained
+    1      -33.5807   8:49:47      0           0
+    2      -31.5568   8:49:47      0           0
+    3      -30.6399   8:49:47      0           0
+    4      -30.6026   8:49:47      0           0
+    5      -30.5922   8:49:47      0           0
+    6      -30.5881   8:49:47      0           0
+    7      -30.5864   8:49:47      0           0
+    8      -30.5856   8:49:47      0           0</code></pre>
+<pre class="r"><code>summary(mix1)</code></pre>
+<pre><code>============================================================
+         Multivariate Linear Mixed Model fit by REML         
+**********************  sommer 4.1  ********************** 
+============================================================
+         logLik      AIC      BIC Method Converge
+Value -30.58558 69.17116 78.04919     NR     TRUE
+============================================================
+Variance-Covariance components:
+                       VarComp VarCompSE Zratio Constraint
+Block.TSW-TSW          0.01337   0.02874 0.4652   Positive
+Genotype:Check.TSW-TSW 0.36264   0.13014 2.7865   Positive
+units.TSW-TSW          0.17700   0.07015 2.5232   Positive
+============================================================
+Fixed effects:
+  Trait       Effect Estimate Std.Error t.value
+1   TSW  (Intercept)   9.8900    0.6280 15.7487
+2   TSW  Check.Gen90   0.1717    0.8856  0.1938
+3   TSW  Check.Gen91   0.2800    0.8856  0.3162
+4   TSW Check.Gen999   0.3147    0.6348  0.4958
+============================================================
+Groups and observations:
+               TSW
+Block            6
+Genotype:Check 106
+============================================================
+Use the &#39;$&#39; sign to access results and parameters</code></pre>
+<pre class="r"><code>blup &lt;- mix1$U$`Genotype:Check`$TSW
+blup</code></pre>
+<pre><code>      Genotype100:Check0       Genotype101:Check0       Genotype102:Check0 
+            0.000000e+00             0.000000e+00             0.000000e+00 
+      Genotype104:Check0       Genotype105:Check0       Genotype109:Check0 
+            0.000000e+00             0.000000e+00             0.000000e+00 
+      Genotype110:Check0       Genotype111:Check0       Genotype113:Check0 
+            0.000000e+00             0.000000e+00             0.000000e+00 
+      Genotype118:Check0        Genotype12:Check0       Genotype121:Check0 
+            0.000000e+00             0.000000e+00             0.000000e+00 
+      Genotype123:Check0       Genotype125:Check0       Genotype126:Check0 
+            0.000000e+00             0.000000e+00             0.000000e+00 
+      Genotype132:Check0       Genotype135:Check0       Genotype141:Check0 
+            0.000000e+00             0.000000e+00             0.000000e+00 
+      Genotype143:Check0       Genotype149:Check0        Genotype15:Check0 
+            0.000000e+00             0.000000e+00             0.000000e+00 
+       Genotype23:Check0        Genotype27:Check0        Genotype28:Check0 
+            0.000000e+00             0.000000e+00             0.000000e+00 
+       Genotype30:Check0        Genotype31:Check0        Genotype34:Check0 
+            0.000000e+00             0.000000e+00             0.000000e+00 
+       Genotype35:Check0        Genotype39:Check0        Genotype44:Check0 
+            0.000000e+00             0.000000e+00             0.000000e+00 
+       Genotype47:Check0        Genotype57:Check0        Genotype58:Check0 
+            0.000000e+00             0.000000e+00             0.000000e+00 
+       Genotype61:Check0        Genotype66:Check0        Genotype68:Check0 
+            0.000000e+00             0.000000e+00             0.000000e+00 
+       Genotype70:Check0        Genotype71:Check0        Genotype72:Check0 
+            0.000000e+00             0.000000e+00             0.000000e+00 
+       Genotype74:Check0        Genotype75:Check0        Genotype77:Check0 
+            0.000000e+00             0.000000e+00             0.000000e+00 
+       Genotype85:Check0        Genotype87:Check0        Genotype89:Check0 
+            0.000000e+00             0.000000e+00             0.000000e+00 
+        Genotype9:Check0        Genotype90:Check0        Genotype92:Check0 
+            0.000000e+00             0.000000e+00             0.000000e+00 
+       Genotype95:Check0        Genotype96:Check0     GenotypeMF183:Check0 
+            0.000000e+00             0.000000e+00            -5.262457e-14 
+     GenotypeRoss:Check0 GenotypeStarlight:Check0       Genotype100:Check1 
+           -3.841372e-14             3.883005e-14            -4.334316e-01 
+      Genotype101:Check1       Genotype102:Check1       Genotype104:Check1 
+           -6.478307e-01             5.294272e-01            -1.298426e+00 
+      Genotype105:Check1       Genotype109:Check1       Genotype110:Check1 
+            1.245896e-01             3.426783e-01             3.628384e-01 
+      Genotype111:Check1       Genotype113:Check1       Genotype118:Check1 
+            4.233188e-01             4.065742e-01             6.544447e-02 
+       Genotype12:Check1       Genotype121:Check1       Genotype123:Check1 
+           -2.433782e-01             2.267256e-01             3.355610e-02 
+      Genotype125:Check1       Genotype126:Check1       Genotype132:Check1 
+           -5.003748e-01            -5.326397e-01            -4.596694e-01 
+      Genotype135:Check1       Genotype141:Check1       Genotype143:Check1 
+            5.880155e-01            -2.452703e-01            -6.197008e-01 
+      Genotype149:Check1        Genotype15:Check1        Genotype23:Check1 
+           -5.592204e-01            -9.045193e-02             5.902390e-02 
+       Genotype27:Check1        Genotype28:Check1        Genotype30:Check1 
+           -2.325146e-02            -4.166870e-01            -8.565373e-01 
+       Genotype31:Check1        Genotype34:Check1        Genotype35:Check1 
+           -6.536005e-01            -8.081616e-01            -1.142849e-01 
+       Genotype39:Check1        Genotype44:Check1        Genotype47:Check1 
+            6.017129e-01             2.082773e-01            -1.643724e-01 
+       Genotype57:Check1        Genotype58:Check1        Genotype61:Check1 
+            5.022475e-01            -2.923107e-01             5.041173e-02 
+       Genotype66:Check1        Genotype68:Check1        Genotype70:Check1 
+           -9.502328e-01             1.124848e-01             2.135850e-01 
+       Genotype71:Check1        Genotype72:Check1        Genotype74:Check1 
+            4.286265e-01             4.699620e-02             8.401197e-02 
+       Genotype75:Check1        Genotype77:Check1        Genotype85:Check1 
+            7.156964e-01             8.590409e-02             4.340968e-01 
+       Genotype87:Check1        Genotype89:Check1         Genotype9:Check1 
+            3.534562e-01             5.022475e-01             2.990535e-01 
+       Genotype90:Check1        Genotype92:Check1        Genotype95:Check1 
+            1.998454e-01             2.821978e-01             6.218730e-01 
+       Genotype96:Check1     GenotypeMF183:Check1      GenotypeRoss:Check1 
+            1.004916e+00             0.000000e+00             0.000000e+00 
+GenotypeStarlight:Check1 
+            0.000000e+00 </code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
