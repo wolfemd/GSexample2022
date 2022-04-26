@@ -65,19 +65,31 @@ METdata<-phenos$METdata[[1]] %>%
 How to run a single, simple model, _not_ using future.
 
 This next step takes at least 25 minutes to run on my laptop.
+```{r, eval=F}
+simple_model<-mmer(Value~yearInLoc,
+                   random=~germplasmName + repInTrial + blockInRep,
+                   data=METdata, 
+                   verbose = FALSE)
+```
 
 ```{r, eval=F}
 library(sommer)
 library(future);
 plan(multisession)
 
-# the model I've applied to NextGen predictions the last several years
-conv_model %<-% { mmer(Value~yearInLoc,
-                       random=~germplasmName + 
-                            vs(at(CompleteBlocks,"TRUE"),repInTrial) + 
-                            vs(at(IncompleteBlocks,"TRUE"),blockInRep),
-                       data=METdata, 
-                       verbose = FALSE) }
+# simplify: no het. error, no at() variance structure
+simple_model %<-% { mmer(Value~yearInLoc,
+                         random=~germplasmName + repInTrial + blockInRep,
+                         data=METdata, 
+                         verbose = FALSE) }
+
+# no at() variance structure, include het. error variance by trial
+simple_het_error_model %<-% { mmer(Value~yearInLoc,
+                                   random=~germplasmName + repInTrial + blockInRep,
+                                   rcov=~vs(ds(studyName),units),
+                                   data=METdata, 
+                                   verbose = FALSE) }
+
 # add heterogeneous-error variance for each trial (studyName)
 conv_het_error_model %<-% { mmer(Value~yearInLoc,
                                  random=~germplasmName + 
@@ -86,17 +98,15 @@ conv_het_error_model %<-% { mmer(Value~yearInLoc,
                                  rcov=~vs(ds(studyName),units),
                                  data=METdata, 
                                  verbose = FALSE) }
-# simplify: no het. error, no at() variance structure
-simple_model %<-% { mmer(Value~yearInLoc,
-                         random=~germplasmName + repInTrial + blockInRep,
-                         data=METdata, 
-                         verbose = FALSE) }
-# no at() variance structure, include het. error variance by trial
-simple_het_error_model %<-% { mmer(Value~yearInLoc,
-                                   random=~germplasmName + repInTrial + blockInRep,
-                                   rcov=~vs(ds(studyName),units),
-                                   data=METdata, 
-                                   verbose = FALSE) }
+
+# the model I've applied to NextGen predictions the last several years
+conv_model %<-% { mmer(Value~yearInLoc,
+                       random=~germplasmName + 
+                            vs(at(CompleteBlocks,"TRUE"),repInTrial) + 
+                            vs(at(IncompleteBlocks,"TRUE"),blockInRep),
+                       data=METdata, 
+                       verbose = FALSE) }
+
 ```
 
 ```{r, eval=F}
@@ -208,6 +218,15 @@ blups %>%
             outliers=map_dbl(outliers,length))
 ```
 
+Show all the outputs from the model in `blups`
+```{r}
+blups
+```
+
+Show how the BLUPs come out of the function formatted:
+```{r}
+blups$blups[[1]]
+```
 
 That's the end of the core steps.
 

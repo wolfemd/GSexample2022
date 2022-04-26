@@ -1,0 +1,308 @@
+---
+title: "Introduction to Genomic Prediction in R"
+author: "wolfemd"
+date: "2022-04-25"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: inline
+---
+
+# Load packages
+```{r}
+suppressMessages(library(tidyverse)); 
+suppressMessages(library(genomicMateSelectR)); 
+suppressMessages(library(sommer));
+```
+
+# Kinship matrix
+```{r}
+A<-readRDS(file=here::here("output","kinship_add.rds"))
+```
+```{r}
+dim(A)
+```
+
+```{r}
+hist(A[lower.tri(A)], main='Off-diagonal values (lower-triangle) of the kinship matrix')
+```
+The off-diagonals express the genomic relatedness between different individuals in the dataset.
+
+This formulation has a mean-value of zero, such that >0 kinship means “more than the average population level of relatedness” while <0 values mean “greater than average.”
+
+```{r}
+hist(diag(A), main='Diagonals of the kinship', breaks=20)
+```
+The diagonal values express the relatedness of each individual to itself, which should be interpreted as the level of inbreeding (homozygosity).
+
+
+```{r}
+heatmap(A)
+```
+
+# GBLUP prediction
+
+```{r}
+blups<-readRDS(here::here("output","blups.rds"))
+```
+
+```{r}
+# pull out one trait (DM) BLUPs
+dm_blups<-blups$blups[[1]]
+dm_blups %>% head
+```
+
+Now we have all we need to implement a GBLUP model using mmer().
+
+One thing to note:
+```{r}
+table(dm_blups$germplasmName %in% rownames(A))
+```
+
+There are phenotyped-but-not-genotyped lines.
+```{r}
+table(rownames(A) %in% dm_blups$germplasmName)
+```
+
+There are also genotyped-but-not-phenotyped lines.
+
+Phenotyped-but-not-genotyped lines need to be excluded from the analysis. 
+
+Genotyped-but-not-phenotyped lines, as discussed above are accepted and can be predicted!
+
+```{r}
+dm_blups %<>% 
+     filter(germplasmName %in% rownames(A))
+```
+
+```{r}
+gblup_all<-mmer(fixed = drgBLUP~1,
+                # here we specify a random-effect for the "germplasmName" variable
+                # and supply the kinship matrix "A" as follows:
+                random = ~vs(germplasmName,Gu=A),
+                weights = WT,
+                data=dm_blups)
+```
+
+Here's how to get out the **GEBV** from the `mmer()` output:
+```{r}
+gebv<-gblup_all$U$`u:germplasmName`$drgBLUP
+# Notice the "germplasmName" and "drgBLUP" references in this call 
+## are specific to the analysis/dataset in question. 
+## See the sommer manual on CRAN. 
+```
+
+Things to notice:
+```{r}
+length(gebv)
+```
+
+Only 962 phenotyped lines. 
+
+1007 predicted GEBV.
+
+```{r}
+summary(gebv)
+```
+
+GEBV are centered on zero.
+
+```{r}
+hist(gebv)
+```
+
+# Prediction accuracy
+
+Now we can move into a more potentially complicated arena: evaluating prediction accuracy.
+
+There are many scenarios and styles for doing this.
+
+Let's start *super* simple.
+
+Of the phenotyped lines, I randomly sample approx. 1/5 (20%).
+```{r}
+set.seed(1212)
+test_set<-sample(dm_blups$germplasmName,size = ceiling(346/5), replace = F)
+```
+
+Remove the lines chosen (**test_set**) from the training dataset:
+
+```{r}
+training_blups<-dm_blups %>% 
+     filter(!germplasmName %in% test_set)
+```
+
+Fit the prediction model:
+
+```{r}
+gblup_train<-mmer(fixed = drgBLUP~1,
+                  # here we specify a random-effect for the "germplasmName" variable
+                  # and supply the kinship matrix "A" as follows:
+                  random = ~vs(germplasmName,Gu=A),
+                  weights = WT,
+                  data=training_blups)
+```
+
+Now we can compare (correlate) the GEBV predicted for the held-out **test_set** lines to the BLUPs for those lines.
+
+This is considered an estimate of **"prediction accuracy"**.
+
+```{r}
+# grab the gebv only for the test_set lines
+gebv_test<-gblup_train$U$`u:germplasmName`$drgBLUP[test_set]
+# merge the original BLUPs (for the test set only) to the corresponding GEBV
+# I use a left_join() or merge() to be absolutely sure there are no mix-ups
+gebv_vs_blups_testset<-dm_blups %>% 
+     filter(germplasmName %in% test_set) %>% 
+     left_join(tibble(germplasmName=names(gebv_test),GEBV=as.numeric(gebv_test)))
+```
+
+Correlate the GEBV with the BLUP for the test_set.
+
+```{r}
+gebv_vs_blups_testset %$% cor(BLUP,GEBV)
+```
+
+This correlation represents an estimate of accuracy predicting lines that aren't phenotyped, based only on their genetic relatedness and the phenotypes of their relatives.
+
+Sure, this is a low values. But it's a small dataset using a small sample of markers to make compute fast for example purposes.
+
+# Cross-validation
+
+Cross-validation functions get complicated quickly as they have loops within loops. 
+
+I built a function `runCrossVal()` that fits several different models, handles multiple traits, can run in-parallel across mutiple compute-cores and even accepts selection index weights to compute selection index accuracy. `runCrossVal()` is included in the `genomicMateSelectR` package.
+
+Below, I use it on only 1 trait, additive-only model.
+
+**NOTES:** - doesn't work properly *unless* `gid="GID"`. - It also requires you to remove any phenotyped lines that aren't genotyped.
+
+Following chunk does both of those:
+
+```{r}
+blups_forRunCrossValFunc<-blups %>% 
+     # just one trait
+     slice(1) %>% 
+     # need to rename the "blups" list to comply with the runCrossVal function
+     rename(TrainingData=blups) %>% 
+     dplyr::select(Trait,TrainingData) %>% 
+     # need also to remove phenotyped-but-not-genotyped lines
+     # couldn't hurt to also subset the kinship to only phenotyped lines... would save RAM
+     mutate(TrainingData=map(TrainingData,
+                             ~filter(.,germplasmName %in% rownames(A)) %>% 
+                                  # rename the germplasmName column to GID
+                                  rename(GID=germplasmName)))
+```
+
+```{r}
+standardCV<-runCrossVal(blups=blups_forRunCrossValFunc,
+                        modelType="A",
+                        selInd=FALSE,
+                        grms=list(A=A),
+                        nrepeats=2,nfolds=5,
+                        gid="GID",seed=424242,
+                        ncores=5)
+standardCV %>% unnest(accuracyEstOut) 
+```
+
+```{r}
+standardCV %>% 
+     unnest(accuracyEstOut) %$% summary(Accuracy)
+```
+
+# RRBLUP prediction
+
+AKA SNP-BLUP.
+
+Let's see how to fit with `mmer()`.
+
+Also demo the equivalency of RRBLUP and GBLUP.
+
+```{r}
+# load the dosage matrix
+M<-readRDS(file=here::here("data","dosages.rds"))
+# re-load and extract the blups for just 1 trait
+blups<-readRDS(file=here::here("output","blups.rds"))
+dm_blups<-blups$blups[[1]]
+# remove phenotyped-but-not-genoypted blups
+dm_blups %<>% 
+     filter(germplasmName %in% rownames(M))
+# remove genotyped-but-not-phenoypted (not strictly necessary)
+M<-M[rownames(M) %in% dm_blups$germplasmName,]
+# Create a kinship matrix "K"
+K<-kinship(M,"add")
+# Now create a centered dosage matrix, to use as predictors for rr-BLUP
+Z<-centerDosage(M)
+```
+
+Fit the GBLUP model
+```{r}
+gblup<-mmer(fixed = drgBLUP~1,
+            random = ~vs(germplasmName,Gu = K),
+            weights = WT,
+            data=dm_blups)
+```
+
+```{r}
+# extract the G-BLUPs (GEBVs)
+g<-gblup$U$`u:germplasmName`$drgBLUP
+all(names(g) %in% rownames(Z))
+```
+
+Now fit the RRBLUP model
+```{r}
+# one catch
+# the rows of the centered dosage matrix must be matched
+## to the rows of data.frame with the blups
+## one way to do this is by creating and incidence matrix
+## use the model.matrix() function as follows:
+ZincMat=model.matrix(~factor(germplasmName,levels=rownames(Z))-1,data=dm_blups) # -1 because we don't want an intercept here
+dim(ZincMat) # [1] 346 346 
+# relates the rows of the BLUPs to the rows the marker matrix
+
+# now fit the RRBLUP model
+rrblup<-mmer(fixed = drgBLUP~1,
+             random = ~vs(list(ZincMat%*%Z),buildGu = FALSE),
+             weights = WT,
+             data=dm_blups)
+```
+Extract the SNP-BLUPs
+```{r}
+# extract the SNP-BLUPs
+u<-as.matrix(rrblup$U$`u:Z`$drgBLUP)
+all(rownames(u)==colnames(Z))
+```
+
+```{r}
+summary(u)
+```
+```{r}
+hist(u,breaks=20,main = 'Distribution of SNP effects')
+```
+
+Calculate the GEBVs using the SNP-effects (SNP-BLUPs)
+
+```{r}
+# calculate the GEBVs using the SNP-effects (SNP-BLUPs)
+g_rr<-Z[names(g),]%*%u
+all(rownames(g_rr)==names(g))
+```
+
+```{r}
+g_rr[1:5,]
+```
+
+```{r}
+g[1:5]
+```
+
+```{r}
+# cor(g,g_rr) # [1,] 0.9999997
+plot(x=g,y=g_rr,
+     main = 'Proof that GEBV from GBLUP and RRBLUP are equal!',
+     xlab="GEBV from GBLUP", ylab="GEBV from RRBLUP"); 
+abline(a=0,b=1,col='red')
+```
+
+# Study material
+
+The Genomic Selection Manual, Chapter 10 has lot's of "Recommended Literature" at the bottom of the section!
