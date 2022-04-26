@@ -267,6 +267,9 @@ $(document).ready(function () {
   <a href="get_blups.html">Get BLUPs</a>
 </li>
 <li>
+  <a href="intro_gp.html">Intro to GP</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
 <li>
@@ -309,7 +312,7 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-04-20
+<strong>Last updated:</strong> 2022-04-26
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -400,16 +403,16 @@ This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysi
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree9c0e19e38ee5c830efc736987c5fd8e9e6450616targetblank9c0e19ea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/9c0e19e38ee5c830efc736987c5fd8e9e6450616" target="_blank">9c0e19e</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treeacd7ed55418e569a295cd90a5404e7e8d8133bdbtargetblankacd7ed5a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/acd7ed55418e569a295cd90a5404e7e8d8133bdb" target="_blank">acd7ed5</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree9c0e19e38ee5c830efc736987c5fd8e9e6450616targetblank9c0e19ea" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treeacd7ed55418e569a295cd90a5404e7e8d8133bdbtargetblankacd7ed5a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/9c0e19e38ee5c830efc736987c5fd8e9e6450616" target="_blank">9c0e19e</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/acd7ed55418e569a295cd90a5404e7e8d8133bdb" target="_blank">acd7ed5</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -445,7 +448,6 @@ Untracked files:
     Untracked:  out.log
     Untracked:  output/.DS_Store
     Untracked:  output/Icon
-    Untracked:  output/blups.rds
     Untracked:  output/models_compared.Rdata
 
 </code></pre>
@@ -485,6 +487,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/acd7ed55418e569a295cd90a5404e7e8d8133bdb/analysis/index.Rmd" target="_blank">acd7ed5</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-04-26
+</td>
+<td>
+Add ‘Intro to GP’ section. Update ‘Index’ page. Minor tweak to ‘Get BLUPs’ section.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/63d6587f701fd0af1c9e5c0c2a97caf8f6273447/docs/index.html" target="_blank">63d6587</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-04-20
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -815,6 +851,7 @@ Start workflowr project.
 <li><a href="clean_phenos.html">Clean phenotype data</a>: standard procedures to prepare phenotypes for analysis.</li>
 <li><a href="prep_genos.html">Prepare genotypic data</a>: standard procedures to prepare genotypic inputs (e.g. haplotype matrices) for genomic mate selection analyses.</li>
 <li><a href="get_blups.html">Preliminary field trial analyses</a>: Conduct preliminary analysis of the trial data without genomic relatedeness / marker-information. Identify the best-fitting model for the data and potentially curate the raw data, removing outliers. Fit mixed-model to MET data. Extract BLUPs, PEVs and variance components (VarComps). Compute de-regressed BLUPs (drgBLUPs) and weights (WTS) for “Stage 2.”</li>
+<li><a href="intro_gp.html">Introduction to Genomic Prediction in R</a>: Into to using <code>sommer</code> to fit G-BLUP and RR-BLUP models, a demo of their equivalency and quickly showing how to run cross-validations with the <code>runCrossVal()</code> function of <code>library(genomicMateSelectR)</code>.</li>
 </ol>
 <p><strong>TROUBLESHOOTING RMD:</strong> <a href="troubleshooting.html">Troubleshooting each step</a></p>
 </div>

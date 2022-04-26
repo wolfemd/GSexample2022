@@ -345,6 +345,9 @@ div.tocify {
   <a href="get_blups.html">Get BLUPs</a>
 </li>
 <li>
+  <a href="intro_gp.html">Intro to GP</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
 <li>
@@ -389,7 +392,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-04-20
+<strong>Last updated:</strong> 2022-04-26
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -480,16 +483,16 @@ This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysi
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree9c0e19e38ee5c830efc736987c5fd8e9e6450616targetblank9c0e19ea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/9c0e19e38ee5c830efc736987c5fd8e9e6450616" target="_blank">9c0e19e</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treeacd7ed55418e569a295cd90a5404e7e8d8133bdbtargetblankacd7ed5a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/acd7ed55418e569a295cd90a5404e7e8d8133bdb" target="_blank">acd7ed5</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree9c0e19e38ee5c830efc736987c5fd8e9e6450616targetblank9c0e19ea" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treeacd7ed55418e569a295cd90a5404e7e8d8133bdbtargetblankacd7ed5a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/9c0e19e38ee5c830efc736987c5fd8e9e6450616" target="_blank">9c0e19e</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/acd7ed55418e569a295cd90a5404e7e8d8133bdb" target="_blank">acd7ed5</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -504,6 +507,7 @@ Untracked files:
     Untracked:  Icon
     Untracked:  analysis/.DS_Store
     Untracked:  analysis/Icon
+    Untracked:  analysis/figure/
     Untracked:  analysis/images/Icon
     Untracked:  analysis/images/paste-2F34C15B.png
     Untracked:  analysis/images/paste-AD7AEEAC.png
@@ -525,7 +529,6 @@ Untracked files:
     Untracked:  out.log
     Untracked:  output/.DS_Store
     Untracked:  output/Icon
-    Untracked:  output/blups.rds
     Untracked:  output/models_compared.Rdata
 
 </code></pre>
@@ -565,6 +568,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/acd7ed55418e569a295cd90a5404e7e8d8133bdb/analysis/get_blups.Rmd" target="_blank">acd7ed5</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-04-26
+</td>
+<td>
+Add ‘Intro to GP’ section. Update ‘Index’ page. Minor tweak to ‘Get BLUPs’ section.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/63d6587f701fd0af1c9e5c0c2a97caf8f6273447/docs/get_blups.html" target="_blank">63d6587</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-04-20
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -654,17 +691,27 @@ METdata&lt;-phenos$METdata[[1]] %&gt;%
             IncompleteBlocks=as.character(IncompleteBlocks))</code></pre>
 <p>How to run a single, simple model, <em>not</em> using future.</p>
 <p>This next step takes at least 25 minutes to run on my laptop.</p>
+<pre class="r"><code>simple_model&lt;-mmer(Value~yearInLoc,
+                   random=~germplasmName + repInTrial + blockInRep,
+                   data=METdata, 
+                   verbose = FALSE)</code></pre>
 <pre class="r"><code>library(sommer)
 library(future);
 plan(multisession)
 
-# the model I&#39;ve applied to NextGen predictions the last several years
-conv_model %&lt;-% { mmer(Value~yearInLoc,
-                       random=~germplasmName + 
-                            vs(at(CompleteBlocks,&quot;TRUE&quot;),repInTrial) + 
-                            vs(at(IncompleteBlocks,&quot;TRUE&quot;),blockInRep),
-                       data=METdata, 
-                       verbose = FALSE) }
+# simplify: no het. error, no at() variance structure
+simple_model %&lt;-% { mmer(Value~yearInLoc,
+                         random=~germplasmName + repInTrial + blockInRep,
+                         data=METdata, 
+                         verbose = FALSE) }
+
+# no at() variance structure, include het. error variance by trial
+simple_het_error_model %&lt;-% { mmer(Value~yearInLoc,
+                                   random=~germplasmName + repInTrial + blockInRep,
+                                   rcov=~vs(ds(studyName),units),
+                                   data=METdata, 
+                                   verbose = FALSE) }
+
 # add heterogeneous-error variance for each trial (studyName)
 conv_het_error_model %&lt;-% { mmer(Value~yearInLoc,
                                  random=~germplasmName + 
@@ -673,17 +720,14 @@ conv_het_error_model %&lt;-% { mmer(Value~yearInLoc,
                                  rcov=~vs(ds(studyName),units),
                                  data=METdata, 
                                  verbose = FALSE) }
-# simplify: no het. error, no at() variance structure
-simple_model %&lt;-% { mmer(Value~yearInLoc,
-                         random=~germplasmName + repInTrial + blockInRep,
-                         data=METdata, 
-                         verbose = FALSE) }
-# no at() variance structure, include het. error variance by trial
-simple_het_error_model %&lt;-% { mmer(Value~yearInLoc,
-                                   random=~germplasmName + repInTrial + blockInRep,
-                                   rcov=~vs(ds(studyName),units),
-                                   data=METdata, 
-                                   verbose = FALSE) }</code></pre>
+
+# the model I&#39;ve applied to NextGen predictions the last several years
+conv_model %&lt;-% { mmer(Value~yearInLoc,
+                       random=~germplasmName + 
+                            vs(at(CompleteBlocks,&quot;TRUE&quot;),repInTrial) + 
+                            vs(at(IncompleteBlocks,&quot;TRUE&quot;),blockInRep),
+                       data=METdata, 
+                       verbose = FALSE) }</code></pre>
 <pre class="r"><code># Save output of above so the above models don&#39;t need to be re-run
 ## if and when I reformat or otherwise re-knit this doc to HTML
 save(conv_model,conv_het_error_model,simple_model,simple_het_error_model,
@@ -813,6 +857,33 @@ blups %&gt;%
 2 MCMDS   0           0.205      1.52       33
 3 logFYLD 0.3         0.129      1.72        9
 4 logDYLD 0.347       0.112      1.78        4</code></pre>
+<p>Show all the outputs from the model in <code>blups</code></p>
+<pre class="r"><code>blups</code></pre>
+<pre><code># A tibble: 4 × 13
+  Trait   METdata  fixedFormula   randFormula   rcovFormula       H2 meanHetVarE
+  &lt;chr&gt;   &lt;list&gt;   &lt;chr&gt;          &lt;chr&gt;         &lt;chr&gt;          &lt;dbl&gt;       &lt;dbl&gt;
+1 DM      &lt;tibble… Value ~ yearI… ~germplasmNa… ~vs(ds(stu…  4.26e-1       9.80 
+2 MCMDS   &lt;tibble… Value ~ yearI… ~germplasmNa… ~vs(ds(stu… -3.04e-7       0.205
+3 logFYLD &lt;tibble… Value ~ yearI… ~germplasmNa… ~vs(ds(stu…  3.00e-1       0.129
+4 logDYLD &lt;tibble… Value ~ yearI… ~germplasmNa… ~vs(ds(stu…  3.47e-1       0.112
+# … with 6 more variables: meanNreps &lt;dbl&gt;, modelfit &lt;list&gt;, groups &lt;list&gt;,
+#   blups &lt;list&gt;, varcomp &lt;list&gt;, outliers &lt;list&gt;</code></pre>
+<p>Show how the BLUPs come out of the function formatted:</p>
+<pre class="r"><code>blups$blups[[1]]</code></pre>
+<pre><code># A tibble: 1,526 × 6
+   germplasmName    BLUP   PEV   REL drgBLUP    WT
+   &lt;chr&gt;           &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+ 1 50395         -1.02    4.44 0.117  -8.65  0.177
+ 2 95NA-00063    -0.0285  4.44 0.117  -0.243 0.177
+ 3 ANKRA         -0.760   4.44 0.117  -6.47  0.177
+ 4 BAHKYEHEMAA    0.924   4.44 0.117   7.87  0.177
+ 5 BANGWEULU      0.331   4.44 0.117   2.82  0.177
+ 6 BOUNOUA_BLANC  1.02    4.44 0.117   8.68  0.177
+ 7 CE85           0.545   4.44 0.117   4.64  0.177
+ 8 CH92108        0.209   4.44 0.117   1.78  0.177
+ 9 DOKUNBAHKYE    0.924   4.44 0.117   7.87  0.177
+10 ESAMBAHKYE     0.449   4.44 0.117   3.83  0.177
+# … with 1,516 more rows</code></pre>
 <p>That’s the end of the core steps.</p>
 <p>The rest of the manual chapter includes some exploration of the results <em>and</em> explanation of BLUPs, de-regressed BLUPs and weighted analysis.</p>
 <p>I will try to cover that with some slides to give you intuition.</p>
