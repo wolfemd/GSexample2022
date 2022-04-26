@@ -275,3 +275,39 @@ Packages `purrr` and (for parallel processing) `furrr`.
 <https://stats.oarc.ucla.edu/other/mult-pkg/introduction-to-linear-mixed-models/>
 
 [Excellence in Breeding - Basics of GS - 2021 YouTube Video Series with Eduardo Covarrubias](https://www.youtube.com/playlist?list=PLZ0lafzH_UmfHsoePj0t7xQglKSOpzbDp)
+
+# Q&A
+
+## Augmented design
+
+Example from sommer manual, excellent explanation by Moshood Bakare!
+
+```{r}
+data(DT_augment)
+DT_augment
+```
+
+```{r}
+DT_augment %>% count(Check.Gen)
+```
+```{r}
+DT_augment %>% count(Check)
+```
+
+```{r}
+mix1 <- mmer(TSW ~ Check.Gen,
+random = ~ Block + Genotype:Check,
+data=DT_augment)
+```
+
+
+```{r}
+summary(mix1)
+```
+
+
+```{r}
+blup <- mix1$U$`Genotype:Check`$TSW
+blup
+```
+
