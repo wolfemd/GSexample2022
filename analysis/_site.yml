@@ -15,6 +15,10 @@ navbar:
     href: get_blups.html
   - text: Intro to GP
     href: intro_gp.html
+  - text: K-fold Cross-val
+    href: kfoldcrossval.html
+  - text: Get GEBVs
+    href: get_gebv.html
   - text: About
     href: about.html
   - text: License

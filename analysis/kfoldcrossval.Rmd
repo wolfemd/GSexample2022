@@ -1,0 +1,90 @@
+---
+title: "Run K-fold Cross-validation"
+author: "wolfemd"
+date: "2022-05-05"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: inline
+---
+
+# Load packages
+```{r}
+suppressMessages(library(tidyverse)); 
+suppressMessages(library(genomicMateSelectR)); 
+suppressMessages(library(sommer))
+```
+
+# Set-up
+```{r}
+blups<-readRDS(here::here("output","blups.rds"))
+A<-readRDS(file=here::here("output","kinship_add.rds"))
+```
+
+```{r}
+blups %<>% 
+     # need to rename the "blups" list to comply with the runCrossVal function
+     rename(TrainingData=blups) %>% 
+     dplyr::select(Trait,TrainingData) %>% 
+     # need also to remove phenotyped-but-not-genotyped lines
+     # couldn't hurt to also subset the kinship to only phenotyped lines... would save RAM
+     mutate(TrainingData=map(TrainingData,
+                             ~filter(.,germplasmName %in% rownames(A)) %>% 
+                                  # rename the germplasmName column to GID
+                                  rename(GID=germplasmName))) %>% 
+     # Exclude MCMDS in this example
+     filter(Trait != "MCMDS")
+
+blups
+```
+
+```{r}
+# For fastest, lightest compute of accuracy, remove non-phenotyped from kinship
+
+gids<-blups %>% 
+     unnest(TrainingData) %$% unique(GID)
+# dim(A) [1] 963 963
+
+A<-A[gids,gids]
+```
+
+Set-up a vector of index weights. 
+```{r}
+SIwts<-c(DM=15,
+         logFYLD=20,
+         logDYLD=20)
+SIwts
+```
+
+Run 2 repetitions of 5-fold cross-validation.
+
+Means 10 predictions per trait overall. 
+
+I’ve got a 16-core laptop so I can use ncores=10,
+to do all 10 predictions per trait at the same time. 
+
+`runCrossVal()` will process all traits and compute the selection index accuracy.
+
+```{r}
+standardCV<-runCrossVal(blups=blups,
+                        modelType="A",
+                        selInd=TRUE,SIwts=SIwts,
+                        grms=list(A=A),
+                        nrepeats=2,nfolds=5,
+                        gid="GID",seed=424242,
+                        ncores=10)
+```
+
+```{r}
+saveRDS(standardCV,file = here::here("output","standardCV.rds"))
+```
+
+# Plot results
+
+```{r}
+standardCV %>% 
+     unnest(accuracyEstOut) %>% 
+     dplyr::select(repeats,id,predOf,Trait,Accuracy) %>% 
+     ggplot(.,aes(x=Trait,y=Accuracy,fill=Trait)) + 
+     geom_boxplot() + theme_bw()
+```
+

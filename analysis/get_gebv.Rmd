@@ -1,0 +1,84 @@
+---
+title: "Predict parental GEBV"
+author: "wolfemd"
+date: "2022-05-05"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: inline
+---
+
+# Load packages
+```{r}
+suppressMessages(library(tidyverse)); 
+suppressMessages(library(genomicMateSelectR)); 
+suppressMessages(library(sommer))
+```
+
+# Set-up
+
+```{r}
+blups<-readRDS(here::here("output","blups.rds"))
+A<-readRDS(file=here::here("output","kinship_add.rds"))
+```
+
+```{r}
+blups %<>% 
+     # based on cross-validation, decided to exclude MCMDS from this analysis
+     filter(Trait != "MCMDS") %>% 
+     # need to rename the "blups" list to comply with the runCrossVal function
+     rename(TrainingData=blups) %>% 
+     dplyr::select(Trait,TrainingData) %>% 
+     # need also to remove phenotyped-but-not-genotyped lines
+     mutate(TrainingData=map(TrainingData,
+                             ~filter(.,germplasmName %in% rownames(A)) %>% 
+                                  # rename the germplasmName column to GID
+                                  rename(GID=germplasmName))) %>% 
+     # Exclude MCMDS in this example
+     filter(Trait != "MCMDS")
+
+blups
+```
+
+Selection index:
+```{r}
+SIwts<-c(DM=15,
+         logFYLD=20,
+         logDYLD=20)
+SIwts
+```
+
+# Run genomic predictions
+
+```{r}
+gpreds<-runGenomicPredictions(modelType="A",
+                              selInd=TRUE, SIwts=SIwts,
+                              blups=blups,
+                              grms=list(A=A),
+                              ncores=3)
+```
+
+# Extract GEBV
+```{r}
+gpreds
+```
+
+We have a single-row `tibble`.
+
+To access a simple table listing GEBV for each trait and the selection index:
+
+```{r}
+gpreds$gblups[[1]]
+```
+
+At this point, you can use the **SELIND** predictions directly to rank and select parents.
+
+Example: sort by **SELIND** and pick the top 10.
+
+```{r}
+gpreds$genomicPredOut[[1]]
+```
+
+```{r}
+saveRDS(gpreds,file = here::here("output","genomicPredictions.rds"))
+```
+

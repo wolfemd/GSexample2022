@@ -57,6 +57,9 @@ One thing to note:
 ```{r}
 table(dm_blups$germplasmName %in% rownames(A))
 ```
+```{r}
+dm_blups$germplasmName[!dm_blups$germplasmName %in% rownames(A)]
+```
 
 There are phenotyped-but-not-genotyped lines.
 ```{r}
@@ -81,6 +84,9 @@ gblup_all<-mmer(fixed = drgBLUP~1,
                 random = ~vs(germplasmName,Gu=A),
                 weights = WT,
                 data=dm_blups)
+```
+```{r}
+summary(gblup_all)
 ```
 
 Here's how to get out the **GEBV** from the `mmer()` output:
@@ -121,7 +127,7 @@ Let's start *super* simple.
 Of the phenotyped lines, I randomly sample approx. 1/5 (20%).
 ```{r}
 set.seed(1212)
-test_set<-sample(dm_blups$germplasmName,size = ceiling(346/5), replace = F)
+test_set<-sample(dm_blups$germplasmName,size = ceiling(962/5), replace = F)
 ```
 
 Remove the lines chosen (**test_set**) from the training dataset:
@@ -177,6 +183,9 @@ Below, I use it on only 1 trait, additive-only model.
 **NOTES:** - doesn't work properly *unless* `gid="GID"`. - It also requires you to remove any phenotyped lines that aren't genotyped.
 
 Following chunk does both of those:
+```{r}
+blups$blups[[1]]
+```
 
 ```{r}
 blups_forRunCrossValFunc<-blups %>% 
@@ -191,6 +200,9 @@ blups_forRunCrossValFunc<-blups %>%
                              ~filter(.,germplasmName %in% rownames(A)) %>% 
                                   # rename the germplasmName column to GID
                                   rename(GID=germplasmName)))
+```
+```{r}
+blups_forRunCrossValFunc$TrainingData[[1]]
 ```
 
 ```{r}
@@ -256,7 +268,7 @@ Now fit the RRBLUP model
 ## one way to do this is by creating and incidence matrix
 ## use the model.matrix() function as follows:
 ZincMat=model.matrix(~factor(germplasmName,levels=rownames(Z))-1,data=dm_blups) # -1 because we don't want an intercept here
-dim(ZincMat) # [1] 346 346 
+dim(ZincMat) 
 # relates the rows of the BLUPs to the rows the marker matrix
 
 # now fit the RRBLUP model
@@ -271,6 +283,12 @@ Extract the SNP-BLUPs
 u<-as.matrix(rrblup$U$`u:Z`$drgBLUP)
 all(rownames(u)==colnames(Z))
 ```
+```{r}
+length(u)
+```
+```{r}
+u
+```
 
 ```{r}
 summary(u)
@@ -278,6 +296,7 @@ summary(u)
 ```{r}
 hist(u,breaks=20,main = 'Distribution of SNP effects')
 ```
+
 
 Calculate the GEBVs using the SNP-effects (SNP-BLUPs)
 
@@ -301,6 +320,9 @@ plot(x=g,y=g_rr,
      main = 'Proof that GEBV from GBLUP and RRBLUP are equal!',
      xlab="GEBV from GBLUP", ylab="GEBV from RRBLUP"); 
 abline(a=0,b=1,col='red')
+```
+```{r}
+kinship
 ```
 
 # Study material
