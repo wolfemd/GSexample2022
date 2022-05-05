@@ -9,9 +9,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="wolfemd" />
 
+<meta name="date" content="2022-05-05" />
 
-<title>Home</title>
+<title>Predict parental GEBV</title>
 
 <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -29,6 +31,9 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -228,6 +233,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -235,6 +303,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -293,7 +371,9 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Home</h1>
+<h1 class="title toc-ignore">Predict parental GEBV</h1>
+<h4 class="author">wolfemd</h4>
+<h4 class="date">2022-05-05</h4>
 
 </div>
 
@@ -470,7 +550,7 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/index.Rmd</code>) and HTML (<code>docs/index.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/get_gebv.Rmd</code>) and HTML (<code>docs/get_gebv.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -499,7 +579,7 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/wolfemd/GSexample2022/blob/975daa79a6e60fffa81b189ad3803dbd080b9ba4/analysis/index.Rmd" target="_blank">975daa7</a>
+<a href="https://github.com/wolfemd/GSexample2022/blob/975daa79a6e60fffa81b189ad3803dbd080b9ba4/analysis/get_gebv.Rmd" target="_blank">975daa7</a>
 </td>
 <td>
 wolfemd
@@ -511,363 +591,6 @@ wolfemd
 Publish demo for k-fold cross-val and genomic prediction of GEBV steps
 </td>
 </tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/176b527de592e875f34a446c60c765f327c67eb6/docs/index.html" target="_blank">176b527</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-04-26
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/wolfemd/GSexample2022/blob/acd7ed55418e569a295cd90a5404e7e8d8133bdb/analysis/index.Rmd" target="_blank">acd7ed5</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-04-26
-</td>
-<td>
-Add ‘Intro to GP’ section. Update ‘Index’ page. Minor tweak to ‘Get BLUPs’ section.
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/63d6587f701fd0af1c9e5c0c2a97caf8f6273447/docs/index.html" target="_blank">63d6587</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-04-20
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/wolfemd/GSexample2022/blob/9c0e19e38ee5c830efc736987c5fd8e9e6450616/analysis/index.Rmd" target="_blank">9c0e19e</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-04-20
-</td>
-<td>
-Add the ‘preliminary trial analysis’ or ‘get blups’ steps.
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/065ed11e011658a7627dacec5d72604779417326/docs/index.html" target="_blank">065ed11</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-04-01
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/wolfemd/GSexample2022/blob/e3d8e656fa9569396dbd5ea381bc87edf99da39d/analysis/index.Rmd" target="_blank">e3d8e65</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-04-01
-</td>
-<td>
-update everything
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/adb7ede079281ff2c2bf22c710b3e2c7d2cccc55/docs/index.html" target="_blank">adb7ede</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-04-01
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/wolfemd/GSexample2022/blob/b62cd6d4b3a93bcc0db9fb11e0366c9d6b311fdb/analysis/index.Rmd" target="_blank">b62cd6d</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-04-01
-</td>
-<td>
-Add the ‘prep genos’ steps
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/4d5fb817a885621aa8c263f74cfa5f0ceb94b787/docs/index.html" target="_blank">4d5fb81</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-03-25
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/wolfemd/GSexample2022/blob/11eeb7936bf59e7438091a822bb16f38d42bce44/analysis/index.Rmd" target="_blank">11eeb79</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-03-25
-</td>
-<td>
-Publish cleaned phenotypes.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/wolfemd/GSexample2022/blob/5d8319287f14dbf3f645a0622eca1c1f5c7d53af/analysis/index.Rmd" target="_blank">5d83192</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-03-24
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/5d8319287f14dbf3f645a0622eca1c1f5c7d53af/docs/index.html" target="_blank">5d83192</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-03-24
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/wolfemd/GSexample2022/blob/4665bfec1a68801e7d38a5dfda5ad13dece90206/analysis/index.Rmd" target="_blank">4665bfe</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-03-21
-</td>
-<td>
-fix link to ‘downloads.html’
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/4665bfec1a68801e7d38a5dfda5ad13dece90206/docs/index.html" target="_blank">4665bfe</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-03-21
-</td>
-<td>
-fix link to ‘downloads.html’
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/a2e74926c8651a089b12d7f94f65e46251125e42/docs/index.html" target="_blank">a2e7492</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-03-20
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/wolfemd/GSexample2022/blob/e4f9fd907dcedd581b8977a735ac209be218f44d/analysis/index.Rmd" target="_blank">e4f9fd9</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-03-20
-</td>
-<td>
-Update index.Rmd with additional screenshipts on publishing to github
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/9a87a77cd915c5b7ce6ea38cd1d3041536ca3918/docs/index.html" target="_blank">9a87a77</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-03-20
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/b54d21a7eae89be6fb7567265e15f7c9bc0a8f0e/docs/index.html" target="_blank">b54d21a</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-03-20
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/wolfemd/GSexample2022/blob/2a55fb9d0b905a347b0456a6b81f4c9db6569bd7/analysis/index.Rmd" target="_blank">2a55fb9</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-03-20
-</td>
-<td>
-First publish
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/wolfemd/GSexample2022/blob/3366366bca152906150c06073f78c359a45ac3d3/analysis/index.Rmd" target="_blank">3366366</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-03-20
-</td>
-<td>
-First commit. Index + Download page. Include images and phenotype/metadata files for workshop purposes only!
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/wolfemd/GSexample2022/blob/d05e5dd638d2a2e2930615b2529b752bfe5111f1/analysis/index.Rmd" target="_blank">d05e5dd</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-03-20
-</td>
-<td>
-Start workflowr project.
-</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -875,51 +598,107 @@ Start workflowr project.
 </div>
 </div>
 </div>
-<p>Welcome to my example GS repository. I followed the instructions <a href="https://wolfemd.github.io/GenomicSelectionManual/create_project.html">here</a> to create this project.</p>
-<p>I’m going to follow along the <a href="https://wolfemd.github.io/GenomicSelectionManual/">Genomic Selection Manual</a> throughout this project.</p>
-<div id="data-download" class="section level2">
-<h2>Data download</h2>
-<p>Create the “download.Rmd”</p>
-<pre class="r"><code>wflow_open(&quot;analysis/download.Rmd&quot;)</code></pre>
-<p>Link to it: <a href="download.html">Data Download Stage</a></p>
-<p>Add it to the top navigation bar, via the <code>_site.yml</code> file:</p>
-<p><img src="images/paste-72D2779D.png" /></p>
+<div id="load-packages" class="section level1">
+<h1>Load packages</h1>
+<pre class="r"><code>suppressMessages(library(tidyverse)); 
+suppressMessages(library(genomicMateSelectR)); 
+suppressMessages(library(sommer))</code></pre>
 </div>
-<div id="table-of-contents" class="section level2">
-<h2>Table of Contents</h2>
-<ol style="list-style-type: decimal">
-<li><a href="download.html">Data Download Stage</a></li>
-<li><a href="clean_phenos.html">Clean phenotype data</a>: standard procedures to prepare phenotypes for analysis.</li>
-<li><a href="prep_genos.html">Prepare genotypic data</a>: standard procedures to prepare genotypic inputs (e.g. haplotype matrices) for genomic mate selection analyses.</li>
-<li><a href="get_blups.html">Preliminary field trial analyses</a>: Conduct preliminary analysis of the trial data without genomic relatedeness / marker-information. Identify the best-fitting model for the data and potentially curate the raw data, removing outliers. Fit mixed-model to MET data. Extract BLUPs, PEVs and variance components (VarComps). Compute de-regressed BLUPs (drgBLUPs) and weights (WTS) for “Stage 2.”</li>
-<li><a href="intro_gp.html">Introduction to Genomic Prediction in R</a>: Into to using <code>sommer</code> to fit G-BLUP and RR-BLUP models, a demo of their equivalency and quickly showing how to run cross-validations with the <code>runCrossVal()</code> function of <code>library(genomicMateSelectR)</code>.</li>
-<li><a href="kfoldcrossval.html">Check prediction accuracy</a>: Use what we learned previously to run a k-fold cross-validation and estimate the accuracy predicting the performance of parents on our selection index.</li>
-<li><a href="get_gebv.html">Predict parental GEBV</a>: Having checked prediction accuracy and assuming we are satisfied, we can now run the full genomic prediction using <code>runGenomicPredictions()</code> and get GEBV for our population, computing the selection index performance using those GEBVs for our ultimate selections of parents.</li>
-</ol>
-<p><strong>TROUBLESHOOTING RMD:</strong> <a href="troubleshooting.html">Troubleshooting each step</a></p>
+<div id="set-up" class="section level1">
+<h1>Set-up</h1>
+<pre class="r"><code>blups&lt;-readRDS(here::here(&quot;output&quot;,&quot;blups.rds&quot;))
+A&lt;-readRDS(file=here::here(&quot;output&quot;,&quot;kinship_add.rds&quot;))</code></pre>
+<pre class="r"><code>blups %&lt;&gt;% 
+     # based on cross-validation, decided to exclude MCMDS from this analysis
+     filter(Trait != &quot;MCMDS&quot;) %&gt;% 
+     # need to rename the &quot;blups&quot; list to comply with the runCrossVal function
+     rename(TrainingData=blups) %&gt;% 
+     dplyr::select(Trait,TrainingData) %&gt;% 
+     # need also to remove phenotyped-but-not-genotyped lines
+     mutate(TrainingData=map(TrainingData,
+                             ~filter(.,germplasmName %in% rownames(A)) %&gt;% 
+                                  # rename the germplasmName column to GID
+                                  rename(GID=germplasmName))) %&gt;% 
+     # Exclude MCMDS in this example
+     filter(Trait != &quot;MCMDS&quot;)
+
+blups</code></pre>
+<pre><code># A tibble: 3 × 2
+  Trait   TrainingData      
+  &lt;chr&gt;   &lt;list&gt;            
+1 DM      &lt;tibble [962 × 6]&gt;
+2 logFYLD &lt;tibble [350 × 6]&gt;
+3 logDYLD &lt;tibble [348 × 6]&gt;</code></pre>
+<p>Selection index:</p>
+<pre class="r"><code>SIwts&lt;-c(DM=15,
+         logFYLD=20,
+         logDYLD=20)
+SIwts</code></pre>
+<pre><code>     DM logFYLD logDYLD 
+     15      20      20 </code></pre>
 </div>
-<div id="committing-and-publishing" class="section level2">
-<h2>Committing and publishing</h2>
-<p>Example, first commit:</p>
-<p><img src="images/paste-1EE3E624.png" /></p>
-<p><strong>VERY IMPORTANT NOTE:</strong> here I’m adding the <code>data/metadata.csv</code> and <code>data/phenotype.csv</code>. These are small files and I want them available to workshop users. DO NOT make a habit of this. GitHub max size is 25 Mb. ESPECIALLY DO NOT add genomic data files to your Git version control.</p>
-<p><img src="images/paste-90E446A0.png" /></p>
+<div id="run-genomic-predictions" class="section level1">
+<h1>Run genomic predictions</h1>
+<pre class="r"><code>gpreds&lt;-runGenomicPredictions(modelType=&quot;A&quot;,
+                              selInd=TRUE, SIwts=SIwts,
+                              blups=blups,
+                              grms=list(A=A),
+                              ncores=3)</code></pre>
+<pre><code>Loading required package: furrr</code></pre>
+<pre><code>Loading required package: future</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -356.471   7:56:48      4           0
+    2      -355.724   7:56:51      7           0
+    3      -355.405   7:56:53      9           0
+    4      -355.333   7:56:56      12           0
+    5      -355.327   7:56:59      15           0
+    6      -355.326   7:57:1      17           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -135.425   7:56:45      0           0
+    2      -135.407   7:56:45      0           0
+    3      -135.395   7:56:45      0           0
+    4      -135.391   7:56:46      1           0
+    5      -135.39   7:56:46      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -146.037   7:56:46      1           0
+    2      -146.031   7:56:46      1           0
+    3      -146.028   7:56:46      1           0
+    4      -146.027   7:56:46      1           0</code></pre>
 </div>
-<div id="publishing-to-github-pages" class="section level2">
-<h2>Publishing to GitHub Pages</h2>
-<p>Follow the manual’s instructions at: <a href="https://wolfemd.github.io/GenomicSelectionManual/create_project.html#publishing-on-github-pages" class="uri">https://wolfemd.github.io/GenomicSelectionManual/create_project.html#publishing-on-github-pages</a></p>
-<p>In addition, edit repository details, adding the GitHub pages web address and a short description, like so:</p>
-<p><img src="images/paste-CB5D91AC.png" /></p>
-<p><img src="images/paste-AD7AEEAC.png" /></p>
-<p>Consider modifying the <code>README.md</code> file in the main project folder, as it will display to anyone viewing the repository directly on GitHub.</p>
-<p><img src="images/paste-2F34C15B.png" /></p>
-</div>
-<div id="customize-workflowr-project" class="section level2">
-<h2>Customize <code>workflowR</code> project</h2>
-<div id="inline-chunk-output" class="section level3">
-<h3>Inline chunk output</h3>
-<p>Change chunk output setting to “inline output” instead of “console”</p>
-<p><img src="images/paste-46ECDEBA.png" /></p>
+<div id="extract-gebv" class="section level1">
+<h1>Extract GEBV</h1>
+<pre class="r"><code>gpreds</code></pre>
+<pre><code># A tibble: 1 × 2
+  gblups               genomicPredOut  
+  &lt;list&gt;               &lt;list&gt;          
+1 &lt;tibble [1,007 × 6]&gt; &lt;tibble [3 × 4]&gt;</code></pre>
+<p>We have a single-row <code>tibble</code>.</p>
+<p>To access a simple table listing GEBV for each trait and the selection index:</p>
+<pre class="r"><code>gpreds$gblups[[1]]</code></pre>
+<pre><code># A tibble: 1,007 × 6
+   GID                 predOf SELIND     DM  logFYLD  logDYLD
+   &lt;chr&gt;               &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+ 1 IITA-TMS-IBA30572   GEBV    -7.66 -0.597  0.0299   0.0349 
+ 2 IITA-TMS-IBA940237  GEBV     4.99  0.363 -0.0128  -0.00951
+ 3 IITA-TMS-IBA961642  GEBV    20.0   1.14   0.0737   0.0714 
+ 4 IITA-TMS-ONN8700813 GEBV    27.4   1.81   0.00236  0.00621
+ 5 IITA-TMS-ONN920168  GEBV    17.9   1.23  -0.0133  -0.0171 
+ 6 IITA-TMS-JOS920230  GEBV   -17.1  -1.25   0.0585   0.0259 
+ 7 IITA-TMS-WAR4080    GEBV    -5.34 -0.449  0.0309   0.0392 
+ 8 IITA-TMS-WAR4092    GEBV    -5.57 -0.466  0.0301   0.0405 
+ 9 IITA-TMS-WAR820249  GEBV     8.50  0.374  0.0748   0.0700 
+10 IITA-TMS-WAR820422  GEBV    10.3   0.474  0.0827   0.0747 
+# … with 997 more rows</code></pre>
+<p>At this point, you can use the <strong>SELIND</strong> predictions directly to rank and select parents.</p>
+<p>Example: sort by <strong>SELIND</strong> and pick the top 10.</p>
+<pre class="r"><code>gpreds$genomicPredOut[[1]]</code></pre>
+<pre><code># A tibble: 3 × 4
+  Trait   gblups               varcomps     fixeffs     
+  &lt;chr&gt;   &lt;list&gt;               &lt;list&gt;       &lt;list&gt;      
+1 DM      &lt;tibble [1,007 × 2]&gt; &lt;df [2 × 4]&gt; &lt;df [1 × 5]&gt;
+2 logFYLD &lt;tibble [1,007 × 2]&gt; &lt;df [2 × 4]&gt; &lt;df [1 × 5]&gt;
+3 logDYLD &lt;tibble [1,007 × 2]&gt; &lt;df [2 × 4]&gt; &lt;df [1 × 5]&gt;</code></pre>
+<pre class="r"><code>saveRDS(gpreds,file = here::here(&quot;output&quot;,&quot;genomicPredictions.rds&quot;))</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -943,21 +722,32 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] workflowr_1.7.0
+ [1] furrr_0.2.3              future_1.23.0            sommer_4.1.5            
+ [4] crayon_1.4.2             lattice_0.20-45          MASS_7.3-54             
+ [7] Matrix_1.4-0             genomicMateSelectR_0.2.0 forcats_0.5.1           
+[10] stringr_1.4.0            dplyr_1.0.7              purrr_0.3.4             
+[13] readr_2.1.1              tidyr_1.1.4              tibble_3.1.6            
+[16] ggplot2_3.3.5            tidyverse_1.3.1          workflowr_1.7.0         
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.7       compiler_4.1.1   pillar_1.6.4     bslib_0.3.1     
- [5] later_1.3.0      git2r_0.29.0     jquerylib_0.1.4  tools_4.1.1     
- [9] getPass_0.2-2    digest_0.6.29    jsonlite_1.7.2   evaluate_0.14   
-[13] tibble_3.1.6     lifecycle_1.0.1  pkgconfig_2.0.3  rlang_0.4.12    
-[17] rstudioapi_0.13  yaml_2.2.1       xfun_0.29        fastmap_1.1.0   
-[21] httr_1.4.2       stringr_1.4.0    knitr_1.37       sass_0.4.0      
-[25] fs_1.5.2         vctrs_0.3.8      rprojroot_2.0.2  glue_1.6.0      
-[29] R6_2.5.1         processx_3.5.2   fansi_0.5.0      rmarkdown_2.11  
-[33] callr_3.7.0      magrittr_2.0.1   whisker_0.4      ps_1.6.0        
-[37] promises_1.2.0.1 htmltools_0.5.2  ellipsis_0.3.2   httpuv_1.6.5    
-[41] utf8_1.2.2       stringi_1.7.6    crayon_1.4.2    </code></pre>
-</div>
+ [1] httr_1.4.2        sass_0.4.0        jsonlite_1.7.2    here_1.0.1       
+ [5] modelr_0.1.8      bslib_0.3.1       assertthat_0.2.1  getPass_0.2-2    
+ [9] cellranger_1.1.0  yaml_2.2.1        globals_0.14.0    pillar_1.6.4     
+[13] backports_1.4.1   glue_1.6.0        digest_0.6.29     promises_1.2.0.1 
+[17] rvest_1.0.2       colorspace_2.0-2  htmltools_0.5.2   httpuv_1.6.5     
+[21] pkgconfig_2.0.3   broom_0.7.11      listenv_0.8.0     haven_2.4.3      
+[25] scales_1.1.1      processx_3.5.2    whisker_0.4       later_1.3.0      
+[29] tzdb_0.2.0        git2r_0.29.0      generics_0.1.1    ellipsis_0.3.2   
+[33] withr_2.4.3       cli_3.1.0         magrittr_2.0.1    readxl_1.3.1     
+[37] evaluate_0.14     ps_1.6.0          parallelly_1.30.0 fs_1.5.2         
+[41] fansi_0.5.0       xml2_1.3.3        tools_4.1.1       hms_1.1.1        
+[45] lifecycle_1.0.1   munsell_0.5.0     reprex_2.0.1      callr_3.7.0      
+[49] compiler_4.1.1    jquerylib_0.1.4   rlang_0.4.12      grid_4.1.1       
+[53] rstudioapi_0.13   rmarkdown_2.11    gtable_0.3.0      codetools_0.2-18 
+[57] DBI_1.1.2         R6_2.5.1          lubridate_1.8.0   knitr_1.37       
+[61] fastmap_1.1.0     utf8_1.2.2        rprojroot_2.0.2   stringi_1.7.6    
+[65] parallel_4.1.1    Rcpp_1.0.7        vctrs_0.3.8       dbplyr_2.1.1     
+[69] tidyselect_1.1.1  xfun_0.29        </code></pre>
 </div>
 </div>
 
@@ -977,6 +767,8 @@ footer is added to webpages before the MathJax javascript. -->
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -1009,6 +801,35 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

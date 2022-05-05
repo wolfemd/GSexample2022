@@ -348,6 +348,12 @@ div.tocify {
   <a href="intro_gp.html">Intro to GP</a>
 </li>
 <li>
+  <a href="kfoldcrossval.html">K-fold Cross-val</a>
+</li>
+<li>
+  <a href="get_gebv.html">Get GEBVs</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
 <li>
@@ -392,7 +398,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-04-26
+<strong>Last updated:</strong> 2022-05-05
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -483,16 +489,16 @@ This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysi
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treeacd7ed55418e569a295cd90a5404e7e8d8133bdbtargetblankacd7ed5a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/acd7ed55418e569a295cd90a5404e7e8d8133bdb" target="_blank">acd7ed5</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree975daa79a6e60fffa81b189ad3803dbd080b9ba4targetblank975daa7a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/975daa79a6e60fffa81b189ad3803dbd080b9ba4" target="_blank">975daa7</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treeacd7ed55418e569a295cd90a5404e7e8d8133bdbtargetblankacd7ed5a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree975daa79a6e60fffa81b189ad3803dbd080b9ba4targetblank975daa7a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/acd7ed55418e569a295cd90a5404e7e8d8133bdb" target="_blank">acd7ed5</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/975daa79a6e60fffa81b189ad3803dbd080b9ba4" target="_blank">975daa7</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -528,7 +534,9 @@ Untracked files:
     Untracked:  out.log
     Untracked:  output/.DS_Store
     Untracked:  output/Icon
+    Untracked:  output/genomicPredictions.rds
     Untracked:  output/models_compared.Rdata
+    Untracked:  output/standardCV.rds
 
 </code></pre>
 <p>
@@ -572,6 +580,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/975daa79a6e60fffa81b189ad3803dbd080b9ba4/analysis/intro_gp.Rmd" target="_blank">975daa7</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-05-05
+</td>
+<td>
+Publish demo for k-fold cross-val and genomic prediction of GEBV steps
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/176b527de592e875f34a446c60c765f327c67eb6/docs/intro_gp.html" target="_blank">176b527</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-04-26
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/wolfemd/GSexample2022/blob/acd7ed55418e569a295cd90a5404e7e8d8133bdb/analysis/intro_gp.Rmd" target="_blank">acd7ed5</a>
 </td>
 <td>
@@ -603,12 +645,125 @@ suppressMessages(library(sommer));</code></pre>
 <pre class="r"><code>dim(A)</code></pre>
 <pre><code>[1] 1007 1007</code></pre>
 <pre class="r"><code>hist(A[lower.tri(A)], main=&#39;Off-diagonal values (lower-triangle) of the kinship matrix&#39;)</code></pre>
-<p><img src="figure/intro_gp.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /> The off-diagonals express the genomic relatedness between different individuals in the dataset.</p>
+<p><img src="figure/intro_gp.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/176b527de592e875f34a446c60c765f327c67eb6/docs/figure/intro_gp.Rmd/unnamed-chunk-4-1.png" target="_blank">176b527</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-04-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The off-diagonals express the genomic relatedness between different individuals in the dataset.</p>
 <p>This formulation has a mean-value of zero, such that &gt;0 kinship means “more than the average population level of relatedness” while &lt;0 values mean “greater than average.”</p>
 <pre class="r"><code>hist(diag(A), main=&#39;Diagonals of the kinship&#39;, breaks=20)</code></pre>
-<p><img src="figure/intro_gp.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /> The diagonal values express the relatedness of each individual to itself, which should be interpreted as the level of inbreeding (homozygosity).</p>
+<p><img src="figure/intro_gp.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/176b527de592e875f34a446c60c765f327c67eb6/docs/figure/intro_gp.Rmd/unnamed-chunk-5-1.png" target="_blank">176b527</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-04-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The diagonal values express the relatedness of each individual to itself, which should be interpreted as the level of inbreeding (homozygosity).</p>
 <pre class="r"><code>heatmap(A)</code></pre>
 <p><img src="figure/intro_gp.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/176b527de592e875f34a446c60c765f327c67eb6/docs/figure/intro_gp.Rmd/unnamed-chunk-6-1.png" target="_blank">176b527</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-04-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="gblup-prediction" class="section level1">
 <h1>GBLUP prediction</h1>
@@ -631,6 +786,289 @@ dm_blups %&gt;% head</code></pre>
 <pre><code>
 FALSE  TRUE 
   564   962 </code></pre>
+<pre class="r"><code>dm_blups$germplasmName[!dm_blups$germplasmName %in% rownames(A)]</code></pre>
+<pre><code>  [1] &quot;ANKRA&quot;                   &quot;BANGWEULU&quot;              
+  [3] &quot;CE85&quot;                    &quot;I95D069&quot;                
+  [5] &quot;IITA-TMS-BAD1090592-20&quot;  &quot;IITA-TMS-BAD9100462&quot;    
+  [7] &quot;IITA-TMS-IBA070052&quot;      &quot;IITA-TMS-IBA070055&quot;     
+  [9] &quot;IITA-TMS-IBA070066&quot;      &quot;IITA-TMS-IBA070100&quot;     
+ [11] &quot;IITA-TMS-IBA070108&quot;      &quot;IITA-TMS-IBA070119&quot;     
+ [13] &quot;IITA-TMS-IBA070141&quot;      &quot;IITA-TMS-IBA070170&quot;     
+ [15] &quot;IITA-TMS-IBA070172&quot;      &quot;IITA-TMS-IBA070178&quot;     
+ [17] &quot;IITA-TMS-IBA070180&quot;      &quot;IITA-TMS-IBA070181&quot;     
+ [19] &quot;IITA-TMS-IBA070190&quot;      &quot;IITA-TMS-IBA070204&quot;     
+ [21] &quot;IITA-TMS-IBA070609&quot;      &quot;IITA-TMS-IBA079593&quot;     
+ [23] &quot;IITA-TMS-IBA082161&quot;      &quot;IITA-TMS-IBA082264&quot;     
+ [25] &quot;IITA-TMS-IBA083703&quot;      &quot;IITA-TMS-IBA084563&quot;     
+ [27] &quot;IITA-TMS-IBA084955&quot;      &quot;IITA-TMS-IBA085056&quot;     
+ [29] &quot;IITA-TMS-IBA085392&quot;      &quot;IITA-TMS-IBA085613&quot;     
+ [31] &quot;IITA-TMS-IBA085894&quot;      &quot;IITA-TMS-IBA086001&quot;     
+ [33] &quot;IITA-TMS-IBA090059&quot;      &quot;IITA-TMS-IBA090067&quot;     
+ [35] &quot;IITA-TMS-IBA090073&quot;      &quot;IITA-TMS-IBA090076&quot;     
+ [37] &quot;IITA-TMS-IBA090081&quot;      &quot;IITA-TMS-IBA090107&quot;     
+ [39] &quot;IITA-TMS-IBA090151&quot;      &quot;IITA-TMS-IBA090482&quot;     
+ [41] &quot;IITA-TMS-IBA090483&quot;      &quot;IITA-TMS-IBA090597&quot;     
+ [43] &quot;IITA-TMS-IBA096051&quot;      &quot;IITA-TMS-IBA101993&quot;     
+ [45] &quot;IITA-TMS-IBA102096&quot;      &quot;IITA-TMS-IBA102405&quot;     
+ [47] &quot;IITA-TMS-IBA102429&quot;      &quot;IITA-TMS-IBA102432&quot;     
+ [49] &quot;IITA-TMS-IBA102446&quot;      &quot;IITA-TMS-IBA102455&quot;     
+ [51] &quot;IITA-TMS-IBA102510&quot;      &quot;IITA-TMS-IBA102521&quot;     
+ [53] &quot;IITA-TMS-IBA102641&quot;      &quot;IITA-TMS-IBA102831&quot;     
+ [55] &quot;IITA-TMS-IBA120428&quot;      &quot;IITA-TMS-IBA120820&quot;     
+ [57] &quot;IITA-TMS-IBA130076&quot;      &quot;IITA-TMS-IBA130807&quot;     
+ [59] &quot;IITA-TMS-IBA141085&quot;      &quot;IITA-TMS-IBA141086&quot;     
+ [61] &quot;IITA-TMS-IBA141089&quot;      &quot;IITA-TMS-IBA141097&quot;     
+ [63] &quot;IITA-TMS-IBA141103&quot;      &quot;IITA-TMS-IBA63397&quot;      
+ [65] &quot;IITA-TMS-IBA8100045&quot;     &quot;IITA-TMS-IBA8101623(4X)&quot;
+ [67] &quot;IITA-TMS-IBA84537&quot;       &quot;IITA-TMS-IBA8800695&quot;    
+ [69] &quot;IITA-TMS-IBA88112-7(3X)&quot; &quot;IITA-TMS-IBA8900003&quot;    
+ [71] &quot;IITA-TMS-IBA900099&quot;      &quot;IITA-TMS-IBA9100090(4X)&quot;
+ [73] &quot;IITA-TMS-IBA9100455&quot;     &quot;IITA-TMS-IBA930614(4X)&quot; 
+ [75] &quot;IITA-TMS-IBA950286&quot;      &quot;IITA-TMS-IBA950442&quot;     
+ [77] &quot;IITA-TMS-IBA95070&quot;       &quot;IITA-TMS-IBA970353&quot;     
+ [79] &quot;IITA-TMS-IBA974045&quot;      &quot;IITA-TMS-IKN120039&quot;     
+ [81] &quot;IITA-TMS-IKN950286&quot;      &quot;IITA-TMS-IKN950562&quot;     
+ [83] &quot;IITA-TMS-IKN950671&quot;      &quot;IITA-TMS-IKN950725&quot;     
+ [85] &quot;IITA-TMS-MM960093&quot;       &quot;IITA-TMS-MM967204(DRC)&quot; 
+ [87] &quot;IITA-TMS-MM968876&quot;       &quot;IITA-TMS-MM97JW2&quot;       
+ [89] &quot;IITA-TMS-ONN850066&quot;      &quot;IITA-TMS-WAR820447&quot;     
+ [91] &quot;IITA-TMS-ZAR950286&quot;      &quot;KIBAHA&quot;                 
+ [93] &quot;kiroba&quot;                  &quot;MN2-13&quot;                 
+ [95] &quot;RB920099&quot;                &quot;RB980113&quot;               
+ [97] &quot;TMEB1331&quot;                &quot;TMS13F1306P1003&quot;        
+ [99] &quot;TMS15F1041P0003&quot;         &quot;TMS15F1118P0001&quot;        
+[101] &quot;TMS15F1118P0006&quot;         &quot;TMS18F1002P0014&quot;        
+[103] &quot;TMS18F1003P0001&quot;         &quot;TMS18F1010P0022&quot;        
+[105] &quot;TMS18F1016P0009&quot;         &quot;TMS18F1017P0045&quot;        
+[107] &quot;TMS18F1020P0028&quot;         &quot;TMS18F1023P0018&quot;        
+[109] &quot;TMS18F1037P0035&quot;         &quot;TMS18F1038P0018&quot;        
+[111] &quot;TMS18F1038P0029&quot;         &quot;TMS18F1038P0035&quot;        
+[113] &quot;TMS18F1038P0053&quot;         &quot;TMS18F1040P0058&quot;        
+[115] &quot;TMS18F1043P0003&quot;         &quot;TMS18F1051P0058&quot;        
+[117] &quot;TMS18F1056P0060&quot;         &quot;TMS18F1056P0082&quot;        
+[119] &quot;TMS18F1063P0002&quot;         &quot;TMS18F1063P0020&quot;        
+[121] &quot;TMS18F1073P0037&quot;         &quot;TMS18F1074P0004&quot;        
+[123] &quot;TMS18F1074P0015&quot;         &quot;TMS18F1093P0014&quot;        
+[125] &quot;TMS18F1101P0005&quot;         &quot;TMS18F1101P0013&quot;        
+[127] &quot;TMS18F1107P0017&quot;         &quot;TMS18F1108P0002&quot;        
+[129] &quot;TMS18F1113P0005&quot;         &quot;TMS18F1114P0013&quot;        
+[131] &quot;TMS18F1126P0006&quot;         &quot;TMS18F1138P0002&quot;        
+[133] &quot;TMS18F1139P0088&quot;         &quot;TMS18F1140P0023&quot;        
+[135] &quot;TMS18F1141P0009&quot;         &quot;TMS18F1151P0011&quot;        
+[137] &quot;TMS18F1153P0023&quot;         &quot;TMS18F1153P0041&quot;        
+[139] &quot;TMS18F1153P0048&quot;         &quot;TMS18F1163P0012&quot;        
+[141] &quot;TMS18F1169P0006&quot;         &quot;TMS18F1175P0052&quot;        
+[143] &quot;TMS18F1178P0007&quot;         &quot;TMS18F1186P0009&quot;        
+[145] &quot;TMS18F1186P0032&quot;         &quot;TMS18F1194P0020&quot;        
+[147] &quot;TMS18F1215P0006&quot;         &quot;TMS18F1221P0024&quot;        
+[149] &quot;TMS18F1222P0015&quot;         &quot;TMS18F1231P0019&quot;        
+[151] &quot;TMS18F1238P0026&quot;         &quot;TMS18F1238P0028&quot;        
+[153] &quot;TMS18F1250P0036&quot;         &quot;TMS18F1258P0101&quot;        
+[155] &quot;TMS18F1258P0114&quot;         &quot;TMS18F1258P0125&quot;        
+[157] &quot;TMS18F1259P0084&quot;         &quot;TMS18F1259P0093&quot;        
+[159] &quot;TMS18F1269P0030&quot;         &quot;TMS18F1270P0039&quot;        
+[161] &quot;TMS18F1278P0094&quot;         &quot;TMS18F1278P0141&quot;        
+[163] &quot;TMS18F1280P0110&quot;         &quot;TMS18F1280P0121&quot;        
+[165] &quot;TMS18F1287P0116&quot;         &quot;TMS18F1299P0020&quot;        
+[167] &quot;TMS18F1304P0015&quot;         &quot;TMS18F1306P0019&quot;        
+[169] &quot;TMS18F1306P0040&quot;         &quot;TMS18F1308P0094&quot;        
+[171] &quot;TMS18F1308P0102&quot;         &quot;TMS18F1310P0145&quot;        
+[173] &quot;TMS18F1310P0152&quot;         &quot;TMS18F1313P0041&quot;        
+[175] &quot;TMS18F1313P0047&quot;         &quot;TMS18F1320P0105&quot;        
+[177] &quot;TMS18F1323P0054&quot;         &quot;TMS18F1324P0170&quot;        
+[179] &quot;TMS18F1324P0209&quot;         &quot;TMS18F1328P0045&quot;        
+[181] &quot;TMS18F1333P0009&quot;         &quot;TMS18F1335P0040&quot;        
+[183] &quot;TMS18F1343P0154&quot;         &quot;TMS18F1344P0177&quot;        
+[185] &quot;TMS18F1348P0111&quot;         &quot;TMS18F1350P0108&quot;        
+[187] &quot;TMS18F1382P0017&quot;         &quot;TMS18F1396P0054&quot;        
+[189] &quot;TMS18F1447P0005&quot;         &quot;TMS18F1453P0069&quot;        
+[191] &quot;TMS18F1476P0043&quot;         &quot;TMS18F1480P0038&quot;        
+[193] &quot;TMS18F1482P0017&quot;         &quot;TMS18F1485P0009&quot;        
+[195] &quot;TMS18F1505P0040&quot;         &quot;TMS18F1505P0041&quot;        
+[197] &quot;TMS18F1505P0054&quot;         &quot;TMS18F1505P0120&quot;        
+[199] &quot;TMS18F1562P0032&quot;         &quot;TMS18F1562P0040&quot;        
+[201] &quot;TMS18F1562P0049&quot;         &quot;TMS19F1001P0017&quot;        
+[203] &quot;TMS19F1002P0001&quot;         &quot;TMS19F1002P0010&quot;        
+[205] &quot;TMS19F1003P0010&quot;         &quot;TMS19F1003P0013&quot;        
+[207] &quot;TMS19F1004P0001&quot;         &quot;TMS19F1005P0005&quot;        
+[209] &quot;TMS19F1008P0001&quot;         &quot;TMS19F1008P0004&quot;        
+[211] &quot;TMS19F1008P0006&quot;         &quot;TMS19F1008P0017&quot;        
+[213] &quot;TMS19F1014P0006&quot;         &quot;TMS19F1014P0007&quot;        
+[215] &quot;TMS19F1014P0045&quot;         &quot;TMS19F1014P0050&quot;        
+[217] &quot;TMS19F1015P0018&quot;         &quot;TMS19F1015P0032&quot;        
+[219] &quot;TMS19F1016P0007&quot;         &quot;TMS19F1016P0052&quot;        
+[221] &quot;TMS19F1016P0055&quot;         &quot;TMS19F1017P0003&quot;        
+[223] &quot;TMS19F1017P0005&quot;         &quot;TMS19F1017P0052&quot;        
+[225] &quot;TMS19F1017P0059&quot;         &quot;TMS19F1017P0069&quot;        
+[227] &quot;TMS19F1017P0084&quot;         &quot;TMS19F1017P0126&quot;        
+[229] &quot;TMS19F1018P0003&quot;         &quot;TMS19F1019P0004&quot;        
+[231] &quot;TMS19F1019P0006&quot;         &quot;TMS19F1019P0011&quot;        
+[233] &quot;TMS19F1023P0005&quot;         &quot;TMS19F1023P0006&quot;        
+[235] &quot;TMS19F1023P0007&quot;         &quot;TMS19F1024P0003&quot;        
+[237] &quot;TMS19F1025P0023&quot;         &quot;TMS19F1028P0012&quot;        
+[239] &quot;TMS19F1030P0017&quot;         &quot;TMS19F1032P0019&quot;        
+[241] &quot;TMS19F1035P0001&quot;         &quot;TMS19F1035P0004&quot;        
+[243] &quot;TMS19F1035P0007&quot;         &quot;TMS19F1039P0001&quot;        
+[245] &quot;TMS19F1040P0024&quot;         &quot;TMS19F1041P0038&quot;        
+[247] &quot;TMS19F1041P0078&quot;         &quot;TMS19F1041P0092&quot;        
+[249] &quot;TMS19F1041P0114&quot;         &quot;TMS19F1045P0054&quot;        
+[251] &quot;TMS19F1046P0002&quot;         &quot;TMS19F1050P0040&quot;        
+[253] &quot;TMS19F1050P0050&quot;         &quot;TMS19F1050P0058&quot;        
+[255] &quot;TMS19F1050P0059&quot;         &quot;TMS19F1051P0001&quot;        
+[257] &quot;TMS19F1051P0025&quot;         &quot;TMS19F1051P0035&quot;        
+[259] &quot;TMS19F1057P0010&quot;         &quot;TMS19F1058P0021&quot;        
+[261] &quot;TMS19F1060P0002&quot;         &quot;TMS19F1060P0006&quot;        
+[263] &quot;TMS19F1061P0014&quot;         &quot;TMS19F1061P0024&quot;        
+[265] &quot;TMS19F1063P0014&quot;         &quot;TMS19F1063P0052&quot;        
+[267] &quot;TMS19F1063P0070&quot;         &quot;TMS19F1063P0076&quot;        
+[269] &quot;TMS19F1063P0128&quot;         &quot;TMS19F1063P0139&quot;        
+[271] &quot;TMS19F1064P0001&quot;         &quot;TMS19F1065P0016&quot;        
+[273] &quot;TMS19F1065P0067&quot;         &quot;TMS19F1065P0115&quot;        
+[275] &quot;TMS19F1066P0042&quot;         &quot;TMS19F1067P0107&quot;        
+[277] &quot;TMS19F1067P0108&quot;         &quot;TMS19F1067P0124&quot;        
+[279] &quot;TMS19F1067P0166&quot;         &quot;TMS19F1067P0197&quot;        
+[281] &quot;TMS19F1071P0016&quot;         &quot;TMS19F1078P0020&quot;        
+[283] &quot;TMS19F1078P0046&quot;         &quot;TMS19F1080P0001&quot;        
+[285] &quot;TMS19F1080P0002&quot;         &quot;TMS19F1080P0008&quot;        
+[287] &quot;TMS19F1080P0081&quot;         &quot;TMS19F1081P0071&quot;        
+[289] &quot;TMS19F1081P0090&quot;         &quot;TMS19F1086P0016&quot;        
+[291] &quot;TMS19F1086P0037&quot;         &quot;TMS19F1091P0087&quot;        
+[293] &quot;TMS19F1092P0063&quot;         &quot;TMS19F1098P0013&quot;        
+[295] &quot;TMS19F1110P0064&quot;         &quot;TMS19F1115P0070&quot;        
+[297] &quot;TMS19F1115P0074&quot;         &quot;TMS19F1121P0115&quot;        
+[299] &quot;TMS19F1123P0002&quot;         &quot;TMS19F1136P0034&quot;        
+[301] &quot;TMS19F1139P0112&quot;         &quot;TMS19F1139P0145&quot;        
+[303] &quot;TMS19F1139P0146&quot;         &quot;TMS19F1139P0150&quot;        
+[305] &quot;TMS19F1143P0049&quot;         &quot;TMS19F1143P0053&quot;        
+[307] &quot;TMS19F1143P0055&quot;         &quot;TMS19F1143P0067&quot;        
+[309] &quot;TMS19F1143P0068&quot;         &quot;TMS19F1143P0069&quot;        
+[311] &quot;TMS19F1144P0030&quot;         &quot;TMS19F1144P0031&quot;        
+[313] &quot;TMS19F1145P0005&quot;         &quot;TMS19F1145P0013&quot;        
+[315] &quot;TMS19F1147P0014&quot;         &quot;TMS19F1149P0005&quot;        
+[317] &quot;TMS19F1149P0034&quot;         &quot;TMS19F1150P0002&quot;        
+[319] &quot;TMS19F1151P0001&quot;         &quot;TMS19F1151P0009&quot;        
+[321] &quot;TMS19F1152P0053&quot;         &quot;TMS19F1155P0003&quot;        
+[323] &quot;TMS19F1155P0019&quot;         &quot;TMS19F1155P0023&quot;        
+[325] &quot;TMS19F1155P0060&quot;         &quot;TMS19F1156P0009&quot;        
+[327] &quot;TMS19F1158P0038&quot;         &quot;TMS19F1159P0029&quot;        
+[329] &quot;TMS19F1163P0006&quot;         &quot;TMS19F1169P0066&quot;        
+[331] &quot;TMS19F1173P0033&quot;         &quot;TMS19F1179P0005&quot;        
+[333] &quot;TMS19F1186P0030&quot;         &quot;TMS19F1187P0050&quot;        
+[335] &quot;TMS19F1190P0021&quot;         &quot;TMS19F1197P0002&quot;        
+[337] &quot;TMS19F1197P0047&quot;         &quot;TMS19F1197P0075&quot;        
+[339] &quot;TMS19F1205P0038&quot;         &quot;TMS19F1205P0043&quot;        
+[341] &quot;TMS19F1207P0028&quot;         &quot;TMS19F1209P0033&quot;        
+[343] &quot;TMS19F1213P0034&quot;         &quot;TMS19F1215P0048&quot;        
+[345] &quot;TMS19F1216P0004&quot;         &quot;TMS19F1218P0010&quot;        
+[347] &quot;TMS19F1218P0023&quot;         &quot;TMS19F1218P0043&quot;        
+[349] &quot;TMS19F1218P0060&quot;         &quot;TMS19F1218P0075&quot;        
+[351] &quot;TMS19F1221P0017&quot;         &quot;TMS19F1221P0041&quot;        
+[353] &quot;TMS19F1221P0050&quot;         &quot;TMS19F1226P0003&quot;        
+[355] &quot;TMS19F1226P0005&quot;         &quot;TMS19F1226P0013&quot;        
+[357] &quot;TMS19F1226P0280&quot;         &quot;TMS19F1226P0296&quot;        
+[359] &quot;TMS19F1227P0010&quot;         &quot;TMS19F1234P0044&quot;        
+[361] &quot;TMS19F1240P0010&quot;         &quot;TMS19F1240P0023&quot;        
+[363] &quot;TMS19F1240P0085&quot;         &quot;TMS19F1241P0037&quot;        
+[365] &quot;TMS19F1243P0018&quot;         &quot;TMS19F1243P0021&quot;        
+[367] &quot;TMS19F1244P0085&quot;         &quot;TMS19F1244P0105&quot;        
+[369] &quot;TMS19F1244P0112&quot;         &quot;TMS19F1244P0127&quot;        
+[371] &quot;TMS19F1246P0004&quot;         &quot;TMS19F1246P0081&quot;        
+[373] &quot;TMS19F1246P0084&quot;         &quot;TMS19F1246P0088&quot;        
+[375] &quot;TMS19F1247P0041&quot;         &quot;TMS19F1247P0057&quot;        
+[377] &quot;TMS19F1249P0017&quot;         &quot;TMS19F1250P0016&quot;        
+[379] &quot;TMS19F1252P0182&quot;         &quot;TMS19F1261P0020&quot;        
+[381] &quot;TMS19F1267P0002&quot;         &quot;TMS19F1268P0023&quot;        
+[383] &quot;TMS19F1269P0030&quot;         &quot;TMS19F1271P0001&quot;        
+[385] &quot;TMS19F1272P0020&quot;         &quot;TMS19F1276P0007&quot;        
+[387] &quot;TMS19F1278P0013&quot;         &quot;TMS19F1278P0035&quot;        
+[389] &quot;TMS19F1279P0049&quot;         &quot;TMS19F1280P0001&quot;        
+[391] &quot;TMS19F1280P0020&quot;         &quot;TMS19F1280P0057&quot;        
+[393] &quot;TMS19F1281P0025&quot;         &quot;TMS19F1281P0026&quot;        
+[395] &quot;TMS19F1281P0046&quot;         &quot;TMS19F1281P0079&quot;        
+[397] &quot;TMS19F1282P0015&quot;         &quot;TMS19F1282P0029&quot;        
+[399] &quot;TMS19F1282P0035&quot;         &quot;TMS19F1283P0030&quot;        
+[401] &quot;TMS19F1283P0053&quot;         &quot;TMS19F1285P0010&quot;        
+[403] &quot;TMS19F1285P0012&quot;         &quot;TMS19F1285P0017&quot;        
+[405] &quot;TMS19F1285P0030&quot;         &quot;TMS19F1285P0038&quot;        
+[407] &quot;TMS19F1285P0040&quot;         &quot;TMS19F1285P0045&quot;        
+[409] &quot;TMS19F1286P0027&quot;         &quot;TMS19F1286P0029&quot;        
+[411] &quot;TMS19F1286P0044&quot;         &quot;TMS19F1286P0046&quot;        
+[413] &quot;TMS19F1286P0052&quot;         &quot;TMS19F1286P0084&quot;        
+[415] &quot;TMS19F1287P0006&quot;         &quot;TMS19F1288P0001&quot;        
+[417] &quot;TMS19F1290P0020&quot;         &quot;TMS19F1291P0006&quot;        
+[419] &quot;TMS19F1292P0001&quot;         &quot;TMS19F1292P0011&quot;        
+[421] &quot;TMS19F1292P0013&quot;         &quot;TMS19F1292P0023&quot;        
+[423] &quot;TMS19F1292P0025&quot;         &quot;TMS19F1292P0036&quot;        
+[425] &quot;TMS19F1292P0045&quot;         &quot;TMS19F1292P0062&quot;        
+[427] &quot;TMS19F1292P0090&quot;         &quot;TMS19F1294P0014&quot;        
+[429] &quot;TMS19F1294P0020&quot;         &quot;TMS19F1294P0030&quot;        
+[431] &quot;TMS19F1298P0005&quot;         &quot;TMS19F1300P0035&quot;        
+[433] &quot;TMS19F1300P0053&quot;         &quot;TMS19F1301P0023&quot;        
+[435] &quot;TMS19F1304P0016&quot;         &quot;TMS19F1304P0017&quot;        
+[437] &quot;TMS19F1304P0083&quot;         &quot;TMS19F1304P0119&quot;        
+[439] &quot;TMS19F1306P0058&quot;         &quot;TMS19F1307P0067&quot;        
+[441] &quot;TMS19F1307P0083&quot;         &quot;TMS19F1307P0098&quot;        
+[443] &quot;TMS19F1307P0112&quot;         &quot;TMS19F1310P0018&quot;        
+[445] &quot;TMS19F1312P0016&quot;         &quot;TMS19F1312P0032&quot;        
+[447] &quot;TMS19F1314P0003&quot;         &quot;TMS19F1316P0015&quot;        
+[449] &quot;TMS19F1316P0029&quot;         &quot;TMS19F1316P0041&quot;        
+[451] &quot;TMS19F1316P0045&quot;         &quot;TMS19F1320P0012&quot;        
+[453] &quot;TMS19F1320P0034&quot;         &quot;TMS19F1320P0060&quot;        
+[455] &quot;TMS19F1322P0029&quot;         &quot;TMS19F1329P0010&quot;        
+[457] &quot;TMS19F1329P0013&quot;         &quot;TMS19F1329P0039&quot;        
+[459] &quot;TMS19F1329P0043&quot;         &quot;TMS19F1329P0072&quot;        
+[461] &quot;TMS19F1329P0073&quot;         &quot;TMS19F1329P0183&quot;        
+[463] &quot;TMS19F1329P0185&quot;         &quot;TMS19F1329P0210&quot;        
+[465] &quot;TMS19F1329P0211&quot;         &quot;TMS19F1329P0227&quot;        
+[467] &quot;TMS19F1329P0229&quot;         &quot;TMS19F1330P0061&quot;        
+[469] &quot;TMS19F1330P0064&quot;         &quot;TMS19F1330P0152&quot;        
+[471] &quot;TMS19F1336P0061&quot;         &quot;TMS19F1337P0005&quot;        
+[473] &quot;TMS19F1338P0017&quot;         &quot;TMS19F1338P0023&quot;        
+[475] &quot;TMS19F1338P0034&quot;         &quot;TMS19F1339P0023&quot;        
+[477] &quot;TMS19F1341P0091&quot;         &quot;TMS19F1342P0006&quot;        
+[479] &quot;TMS19F1342P0025&quot;         &quot;TMS19F1342P0058&quot;        
+[481] &quot;TMS19F1351P0069&quot;         &quot;TMS19F1353P0016&quot;        
+[483] &quot;TMS19F1353P0018&quot;         &quot;TMS19F1362P0007&quot;        
+[485] &quot;TMS19F1362P0020&quot;         &quot;TMS19F1363P0019&quot;        
+[487] &quot;TMS19F1364P0034&quot;         &quot;TMS19F1364P0085&quot;        
+[489] &quot;TMS19F1366P0037&quot;         &quot;TMS19F1370P0005&quot;        
+[491] &quot;TMS19F1372P0019&quot;         &quot;TMS19F1374P0014&quot;        
+[493] &quot;TMS19F1374P0100&quot;         &quot;TMS19F1374P0116&quot;        
+[495] &quot;TMS19F1375P0034&quot;         &quot;TMS19F1375P0040&quot;        
+[497] &quot;TMS19F1378P0011&quot;         &quot;TMS19F1379P0084&quot;        
+[499] &quot;TMS19F1384P0037&quot;         &quot;TMS19F1384P0041&quot;        
+[501] &quot;TMS19F1384P0094&quot;         &quot;TMS19F1386P0032&quot;        
+[503] &quot;TMS19F1387P0025&quot;         &quot;TMS19F1388P0082&quot;        
+[505] &quot;TMS19F1389P0035&quot;         &quot;TMS19F1391P0009&quot;        
+[507] &quot;TMS19F1391P0149&quot;         &quot;TMS19F1401P0007&quot;        
+[509] &quot;TMS19F1403P0001&quot;         &quot;TMS19F1403P0007&quot;        
+[511] &quot;TMS19F1403P0013&quot;         &quot;TMS19F1404P0002&quot;        
+[513] &quot;TMS19F1404P0027&quot;         &quot;TMS19F1412P0101&quot;        
+[515] &quot;TMS19F1413P0002&quot;         &quot;TMS19F1414P0005&quot;        
+[517] &quot;TMS19F1414P0027&quot;         &quot;TMS19F1414P0031&quot;        
+[519] &quot;TMS19F1414P0040&quot;         &quot;TMS19F1414P0109&quot;        
+[521] &quot;TMS19F1418P0007&quot;         &quot;TMS19F1418P0010&quot;        
+[523] &quot;TMS19F1434P0005&quot;         &quot;TMS19F1437P0103&quot;        
+[525] &quot;TMS19F1437P0121&quot;         &quot;TMS19F1437P0122&quot;        
+[527] &quot;TMS19F1437P0171&quot;         &quot;TMS19F1438P0103&quot;        
+[529] &quot;TMS19F1439P0022&quot;         &quot;TMS19F1439P0035&quot;        
+[531] &quot;TMS19F1439P0044&quot;         &quot;TMS19F1439P0068&quot;        
+[533] &quot;TMS19F1439P0073&quot;         &quot;TMS19F1440P0005&quot;        
+[535] &quot;TMS19F1440P0095&quot;         &quot;TMS19F1440P0107&quot;        
+[537] &quot;TMS19F1446P0063&quot;         &quot;TMS19F1448P0165&quot;        
+[539] &quot;TMS19F1450P0057&quot;         &quot;TMS19F1450P0171&quot;        
+[541] &quot;TMS19F1450P0180&quot;         &quot;TMS19F1450P0205&quot;        
+[543] &quot;TMS19F1450P0208&quot;         &quot;TMS19F1450P0245&quot;        
+[545] &quot;TMS19F1451P0004&quot;         &quot;TMS19F1452P0010&quot;        
+[547] &quot;TMS19F1464P0021&quot;         &quot;TMS19F1465P0008&quot;        
+[549] &quot;TMS19F1466P0017&quot;         &quot;TMS19F1468P0005&quot;        
+[551] &quot;TMS19F1472P0002&quot;         &quot;TMS19F1475P0012&quot;        
+[553] &quot;TMS19F1478P0011&quot;         &quot;TMS19F1484P0007&quot;        
+[555] &quot;TMS19F1493P0007&quot;         &quot;TMS19F1493P0020&quot;        
+[557] &quot;TMS19F1520P0006&quot;         &quot;TMS19F1521P0009&quot;        
+[559] &quot;TMS19F1524P0008&quot;         &quot;TMS19F1563P0010&quot;        
+[561] &quot;TOMA326(4X)&quot;             &quot;W940102&quot;                
+[563] &quot;Z960058&quot;                 &quot;Z970002&quot;                </code></pre>
 <p>There are phenotyped-but-not-genotyped lines.</p>
 <pre class="r"><code>table(rownames(A) %in% dm_blups$germplasmName)</code></pre>
 <pre><code>
@@ -651,12 +1089,34 @@ FALSE  TRUE
 install.packages(&#39;sommer&#39;) in a new session
  Use the &#39;date.warning&#39; argument to disable the warning message.Adding additional levels of Gu in the model matrix of &#39;germplasmName&#39; 
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -356.471   6:52:30      3           0
-    2      -355.724   6:52:33      6           0
-    3      -355.405   6:52:35      8           0
-    4      -355.333   6:52:38      11           0
-    5      -355.327   6:52:41      14           0
-    6      -355.326   6:52:43      16           0</code></pre>
+    1      -356.471   7:57:30      3           0
+    2      -355.724   7:57:33      6           0
+    3      -355.405   7:57:35      8           0
+    4      -355.333   7:57:38      11           0
+    5      -355.327   7:57:40      13           0
+    6      -355.326   7:57:43      16           0</code></pre>
+<pre class="r"><code>summary(gblup_all)</code></pre>
+<pre><code>=================================================================
+            Multivariate Linear Mixed Model fit by REML            
+************************  sommer 4.1  ************************ 
+=================================================================
+         logLik      AIC      BIC Method Converge
+Value -355.3263 712.6526 717.5216     NR     TRUE
+=================================================================
+Variance-Covariance components:
+                                VarComp VarCompSE Zratio Constraint
+u:germplasmName.drgBLUP-drgBLUP   2.490    0.5938  4.193   Positive
+units.drgBLUP-drgBLUP             7.694    0.4109 18.724   Positive
+=================================================================
+Fixed effects:
+    Trait      Effect Estimate Std.Error t.value
+1 drgBLUP (Intercept)  -0.0458    0.1375 -0.3331
+=================================================================
+Groups and observations:
+                drgBLUP
+u:germplasmName    1007
+=================================================================
+Use the &#39;$&#39; sign to access results and parameters</code></pre>
 <p>Here’s how to get out the <strong>GEBV</strong> from the <code>mmer()</code> output:</p>
 <pre class="r"><code>gebv&lt;-gblup_all$U$`u:germplasmName`$drgBLUP
 # Notice the &quot;germplasmName&quot; and &quot;drgBLUP&quot; references in this call 
@@ -672,7 +1132,7 @@ iteration    LogLik     wall    cpu(sec)   restrained
 -4.76399 -0.63157  0.05915  0.00000  0.68340  2.44024 </code></pre>
 <p>GEBV are centered on zero.</p>
 <pre class="r"><code>hist(gebv)</code></pre>
-<p><img src="figure/intro_gp.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/intro_gp.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="prediction-accuracy" class="section level1">
 <h1>Prediction accuracy</h1>
@@ -681,7 +1141,7 @@ iteration    LogLik     wall    cpu(sec)   restrained
 <p>Let’s start <em>super</em> simple.</p>
 <p>Of the phenotyped lines, I randomly sample approx. 1/5 (20%).</p>
 <pre class="r"><code>set.seed(1212)
-test_set&lt;-sample(dm_blups$germplasmName,size = ceiling(346/5), replace = F)</code></pre>
+test_set&lt;-sample(dm_blups$germplasmName,size = ceiling(962/5), replace = F)</code></pre>
 <p>Remove the lines chosen (<strong>test_set</strong>) from the training dataset:</p>
 <pre class="r"><code>training_blups&lt;-dm_blups %&gt;% 
      filter(!germplasmName %in% test_set)</code></pre>
@@ -696,12 +1156,12 @@ test_set&lt;-sample(dm_blups$germplasmName,size = ceiling(346/5), replace = F)</
 install.packages(&#39;sommer&#39;) in a new session
  Use the &#39;date.warning&#39; argument to disable the warning message.Adding additional levels of Gu in the model matrix of &#39;germplasmName&#39; 
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -337.163   6:52:49      2           0
-    2      -336.308   6:52:51      4           0
-    3      -335.959   6:52:53      6           0
-    4      -335.885   6:52:55      8           0
-    5      -335.879   6:52:57      10           0
-    6      -335.878   6:52:59      12           0</code></pre>
+    1      -286.179   7:57:47      2           0
+    2      -285.32   7:57:49      4           0
+    3      -284.95   7:57:50      5           0
+    4      -284.868   7:57:51      6           0
+    5      -284.861   7:57:53      8           0
+    6      -284.86   7:57:54      9           0</code></pre>
 <p>Now we can compare (correlate) the GEBV predicted for the held-out <strong>test_set</strong> lines to the BLUPs for those lines.</p>
 <p>This is considered an estimate of <strong>“prediction accuracy”</strong>.</p>
 <pre class="r"><code># grab the gebv only for the test_set lines
@@ -714,7 +1174,7 @@ gebv_vs_blups_testset&lt;-dm_blups %&gt;%
 <pre><code>Joining, by = &quot;germplasmName&quot;</code></pre>
 <p>Correlate the GEBV with the BLUP for the test_set.</p>
 <pre class="r"><code>gebv_vs_blups_testset %$% cor(BLUP,GEBV)</code></pre>
-<pre><code>[1] 0.1750126</code></pre>
+<pre><code>[1] 0.1331629</code></pre>
 <p>This correlation represents an estimate of accuracy predicting lines that aren’t phenotyped, based only on their genetic relatedness and the phenotypes of their relatives.</p>
 <p>Sure, this is a low values. But it’s a small dataset using a small sample of markers to make compute fast for example purposes.</p>
 </div>
@@ -725,6 +1185,21 @@ gebv_vs_blups_testset&lt;-dm_blups %&gt;%
 <p>Below, I use it on only 1 trait, additive-only model.</p>
 <p><strong>NOTES:</strong> - doesn’t work properly <em>unless</em> <code>gid="GID"</code>. - It also requires you to remove any phenotyped lines that aren’t genotyped.</p>
 <p>Following chunk does both of those:</p>
+<pre class="r"><code>blups$blups[[1]]</code></pre>
+<pre><code># A tibble: 1,526 × 6
+   germplasmName    BLUP   PEV   REL drgBLUP    WT
+   &lt;chr&gt;           &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+ 1 50395         -1.02    4.44 0.117  -8.65  0.177
+ 2 95NA-00063    -0.0285  4.44 0.117  -0.243 0.177
+ 3 ANKRA         -0.760   4.44 0.117  -6.47  0.177
+ 4 BAHKYEHEMAA    0.924   4.44 0.117   7.87  0.177
+ 5 BANGWEULU      0.331   4.44 0.117   2.82  0.177
+ 6 BOUNOUA_BLANC  1.02    4.44 0.117   8.68  0.177
+ 7 CE85           0.545   4.44 0.117   4.64  0.177
+ 8 CH92108        0.209   4.44 0.117   1.78  0.177
+ 9 DOKUNBAHKYE    0.924   4.44 0.117   7.87  0.177
+10 ESAMBAHKYE     0.449   4.44 0.117   3.83  0.177
+# … with 1,516 more rows</code></pre>
 <pre class="r"><code>blups_forRunCrossValFunc&lt;-blups %&gt;% 
      # just one trait
      slice(1) %&gt;% 
@@ -737,6 +1212,21 @@ gebv_vs_blups_testset&lt;-dm_blups %&gt;%
                              ~filter(.,germplasmName %in% rownames(A)) %&gt;% 
                                   # rename the germplasmName column to GID
                                   rename(GID=germplasmName)))</code></pre>
+<pre class="r"><code>blups_forRunCrossValFunc$TrainingData[[1]]</code></pre>
+<pre><code># A tibble: 962 × 6
+   GID                    BLUP   PEV   REL drgBLUP    WT
+   &lt;chr&gt;                 &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+ 1 50395               -1.02    4.44 0.117  -8.65  0.177
+ 2 95NA-00063          -0.0285  4.44 0.117  -0.243 0.177
+ 3 BAHKYEHEMAA          0.924   4.44 0.117   7.87  0.177
+ 4 BOUNOUA_BLANC        1.02    4.44 0.117   8.68  0.177
+ 5 CH92108              0.209   4.44 0.117   1.78  0.177
+ 6 DOKUNBAHKYE          0.924   4.44 0.117   7.87  0.177
+ 7 ESAMBAHKYE           0.449   4.44 0.117   3.83  0.177
+ 8 IITA-TMS-BAD9100455  0.408   4.44 0.117   3.47  0.177
+ 9 IITA-TMS-BAD9200061  0.0849  4.44 0.117   0.722 0.177
+10 IITA-TMS-BAD9200068 -0.0338  4.44 0.117  -0.288 0.177
+# … with 952 more rows</code></pre>
 <pre class="r"><code>standardCV&lt;-runCrossVal(blups=blups_forRunCrossValFunc,
                         modelType=&quot;A&quot;,
                         selInd=FALSE,
@@ -748,103 +1238,103 @@ gebv_vs_blups_testset&lt;-dm_blups %&gt;%
 <pre><code>Loading required package: furrr</code></pre>
 <pre><code>Loading required package: future</code></pre>
 <pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -282.488   6:53:6      2           0
-    2      -281.563   6:53:8      4           0
-    3      -281.236   6:53:9      5           0
-    4      -281.183   6:53:11      7           0
-    5      -281.18   6:53:12      8           0
-    6      -281.18   6:53:14      10           0
+    1      -282.488   7:58:1      2           0
+    2      -281.563   7:58:3      4           0
+    3      -281.236   7:58:5      6           0
+    4      -281.183   7:58:6      7           0
+    5      -281.18   7:58:8      9           0
+    6      -281.18   7:58:9      10           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -278.563   6:53:18      2           0
-    2      -277.344   6:53:20      4           0
-    3      -276.812   6:53:21      5           0
-    4      -276.682   6:53:23      7           0
-    5      -276.668   6:53:24      8           0
-    6      -276.666   6:53:26      10           0
-    7      -276.666   6:53:27      11           0
+    1      -278.563   7:58:13      2           0
+    2      -277.344   7:58:15      4           0
+    3      -276.812   7:58:16      5           0
+    4      -276.682   7:58:18      7           0
+    5      -276.668   7:58:19      8           0
+    6      -276.666   7:58:21      10           0
+    7      -276.666   7:58:23      12           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
 <pre><code>Joining, by = &quot;GID&quot;</code></pre>
 <pre><code>Joining, by = &quot;GID&quot;</code></pre>
 <pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -284.947   6:53:7      2           0
-    2      -283.172   6:53:8      3           0
-    3      -282.401   6:53:10      5           0
-    4      -282.225   6:53:11      6           0
-    5      -282.21   6:53:13      8           0
-    6      -282.209   6:53:15      10           0
-    7      -282.209   6:53:17      12           0
+    1      -284.947   7:58:2      2           0
+    2      -283.172   7:58:4      4           0
+    3      -282.401   7:58:5      5           0
+    4      -282.225   7:58:7      7           0
+    5      -282.21   7:58:8      8           0
+    6      -282.209   7:58:10      10           0
+    7      -282.209   7:58:12      12           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -285.414   6:53:20      2           0
-    2      -285.212   6:53:22      4           0
-    3      -285.127   6:53:24      6           0
-    4      -285.109   6:53:25      7           0
-    5      -285.108   6:53:27      9           0
-    6      -285.108   6:53:28      10           0
+    1      -285.414   7:58:15      2           0
+    2      -285.212   7:58:17      4           0
+    3      -285.127   7:58:19      6           0
+    4      -285.109   7:58:20      7           0
+    5      -285.108   7:58:22      9           0
+    6      -285.108   7:58:23      10           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
 <pre><code>Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;</code></pre>
 <pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -293.434   6:53:7      2           0
-    2      -292.797   6:53:9      4           0
-    3      -292.531   6:53:10      5           0
-    4      -292.475   6:53:12      7           0
-    5      -292.471   6:53:14      9           0
-    6      -292.47   6:53:16      11           0
+    1      -293.434   7:58:2      2           0
+    2      -292.797   7:58:4      4           0
+    3      -292.531   7:58:6      6           0
+    4      -292.475   7:58:7      7           0
+    5      -292.471   7:58:9      9           0
+    6      -292.47   7:58:11      11           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -299.215   6:53:19      2           0
-    2      -298.959   6:53:21      4           0
-    3      -298.843   6:53:22      5           0
-    4      -298.815   6:53:24      7           0
-    5      -298.812   6:53:26      9           0
-    6      -298.811   6:53:27      10           0
+    1      -299.215   7:58:14      2           0
+    2      -298.959   7:58:16      4           0
+    3      -298.843   7:58:17      5           0
+    4      -298.815   7:58:19      7           0
+    5      -298.812   7:58:21      9           0
+    6      -298.811   7:58:22      10           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
 <pre><code>Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;</code></pre>
 <pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -270.158   6:53:8      2           0
-    2      -270.127   6:53:9      3           0
-    3      -270.114   6:53:11      5           0
-    4      -270.111   6:53:13      7           0
-    5      -270.111   6:53:14      8           0
+    1      -270.158   7:58:3      2           0
+    2      -270.127   7:58:5      4           0
+    3      -270.114   7:58:6      5           0
+    4      -270.111   7:58:8      7           0
+    5      -270.111   7:58:9      8           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -280.573   6:53:18      2           0
-    2      -278.518   6:53:20      4           0
-    3      -277.652   6:53:21      5           0
-    4      -277.453   6:53:23      7           0
-    5      -277.435   6:53:25      9           0
-    6      -277.433   6:53:26      10           0
-    7      -277.433   6:53:28      12           0
+    1      -280.573   7:58:13      2           0
+    2      -278.518   7:58:15      4           0
+    3      -277.652   7:58:16      5           0
+    4      -277.453   7:58:18      7           0
+    5      -277.435   7:58:19      8           0
+    6      -277.433   7:58:21      10           0
+    7      -277.433   7:58:23      12           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
 <pre><code>Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;</code></pre>
 <pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -288.833   6:53:8      2           0
-    2      -287.363   6:53:10      4           0
-    3      -286.82   6:53:12      6           0
-    4      -286.726   6:53:13      7           0
-    5      -286.721   6:53:15      9           0
-    6      -286.721   6:53:17      11           0
+    1      -288.833   7:58:4      3           0
+    2      -287.363   7:58:5      4           0
+    3      -286.82   7:58:7      6           0
+    4      -286.726   7:58:9      8           0
+    5      -286.721   7:58:10      9           0
+    6      -286.721   7:58:12      11           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -287.812   6:53:20      2           0
-    2      -286.737   6:53:22      4           0
-    3      -286.284   6:53:24      6           0
-    4      -286.189   6:53:25      7           0
-    5      -286.182   6:53:27      9           0
-    6      -286.181   6:53:28      10           0
+    1      -287.812   7:58:15      2           0
+    2      -286.737   7:58:17      4           0
+    3      -286.284   7:58:19      6           0
+    4      -286.189   7:58:20      7           0
+    5      -286.182   7:58:22      9           0
+    6      -286.181   7:58:24      11           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
 <pre><code>Joining, by = &quot;GID&quot;
@@ -895,12 +1385,12 @@ Z&lt;-centerDosage(M)</code></pre>
 <pre><code>Version out of date. Please update sommer to the newest version using:
 install.packages(&#39;sommer&#39;) in a new session
  Use the &#39;date.warning&#39; argument to disable the warning message.iteration    LogLik     wall    cpu(sec)   restrained
-    1      -356.474   6:53:35      3           0
-    2      -355.725   6:53:38      6           0
-    3      -355.405   6:53:41      9           0
-    4      -355.333   6:53:43      11           0
-    5      -355.327   6:53:46      14           0
-    6      -355.326   6:53:49      17           0</code></pre>
+    1      -356.474   7:58:31      4           0
+    2      -355.725   7:58:34      7           0
+    3      -355.405   7:58:36      9           0
+    4      -355.333   7:58:39      12           0
+    5      -355.327   7:58:41      14           0
+    6      -355.326   7:58:44      17           0</code></pre>
 <pre class="r"><code># extract the G-BLUPs (GEBVs)
 g&lt;-gblup$U$`u:germplasmName`$drgBLUP
 all(names(g) %in% rownames(Z))</code></pre>
@@ -912,7 +1402,7 @@ all(names(g) %in% rownames(Z))</code></pre>
 ## one way to do this is by creating and incidence matrix
 ## use the model.matrix() function as follows:
 ZincMat=model.matrix(~factor(germplasmName,levels=rownames(Z))-1,data=dm_blups) # -1 because we don&#39;t want an intercept here
-dim(ZincMat) # [1] 346 346 </code></pre>
+dim(ZincMat) </code></pre>
 <pre><code>[1] 962 962</code></pre>
 <pre class="r"><code># relates the rows of the BLUPs to the rows the marker matrix
 
@@ -924,20 +1414,4011 @@ rrblup&lt;-mmer(fixed = drgBLUP~1,
 <pre><code>Version out of date. Please update sommer to the newest version using:
 install.packages(&#39;sommer&#39;) in a new session
  Use the &#39;date.warning&#39; argument to disable the warning message.iteration    LogLik     wall    cpu(sec)   restrained
-    1      -835.075   6:54:11      18           0
-    2      -610.966   6:54:14      21           0
-    3      -438.994   6:54:17      24           0
-    4      -362.751   6:54:20      27           0
-    5      -355.985   6:54:22      29           0
-    6      -355.386   6:54:25      32           0
-    7      -355.332   6:54:27      34           0
-    8      -355.327   6:54:30      37           0
-    9      -355.326   6:54:32      39           0</code></pre>
+    1      -835.075   7:59:6      17           0
+    2      -610.966   7:59:8      19           0
+    3      -438.994   7:59:11      22           0
+    4      -362.751   7:59:14      25           0
+    5      -355.985   7:59:16      27           0
+    6      -355.386   7:59:19      30           0
+    7      -355.332   7:59:21      32           0
+    8      -355.327   7:59:23      34           0
+    9      -355.326   7:59:26      37           0</code></pre>
 <p>Extract the SNP-BLUPs</p>
 <pre class="r"><code># extract the SNP-BLUPs
 u&lt;-as.matrix(rrblup$U$`u:Z`$drgBLUP)
 all(rownames(u)==colnames(Z))</code></pre>
 <pre><code>[1] TRUE</code></pre>
+<pre class="r"><code>length(u)</code></pre>
+<pre><code>[1] 3987</code></pre>
+<pre class="r"><code>u</code></pre>
+<pre><code>                         [,1]
+1_652699_G_C    -3.486864e-03
+1_868970_G_T     1.164541e-04
+1_943129_T_A     2.163671e-04
+1_1132830_A_T    2.745465e-03
+1_1310706_A_T   -4.121890e-03
+1_1411716_T_A   -5.779730e-04
+1_1438183_T_C    3.304248e-03
+1_1583214_C_T    1.739301e-03
+1_1585851_T_A   -3.352422e-03
+1_1648945_G_A   -6.879783e-03
+1_1709964_G_A   -1.863500e-03
+1_2022985_T_C    5.593540e-03
+1_2198202_T_A    8.500869e-03
+1_2250748_A_G    2.041319e-02
+1_2391503_G_A   -1.306038e-02
+1_2459155_C_G   -6.295218e-03
+1_2552028_G_T    3.029382e-03
+1_2656924_T_C   -6.381407e-03
+1_2660004_A_C   -9.358012e-03
+1_2672725_G_A   -1.053321e-02
+1_2708183_C_G   -2.953085e-03
+1_2753403_G_C    4.571588e-03
+1_3037336_A_G    3.547174e-03
+1_3070666_T_G    9.177683e-03
+1_3096461_A_G   -2.196606e-03
+1_3192411_G_A   -1.075950e-03
+1_3416164_A_G   -8.180591e-04
+1_3425997_G_A   -6.400568e-03
+1_3443860_C_T    1.130272e-03
+1_3456159_A_G    1.036160e-03
+1_3468183_A_T    1.746826e-03
+1_3556174_G_A    1.171235e-02
+1_3604364_A_C   -5.970567e-03
+1_3613148_G_A    1.557972e-03
+1_3706124_C_T    1.488161e-03
+1_3714905_T_C   -1.686612e-04
+1_3783936_G_T   -5.144386e-03
+1_3867093_C_G    5.483958e-03
+1_3874868_T_A    1.059058e-02
+1_4094612_T_C   -7.646728e-03
+1_4265700_T_A    3.984779e-03
+1_4271845_C_G    8.229748e-04
+1_4271903_A_G   -9.715702e-03
+1_4345330_G_A   -8.098392e-03
+1_4357325_T_C    1.041374e-02
+1_4375964_A_T    2.233230e-03
+1_4424963_T_A   -8.107711e-03
+1_4667911_G_C   -2.460234e-02
+1_4890290_T_C   -3.956624e-03
+1_4935603_C_A   -6.965958e-03
+1_5092296_C_T   -2.443585e-03
+1_5134792_A_C   -1.450725e-02
+1_5332930_C_A    1.929853e-02
+1_6234380_G_T    3.201440e-03
+1_6238253_G_A    2.059740e-03
+1_6238486_T_C   -3.108064e-03
+1_6241429_C_A    2.037251e-03
+1_6264141_C_A   -1.318955e-02
+1_6267829_A_G   -1.178024e-02
+1_6295044_G_A   -3.040629e-03
+1_6302789_G_A   -1.720325e-02
+1_6305217_A_T    2.126287e-03
+1_6329956_A_G   -3.928812e-03
+1_6371431_T_A   -2.004676e-03
+1_6379757_T_A   -3.674832e-03
+1_6506393_A_T    9.542399e-03
+1_6640125_T_C   -1.316739e-02
+1_6793874_T_G   -3.418795e-03
+1_6836850_T_C   -1.578854e-02
+1_6836889_A_G   -1.587490e-02
+1_6892964_C_T    1.873782e-03
+1_7022406_A_G    1.239993e-03
+1_7047801_G_T    3.003273e-03
+1_7050582_A_G   -7.086688e-03
+1_7450200_T_C    2.858787e-03
+1_8966302_A_G   -3.794035e-03
+1_10530158_T_C   7.463880e-03
+1_11532716_T_C   1.006814e-02
+1_19352542_A_G   4.488552e-03
+1_19373389_G_A  -1.774381e-03
+1_19379320_A_T  -4.449014e-03
+1_19394623_G_A  -3.585559e-03
+1_19399424_T_C   7.261499e-03
+1_19505721_A_G   5.439930e-03
+1_19517862_T_C   5.775822e-03
+1_19901423_T_C  -2.874345e-03
+1_19989044_A_G  -1.010996e-02
+1_20037955_A_T  -1.156086e-02
+1_20075623_T_G  -5.434439e-03
+1_20284538_A_T   4.114515e-03
+1_20628738_G_A   3.452184e-03
+1_20719519_T_A   1.543052e-02
+1_20763326_A_G   4.288502e-03
+1_21002039_A_C  -1.213545e-03
+1_21002066_C_G  -2.241544e-03
+1_21120010_G_A   3.077160e-03
+1_21188333_T_C  -5.497200e-03
+1_21297546_C_T   1.507870e-03
+1_21337974_A_G   3.519502e-03
+1_21424192_C_T   7.576765e-04
+1_21427763_C_T   7.576765e-04
+1_21647295_C_G  -5.421198e-03
+1_21684691_C_T  -6.841330e-03
+1_21723616_C_T   5.245899e-03
+1_21882034_G_T  -4.752454e-03
+1_21897533_T_A  -3.101579e-03
+1_21914292_C_T   2.543283e-03
+1_22170143_C_T  -4.465180e-03
+1_22183693_T_A  -4.688170e-03
+1_22186444_C_T  -4.613942e-03
+1_22221138_C_T   9.418415e-03
+1_22222377_A_C  -7.024539e-03
+1_22223157_A_G  -5.140994e-03
+1_22318680_A_T  -7.339751e-03
+1_22398524_G_C   3.941182e-04
+1_22455584_T_A   3.827491e-03
+1_22455599_G_A  -9.484822e-03
+1_22530284_A_G  -6.460702e-04
+1_22534856_G_A   7.741503e-03
+1_22612439_C_A   8.439510e-03
+1_22711495_G_A  -2.046588e-03
+1_22751439_G_A  -3.138629e-03
+1_22803807_G_A   4.774140e-03
+1_22916998_C_A   4.542011e-03
+1_22932923_T_C  -4.516861e-03
+1_23131648_C_A  -4.854072e-03
+1_23151323_T_C   7.847807e-03
+1_23177937_A_T   1.076854e-02
+1_23234110_G_C   3.550704e-03
+1_23272093_G_A   5.808216e-03
+1_23305883_G_A   9.183631e-04
+1_23378854_G_A  -1.332635e-02
+1_23396065_T_C  -1.493226e-02
+1_23595404_T_A   3.327880e-04
+1_23748776_C_T   1.188462e-02
+1_23848192_T_G   4.626654e-03
+1_24032867_G_T  -5.168803e-04
+1_24075342_G_T   1.770335e-03
+1_24105354_T_A   3.464947e-03
+1_24110826_G_T   1.060890e-02
+1_24131568_C_T   2.723780e-03
+1_24131579_G_A   2.723780e-03
+1_24141940_A_T   3.549523e-03
+1_24160185_G_C   3.190575e-03
+1_24181137_A_C   3.309016e-03
+1_24191882_A_G   4.508566e-03
+1_24197505_T_C  -9.816248e-03
+1_24197539_T_C   4.102282e-03
+1_24237456_C_T  -8.174348e-03
+1_24243021_C_T  -9.299876e-03
+1_24252809_G_A   2.364222e-03
+1_24283910_A_C   3.061631e-03
+1_24315507_C_T  -9.646422e-03
+1_24318469_T_C  -1.697856e-02
+1_24318472_C_A  -1.308908e-02
+1_24393605_T_C   7.731418e-04
+1_24442092_A_C   1.991944e-04
+1_24477171_C_T   5.297633e-04
+1_24477878_T_A   2.863783e-03
+1_24565257_G_A   4.305333e-03
+1_24568819_T_C   1.758975e-03
+1_24599570_A_G   2.213497e-03
+1_24643031_G_C   1.564785e-03
+1_24648058_A_G   1.269907e-05
+1_24649158_C_T   1.759483e-04
+1_24708394_T_A   4.624306e-03
+1_24709691_T_G   5.776468e-03
+1_24750728_C_T   2.692307e-03
+1_24753904_T_A  -9.433739e-03
+1_24761033_C_A   2.658445e-03
+1_24771810_C_T   6.251571e-03
+1_24834190_G_T   2.398962e-03
+1_24873234_A_T  -1.841706e-03
+1_24925699_A_T   1.230280e-03
+1_24929007_C_G   8.356396e-04
+1_24971014_C_A  -2.295751e-03
+1_24971051_G_A   1.293980e-03
+1_25018104_C_G   3.174671e-03
+1_25018106_A_C   3.091160e-03
+1_25026218_T_A   1.256885e-03
+1_25074711_G_A   6.679147e-04
+1_25144460_C_T   4.426674e-03
+1_25177693_A_G  -9.249866e-04
+1_25178719_C_A   1.022315e-02
+1_25267431_T_A   3.195231e-03
+1_25274414_A_T  -5.007639e-03
+1_25311993_C_A   3.135731e-03
+1_25314780_T_C   2.099306e-03
+1_25358980_A_G   4.695778e-03
+1_25359689_A_G   2.124589e-04
+1_25426829_G_A   4.634690e-03
+1_25473540_T_C   2.018026e-03
+1_25478261_C_T  -1.816542e-02
+1_25479585_C_T   2.034501e-03
+1_25483633_T_C   4.141538e-03
+1_25530221_T_A   2.343334e-03
+1_25544502_C_T  -2.599967e-03
+1_25553458_T_C   7.501675e-04
+1_25553460_G_A   7.501675e-04
+1_25555278_C_A   1.358174e-03
+1_25557632_A_G   2.421098e-03
+1_25616802_T_A   4.034852e-03
+1_25680420_C_T  -1.965826e-03
+1_25683414_G_A   5.287581e-03
+1_25692682_A_G   1.950651e-03
+1_25695592_T_A   8.692456e-04
+1_25706000_T_A   1.861602e-03
+1_25724095_T_C   2.201357e-03
+1_25736086_G_A   1.694680e-03
+1_25736134_A_G   2.052799e-03
+1_25747799_T_C   1.944316e-03
+1_25769111_A_G   8.730398e-04
+1_25769154_T_A   2.971929e-03
+1_25773195_G_A   1.780251e-03
+1_25820754_C_G  -7.443277e-04
+1_25905511_T_C   3.653099e-03
+1_25909433_A_G   3.651946e-03
+1_25914678_A_C   3.548980e-03
+1_25914778_T_C   3.548980e-03
+1_26000550_C_A   3.591645e-03
+1_26006622_C_T  -9.427875e-03
+1_26049007_T_G   3.040377e-03
+1_26049735_T_G   3.251205e-03
+1_26062870_T_C   3.251205e-03
+1_26068128_G_A   3.706559e-03
+1_26077163_C_G   3.013368e-03
+1_26090767_T_C   1.732927e-03
+1_26091115_A_C   5.031966e-03
+1_26091130_T_C   3.656103e-03
+1_26148834_T_C   3.494478e-03
+1_26204322_G_T   5.832018e-03
+1_26207507_C_A   7.767829e-03
+1_26241684_A_T   6.141276e-03
+1_26267164_C_T   4.770869e-03
+1_26317254_C_T   8.710089e-03
+1_26367887_T_G   9.571292e-04
+1_26401277_C_T   1.267663e-03
+1_26408513_T_G   3.322883e-03
+1_26412620_C_T   2.438979e-03
+1_26412670_T_G  -4.247350e-03
+1_26443936_G_A   5.911709e-04
+1_26478450_C_T  -7.443498e-04
+1_26514419_A_G  -3.380911e-03
+1_26541682_C_G  -6.952085e-04
+1_26577660_G_A  -1.340471e-04
+1_26664474_C_T  -1.340471e-04
+1_26680470_G_C   3.502127e-03
+1_26697734_C_A   2.740174e-04
+1_26769848_G_C   2.036187e-03
+1_26776890_T_A  -9.146836e-04
+1_26813631_T_A   7.093964e-04
+1_26934218_T_C  -1.951802e-03
+1_26970418_T_C   1.818547e-03
+1_26971262_C_T  -3.848244e-03
+1_27019907_C_T  -8.530629e-05
+1_27114030_C_T   1.159700e-03
+1_27118995_A_T  -1.954550e-02
+1_27157595_C_A   2.333876e-03
+1_27181152_A_C  -2.409615e-03
+1_27181525_A_T  -1.588584e-02
+1_27198727_C_T  -4.117709e-04
+1_27209099_T_A   5.698562e-04
+1_27214116_C_A   4.749747e-05
+1_27218587_A_G  -1.518904e-03
+1_27229383_T_C   1.540015e-04
+1_27295286_G_C   4.440791e-04
+1_27329241_A_C   2.758117e-04
+1_27329295_C_G   3.365565e-04
+1_27417680_C_T   8.195370e-04
+1_27426542_T_A  -2.835544e-03
+1_27430249_C_T  -9.562994e-04
+1_27446443_A_G   2.779895e-03
+1_27532019_T_C  -2.207065e-03
+1_27693188_A_G  -2.254376e-03
+1_27700639_G_A  -1.296122e-03
+1_27701030_C_T  -2.037371e-03
+1_27702644_C_T  -2.006013e-03
+1_27712174_C_G  -2.542856e-03
+1_27742113_T_G  -6.279424e-03
+1_27764360_A_G  -3.550446e-03
+1_27764381_T_C  -3.550446e-03
+1_27778609_A_G  -8.277990e-04
+1_27783330_A_G  -1.084612e-03
+1_27783722_G_A  -9.225514e-04
+1_27827581_T_C  -2.230797e-03
+1_27875161_G_T  -3.702145e-03
+1_27940769_A_G  -3.998459e-03
+1_27965523_A_C  -3.606671e-03
+1_27984261_A_T  -3.387723e-03
+1_27985672_C_T  -2.748350e-03
+1_28086866_T_G  -2.407341e-03
+1_28205313_G_C   8.012440e-03
+1_28277286_T_C   1.368940e-05
+1_28296310_A_G  -1.611302e-03
+1_28353015_C_A  -4.018374e-03
+1_28455846_T_C  -1.052571e-03
+1_28457871_G_C  -2.716284e-03
+1_28467266_T_C  -2.621723e-03
+1_28573036_C_T   5.112116e-03
+1_28584366_T_A  -5.868915e-04
+1_28586476_T_G  -3.244495e-03
+1_28588864_A_T  -5.644592e-04
+1_28604907_A_G  -2.421532e-03
+1_28629400_G_A  -5.051817e-04
+1_28668363_G_A  -2.610192e-03
+1_28713465_T_C   9.797983e-04
+1_28762521_A_G   4.271049e-04
+1_28836068_G_C  -1.181424e-03
+1_28872020_T_C   2.094987e-03
+1_28986211_G_T   3.001259e-03
+1_29009435_T_C   8.661967e-04
+1_29043280_G_C  -3.672894e-04
+1_29170261_G_T  -3.530746e-03
+1_29220717_G_A   2.669045e-03
+1_29299025_G_A  -2.612362e-03
+1_29312381_T_A  -2.196101e-03
+1_29334992_G_C  -4.081365e-03
+1_29338642_C_T  -2.895187e-03
+1_29440638_C_T  -2.545505e-03
+1_29474929_T_C  -8.465170e-04
+1_29564089_G_T  -2.881237e-03
+1_29565840_C_T  -3.845120e-03
+1_29574389_T_A  -4.144698e-03
+1_29590232_A_G  -4.322927e-03
+1_29645863_G_T  -4.079322e-03
+1_29801835_A_C  -4.456334e-04
+1_29802536_A_T   2.139859e-04
+1_29832307_G_A  -2.047488e-02
+1_29849300_C_A  -2.103262e-03
+1_29886066_G_C  -1.009133e-02
+1_29928955_C_G  -6.790519e-03
+1_29941943_T_C  -6.497320e-03
+1_29996744_G_A  -6.954443e-03
+1_30021064_A_G  -5.249467e-03
+1_30035393_G_C  -2.242168e-02
+1_30055158_G_A  -1.389271e-02
+1_30055168_C_T  -1.659738e-02
+1_30070215_C_T  -9.464625e-03
+1_30098950_T_C  -8.571629e-03
+1_30106864_T_G  -8.326553e-03
+1_30132102_A_G  -4.062986e-03
+1_30206366_A_T  -6.883151e-03
+1_30338908_A_C   1.920550e-02
+1_30341373_T_C  -4.739242e-03
+1_30350182_A_T   8.211506e-03
+1_30375119_T_G   8.088049e-03
+1_30479434_C_A  -6.043073e-03
+1_30505553_C_T  -5.630427e-03
+1_30545986_A_G   1.747312e-02
+1_30558236_T_A  -1.053837e-02
+1_30568016_G_A  -6.831388e-03
+1_30572867_T_G  -3.990964e-03
+1_30653254_A_G  -4.588660e-03
+1_30688571_T_C  -2.800687e-03
+1_30726068_A_C  -5.338142e-03
+1_30771605_A_T  -5.119976e-03
+1_30781630_A_C   1.022019e-03
+1_30783118_A_G  -3.126118e-03
+1_30833476_C_G  -1.587685e-02
+1_30840841_C_T  -2.145638e-03
+1_30940459_G_T   3.379394e-03
+1_30940468_T_A   3.379394e-03
+1_30948960_A_G  -3.400830e-04
+1_30984051_T_C   1.712912e-04
+1_30992246_A_G  -2.514983e-03
+1_30992477_A_G  -1.041905e-03
+1_31321585_T_G   2.309719e-03
+1_31334524_G_A   2.733572e-03
+1_31389640_C_A   1.793621e-03
+1_31414796_A_T   2.248975e-03
+1_31426568_C_T   8.036910e-04
+1_31432118_T_A   2.226623e-03
+1_31446238_T_A   6.800131e-03
+1_31499097_A_T   9.256893e-04
+1_31531907_T_C  -4.551520e-03
+1_31538002_C_T   3.523407e-03
+1_31583780_C_A   5.171830e-04
+1_31605206_A_T  -3.103156e-04
+1_31639554_A_G  -6.575530e-05
+1_31772950_A_T   2.199390e-03
+1_31773528_C_T   3.911740e-03
+1_31800040_A_C  -4.988407e-03
+1_31811717_A_T   4.067462e-03
+1_31827097_C_T   3.653260e-03
+1_31840925_C_T   3.345482e-03
+1_31922597_G_C   7.568745e-03
+1_31923716_T_C   5.669276e-03
+1_31930801_T_G   7.824980e-03
+1_31950688_T_A   7.392604e-03
+1_31957564_T_G   7.150972e-03
+1_31977264_T_C   5.336908e-03
+1_31981347_T_G   6.431323e-03
+1_31981701_C_A   5.214915e-03
+1_31989699_G_A   5.520523e-03
+1_32071750_A_C   6.685348e-03
+1_32094760_C_T  -5.456818e-05
+1_32094794_A_T  -5.456818e-05
+1_32094944_C_A   7.523596e-03
+1_32232949_C_A   8.057606e-03
+1_32258184_T_C  -1.130273e-03
+1_32268851_T_C  -6.602774e-03
+1_32277160_C_T  -6.836159e-04
+1_32277323_A_C   5.922295e-03
+1_32282991_T_C  -3.392869e-03
+1_32287878_C_T  -3.456011e-03
+1_32287899_C_G  -1.363078e-03
+1_32384693_T_A  -8.148692e-03
+1_32410843_G_A   1.116494e-02
+1_32447613_G_T   7.217180e-03
+1_32462240_A_G  -2.222817e-03
+1_32462276_C_G   6.012538e-03
+1_32503123_T_C   7.161157e-03
+1_32508779_A_C  -9.170776e-03
+1_32508982_A_T   1.929800e-03
+1_32512513_C_T   4.476545e-03
+1_32584127_C_T   1.867839e-03
+1_32604246_G_A  -2.474910e-04
+1_32617166_T_G   4.839887e-03
+1_32716189_G_A   4.834179e-03
+1_32718253_A_T   7.044871e-03
+1_32722046_T_A   3.026765e-03
+1_32759949_T_G   1.415256e-03
+1_32759979_C_T   1.415256e-03
+1_32790432_A_G   5.681775e-03
+1_32799955_T_C   5.224862e-03
+1_32830094_T_A   8.271028e-04
+1_32860087_A_G  -2.888626e-04
+1_32875265_A_C   3.991016e-03
+1_32879551_A_G   1.668178e-03
+1_32904419_C_T   4.842636e-03
+1_32915654_T_A   1.242247e-03
+1_32929765_C_T   5.160435e-03
+1_32930446_G_C   3.657580e-03
+1_32942980_T_C   2.135457e-03
+1_33011930_A_G   1.809254e-02
+1_33024790_T_C   1.214889e-03
+1_33030169_T_G   1.854674e-04
+1_33031073_T_C   1.673769e-03
+1_33061031_G_T   2.536594e-03
+1_33130535_A_G   1.405740e-02
+1_33158803_G_T   3.262990e-03
+1_33163711_C_G   1.340714e-02
+1_33172829_A_G   1.066840e-03
+1_33178533_G_T   1.126352e-03
+1_33192640_G_A  -4.667497e-03
+1_33229658_T_A   3.500949e-03
+1_33243318_G_A   1.548784e-02
+1_33247147_C_A   4.941896e-04
+1_33344236_G_C  -4.621466e-03
+1_33344562_G_A   1.783036e-05
+1_33363312_A_G   3.589785e-04
+1_33363319_A_G   3.589785e-04
+1_33437201_T_G   5.157036e-04
+1_33460704_A_G   8.282584e-04
+1_33460741_A_G   5.679619e-04
+1_33489354_A_G  -5.341384e-04
+1_33588568_G_A  -4.758726e-03
+1_33635667_C_A   5.404072e-04
+1_33684448_T_C   1.450731e-03
+1_33686191_C_G  -4.213530e-03
+1_33687582_G_A  -1.040676e-03
+1_33742238_G_T  -8.173859e-04
+1_33770469_T_C   3.172325e-04
+1_33776722_T_C  -3.869768e-03
+1_33849895_G_A  -3.990633e-05
+1_34163441_A_T  -5.716219e-03
+1_34185499_G_C  -3.494449e-03
+1_34206921_T_C  -3.728300e-03
+1_34226283_G_C  -1.573498e-04
+1_34244722_T_C  -5.927084e-03
+1_34256787_C_T  -4.406497e-03
+1_34319634_G_A  -5.753545e-03
+1_34319959_C_A  -2.897909e-03
+1_34326896_T_G  -5.267529e-03
+1_34479645_T_C  -6.519664e-03
+1_34505041_G_A  -5.491871e-03
+1_34511400_C_T  -4.036135e-03
+1_34511411_C_T  -4.036135e-03
+1_34577618_A_G  -3.314280e-03
+1_34726591_T_G  -7.692026e-03
+1_34808722_C_T  -4.327217e-03
+1_34809865_G_C  -3.364253e-03
+1_34930932_T_G  -2.876742e-03
+10_4879_A_G     -1.248682e-02
+10_22377_C_T    -3.323886e-03
+10_22559_C_G    -4.410005e-04
+10_22620_T_C    -3.988331e-03
+10_27741_G_C    -2.113192e-03
+10_33090_A_G    -3.451051e-03
+10_68033_T_A    -2.350072e-03
+10_69723_C_A     9.998371e-04
+10_157395_A_T   -3.895020e-03
+10_174786_C_A   -1.886743e-02
+10_194683_A_T   -5.607306e-03
+10_402695_C_T   -3.915943e-03
+10_481684_C_G   -3.799177e-03
+10_481961_A_G   -7.180461e-03
+10_513713_A_T   -3.164211e-03
+10_580344_C_T   -5.674776e-03
+10_647151_A_T    6.710069e-03
+10_675287_A_C    3.044640e-03
+10_741738_G_A   -6.703082e-03
+10_763268_T_A   -5.867139e-03
+10_850997_A_C    2.456609e-03
+10_852362_T_C   -5.067130e-03
+10_890691_A_C   -3.016473e-03
+10_914869_A_T   -5.612331e-03
+10_947530_G_A    2.597748e-04
+10_1010079_C_T  -6.106416e-03
+10_1010287_T_C  -6.203658e-03
+10_1254483_A_G  -2.784041e-03
+10_1331183_G_A  -6.422223e-03
+10_1397489_C_G  -3.579322e-03
+10_1397527_T_C   1.559526e-03
+10_1400215_C_A  -2.640426e-03
+10_1437405_C_T  -4.148632e-03
+10_1438487_A_G  -2.388246e-03
+10_1446428_A_G  -6.784019e-03
+10_1588342_A_C  -6.002462e-03
+10_1615903_T_G   5.632005e-03
+10_1619757_C_G   2.482495e-04
+10_1635345_A_C  -5.566775e-03
+10_1710776_T_C   5.715141e-04
+10_2257779_C_A  -5.520314e-03
+10_2258335_C_G  -6.296294e-04
+10_2413381_G_T  -4.677947e-03
+10_2433187_T_G  -3.176767e-03
+10_2528398_G_A   1.975780e-04
+10_2602639_G_A   1.669897e-03
+10_2615406_C_A  -3.685480e-03
+10_2615684_G_T  -4.168202e-03
+10_2633576_G_T  -3.820358e-04
+10_2676141_A_C   1.552383e-03
+10_2718554_G_A  -8.003432e-03
+10_2782752_C_A  -2.262598e-03
+10_2799956_G_A  -1.400367e-02
+10_2834202_A_C  -7.990147e-03
+10_2846022_A_G   1.252108e-03
+10_2850015_T_C  -1.475351e-02
+10_2996842_A_G  -1.689580e-02
+10_3023533_G_T   3.501614e-03
+10_3023618_C_T   5.287305e-03
+10_3105833_G_A  -2.229737e-03
+10_3193158_T_G  -1.414580e-02
+10_3214287_G_C  -5.098656e-03
+10_3249269_C_T   6.614324e-03
+10_3272641_G_A   1.427735e-02
+10_3301481_T_C  -1.161612e-02
+10_3337608_A_T   5.247157e-03
+10_3338921_T_A  -3.855546e-03
+10_3481734_C_A  -3.971446e-03
+10_3581827_G_A   3.569426e-03
+10_3748005_A_G   2.082316e-03
+10_3810140_T_C  -5.236092e-03
+10_4056521_A_G   1.484134e-03
+10_4331064_T_C  -1.419180e-02
+10_4392677_G_C  -5.600060e-03
+10_4434616_G_A   1.477660e-02
+10_4462799_G_A  -1.308554e-03
+10_4485343_G_A  -1.256304e-03
+10_5033782_C_A   9.201875e-04
+10_5440185_G_T  -2.069279e-03
+10_7304197_T_C   8.378982e-03
+10_7304220_A_G   5.929398e-03
+10_7383920_A_C   5.783195e-03
+10_7400608_A_C   7.711030e-03
+10_7532059_T_C   6.476126e-03
+10_7536035_A_G   5.148301e-03
+10_7562707_A_G   2.839497e-03
+10_7582193_T_G   7.002781e-03
+10_7956627_G_A  -5.434421e-03
+10_8485530_A_G   1.428146e-02
+10_8836955_A_G   3.523670e-03
+10_9144917_A_G   6.708109e-03
+10_9278046_A_T   2.187905e-02
+10_9722248_C_T  -3.111331e-02
+10_10612234_G_A  9.995999e-03
+10_11069666_A_T  3.394276e-03
+10_11164043_C_T  2.342963e-03
+10_12121728_A_C -1.872024e-02
+10_12122966_T_C -9.566063e-03
+10_12167087_C_T  1.001482e-02
+10_13008698_C_T  8.991660e-03
+10_20218889_T_G -2.167098e-02
+10_20329764_A_G -2.322094e-02
+10_20369539_C_A -2.303606e-02
+10_20375097_A_G -2.280614e-02
+10_20510378_T_C -5.879248e-03
+10_20510622_A_C -9.513343e-03
+10_20602525_C_A -1.010900e-02
+10_20720412_A_G  4.329134e-03
+10_20774561_G_A -1.571433e-03
+10_20792282_C_G -5.264234e-03
+10_20891398_C_G -7.167225e-03
+10_21702833_A_T -4.112203e-03
+10_22086896_G_A -5.880483e-03
+10_22108080_C_T -1.212366e-03
+10_22690590_G_A  5.181863e-03
+10_22846927_C_T  6.214294e-04
+10_22851661_C_T  4.193906e-03
+10_22851890_C_T  3.370011e-04
+10_22951691_A_C  1.459661e-03
+10_22953280_G_A -5.149777e-03
+10_22953380_C_T -1.125135e-02
+10_22960146_G_A -4.814632e-03
+10_22966559_A_G  5.150556e-03
+10_23126698_C_G  1.319594e-03
+10_23130135_A_T -5.383939e-03
+10_23178632_A_G  4.536722e-03
+10_23401205_A_G -1.899862e-03
+10_23409423_A_T  3.984647e-03
+10_23421886_T_A  2.584969e-03
+10_23551701_T_G -1.829072e-04
+10_23788289_A_T  4.127024e-03
+10_24155272_G_A  5.632515e-03
+10_24174938_C_T -2.170142e-03
+10_24179426_G_A  2.732022e-03
+10_24223199_C_T  3.129346e-04
+10_24306595_G_A -3.570756e-03
+10_24377599_C_A  1.595199e-03
+10_24406839_A_G  7.725861e-03
+10_24429433_A_G  5.868633e-03
+10_24464979_T_G  5.844392e-03
+10_24656548_A_G  1.152584e-03
+10_24658306_A_G -1.170663e-03
+10_24689141_T_A  2.201321e-03
+10_24717669_C_G  3.527733e-03
+10_24758113_A_G -6.754884e-03
+10_25081795_T_A  3.131647e-03
+10_25081831_C_G  3.131647e-03
+10_25143032_G_T -1.458597e-02
+10_25143131_G_T -1.451191e-02
+10_25516882_G_C -6.929767e-03
+10_25524863_C_G -4.791072e-03
+10_25533632_G_A  2.690023e-04
+10_25549628_G_A  2.276918e-02
+10_25552687_T_C -1.046318e-03
+10_25683131_C_A -3.190547e-03
+10_25714475_G_T  1.693821e-02
+10_25725468_A_G -1.250181e-02
+10_25830471_A_T -2.716788e-03
+10_25868621_G_T  3.151482e-04
+10_25929550_T_C  6.059912e-04
+10_26095333_T_C -1.632226e-03
+10_26166118_C_T -2.349749e-03
+10_26186636_G_T -3.499533e-03
+10_26186732_G_A  5.484589e-04
+10_26240946_G_C -1.761332e-02
+11_144569_A_T   -6.415396e-03
+11_466503_C_T   -8.278862e-03
+11_485147_C_T   -7.186339e-03
+11_485180_A_T   -7.294392e-03
+11_499940_T_A   -8.117669e-03
+11_655185_C_G   -5.942773e-03
+11_689290_T_G   -9.955875e-03
+11_728401_T_C   -1.105380e-02
+11_770223_A_G   -1.120163e-02
+11_929907_A_G   -8.290219e-03
+11_950784_A_G   -1.405136e-02
+11_950798_G_A   -1.212428e-02
+11_988098_C_G   -1.374409e-02
+11_993561_G_A   -2.023505e-03
+11_1031178_A_G  -4.023076e-03
+11_1154258_G_A  -1.000227e-02
+11_1227708_A_G  -1.194619e-02
+11_1238740_C_T  -1.190982e-02
+11_1301534_A_G   1.641791e-03
+11_1393818_G_A  -4.272979e-03
+11_1397403_T_A  -2.075461e-04
+11_1460130_C_A   3.684311e-03
+11_1462189_A_T   2.150550e-03
+11_1462216_T_G   1.466194e-03
+11_1480309_G_C  -3.730399e-04
+11_1483728_G_A   6.427959e-03
+11_1498678_G_A  -3.691857e-04
+11_1594396_A_T   4.427814e-04
+11_1797709_C_T   1.691002e-03
+11_1868118_G_C   5.164678e-03
+11_1878158_C_G   1.287205e-03
+11_1894449_G_A  -5.011083e-03
+11_1902412_C_T   3.705043e-03
+11_1971769_C_T  -6.129837e-04
+11_1971778_C_A  -6.065329e-03
+11_2021986_T_C   1.624578e-03
+11_2101645_T_C  -5.785318e-03
+11_2104749_A_G  -5.072588e-03
+11_2199372_A_G   7.135195e-03
+11_2208518_A_G  -3.734558e-03
+11_2289273_C_T  -3.205248e-04
+11_2353516_G_A   2.902589e-03
+11_2414132_T_A  -2.320130e-03
+11_2485790_A_G   1.443882e-02
+11_2495814_C_T  -7.050089e-03
+11_2495984_C_G   1.125137e-02
+11_2518622_T_C   1.392104e-02
+11_2536427_C_T   2.466839e-03
+11_2576005_T_G   2.689106e-03
+11_2679640_A_T   1.639081e-02
+11_2684606_C_T  -5.756640e-03
+11_2752078_T_C  -1.025291e-02
+11_2776279_C_G   1.212097e-03
+11_2809726_T_A   1.094660e-02
+11_2834175_A_T  -6.814011e-03
+11_3128480_T_C  -7.596496e-03
+11_3236374_T_C   1.089528e-02
+11_4027314_T_A   6.806438e-03
+11_4054879_C_T   6.742001e-03
+11_4070190_C_G   9.031556e-04
+11_4070311_C_A   5.802563e-04
+11_4379650_A_C  -1.256844e-02
+11_4408510_C_T  -5.966344e-03
+11_4569446_C_G  -3.965255e-03
+11_4767222_T_A  -1.461492e-03
+11_4790152_C_T  -9.336181e-03
+11_4941829_C_G   7.177104e-03
+11_5233061_T_A  -7.392377e-03
+11_5270975_A_G  -4.171839e-03
+11_5292240_A_C   1.012096e-02
+11_5293997_C_T  -1.686107e-03
+11_5295268_T_G  -4.367594e-03
+11_5301112_A_C  -7.455926e-04
+11_5507841_A_C   1.066415e-02
+11_5507843_A_T   6.028499e-05
+11_5508863_T_C  -3.518075e-03
+11_5572584_G_A   4.254547e-04
+11_5584680_G_A   5.214338e-04
+11_5584875_C_T   5.386592e-03
+11_5731794_T_A   9.440210e-04
+11_5760197_C_T   4.164933e-03
+11_6263532_A_C  -2.818252e-03
+11_6289224_C_G   6.737389e-03
+11_6382654_G_A   4.076692e-03
+11_6398367_A_T  -3.670940e-03
+11_6444139_A_T   9.537983e-04
+11_6545276_C_A   4.588427e-03
+11_6555848_A_G  -6.944046e-04
+11_6720442_C_T   1.180973e-03
+11_6729983_C_A   1.321649e-03
+11_6867356_T_A  -2.061599e-02
+11_6934704_C_T  -8.983837e-03
+11_7088893_A_T   2.744858e-03
+11_7604724_T_A  -1.987383e-03
+11_7682433_G_A   2.782050e-03
+11_7890566_C_T   2.393111e-03
+11_8197838_T_G   1.903661e-02
+11_8363614_C_T  -8.771114e-04
+11_8371083_G_A  -2.097064e-03
+11_8382395_G_C  -3.690775e-04
+11_8383521_A_T  -3.716021e-03
+11_8776765_A_G   1.234138e-02
+11_9040963_G_C   2.741044e-03
+11_9044904_G_A   1.569336e-02
+11_10774279_C_A -2.541761e-03
+11_11645594_A_T -2.468940e-03
+11_11911473_A_T -5.151710e-03
+11_12000114_G_T -4.249537e-03
+11_12123292_T_C  7.892371e-03
+11_12124856_T_C  7.955732e-03
+11_12191482_C_A  2.432697e-03
+11_12194158_A_T -1.689279e-03
+11_12848528_C_T  7.800292e-04
+11_13163453_G_A -5.127693e-03
+11_13204473_C_T -2.298802e-03
+11_13795545_G_A -7.073017e-03
+11_13982437_G_C -4.163303e-03
+11_14023712_C_G -9.175570e-03
+11_14049983_G_A -1.758460e-03
+11_14339190_G_A  1.029874e-02
+11_15105675_A_G  4.387466e-03
+11_15109685_C_G -9.827389e-03
+11_15121465_T_C -1.147907e-02
+11_15173020_T_C -7.982292e-03
+11_15806751_G_A -6.902201e-04
+11_15813163_C_T  2.316248e-03
+11_16193288_G_A -1.738740e-03
+11_16202176_G_C -3.989428e-03
+11_16348859_C_T  1.429927e-03
+11_16352382_C_T -3.218566e-03
+11_20279223_G_A -6.056920e-03
+11_20324745_T_C -5.553848e-03
+11_20325012_T_C -3.507661e-03
+11_20755280_A_G  9.323275e-04
+11_20871865_G_A  2.555164e-03
+11_21542183_A_G  6.790870e-04
+11_21682722_A_G  8.680790e-04
+11_21852147_C_G  8.204277e-03
+11_21946974_T_C -6.184867e-03
+11_21963789_C_T  6.703833e-03
+11_21978622_C_T  1.162685e-03
+11_21984675_A_T  2.345962e-03
+11_22044270_C_T -3.358800e-04
+11_22089977_C_T -6.253053e-04
+11_22128590_A_T -4.439786e-05
+11_22187122_C_T -7.205161e-03
+11_22304304_A_G -6.618709e-03
+11_22306289_T_C  4.996352e-04
+11_22942175_T_A -8.939989e-03
+11_23108089_A_G -5.925581e-03
+11_23446732_T_G -8.732601e-04
+11_23448684_A_G -1.008670e-02
+11_24185552_A_C -1.383054e-03
+11_24185691_A_G -2.459652e-03
+11_24658590_T_C -9.001610e-03
+11_24933800_T_C -2.816074e-03
+11_24940022_G_A -9.183479e-03
+11_25061342_A_G -5.360670e-04
+11_25090968_A_G  3.287668e-03
+11_25219788_C_T  9.448317e-04
+11_25229627_T_C  1.277971e-02
+11_25429392_T_G  9.774010e-04
+11_25440156_C_T  2.514480e-04
+11_25446328_G_C -7.945091e-03
+11_25459920_T_C  1.322120e-03
+11_25520432_C_A -9.731015e-03
+11_25537309_T_G -8.457623e-03
+11_25632541_A_G -7.072529e-03
+11_25710586_A_G -7.897626e-03
+11_25710687_T_A -7.224556e-03
+11_25732614_T_C  7.051454e-03
+11_25908277_A_T  5.606641e-03
+11_26034315_G_A  7.475527e-03
+11_26034462_A_C  5.982929e-03
+11_26066185_C_G  7.117417e-03
+11_26078844_C_T  7.730971e-03
+11_26181015_G_A  3.552305e-03
+11_26219853_G_C  3.887389e-03
+11_26247754_T_G  7.222293e-03
+11_26247776_T_A  7.324775e-03
+11_26279000_C_G  3.258400e-03
+11_26279049_G_A -4.629420e-03
+11_26337618_T_C  2.512646e-03
+11_26411606_T_A -4.347667e-03
+11_26525850_G_A -6.178878e-03
+11_26533703_T_G -5.323809e-03
+11_26542421_G_A  1.249605e-03
+11_26594382_C_T  2.327299e-03
+11_26613336_T_C  6.250840e-03
+11_26670480_A_G -4.767250e-04
+11_26727954_C_G -4.204733e-05
+11_26801293_A_G  7.264819e-03
+11_26826684_A_T  1.342584e-03
+11_26904664_A_G  5.370938e-03
+11_26945385_T_C  3.649986e-03
+11_26989127_A_G  1.562709e-03
+11_26990785_C_T -3.289152e-03
+11_27043364_G_T  1.485662e-03
+11_27050751_C_A -5.149675e-04
+11_27324473_T_A -1.760957e-03
+12_103944_A_T   -6.667692e-03
+12_119571_G_T    8.987841e-04
+12_140061_T_A   -1.299697e-03
+12_141357_C_A   -6.428157e-03
+12_141615_C_A   -6.893661e-03
+12_145045_T_A   -6.643515e-03
+12_326114_T_G    8.141160e-03
+12_432028_C_T   -7.610705e-03
+12_552437_C_T   -5.496447e-03
+12_555640_T_A   -2.377266e-03
+12_561252_A_T   -7.436658e-03
+12_705281_A_G   -6.214101e-03
+12_705533_A_G   -4.124832e-03
+12_726428_C_A   -7.527802e-03
+12_727011_A_C    5.880972e-03
+12_794650_T_C    1.438838e-02
+12_822853_A_T   -1.007868e-02
+12_885944_T_G   -5.631468e-03
+12_1036518_A_G   3.029947e-03
+12_1134624_A_T   6.197516e-03
+12_1139757_G_C  -5.445725e-03
+12_1179815_A_C   3.768282e-03
+12_1217296_T_G   5.297156e-03
+12_1355239_G_T  -3.190094e-03
+12_1361870_A_C   1.139028e-03
+12_1361874_A_G   1.139028e-03
+12_1443035_C_A  -1.165188e-02
+12_1443260_T_G  -7.461857e-03
+12_1464658_C_T  -1.031131e-03
+12_1500045_G_A   2.602275e-03
+12_1517061_A_C  -8.322280e-03
+12_1548691_A_G   8.263035e-03
+12_1559900_A_G  -7.824526e-04
+12_1635372_A_G   5.205135e-03
+12_1662645_G_C  -4.547724e-03
+12_1810499_C_T  -3.053634e-03
+12_1811984_C_T  -9.172223e-03
+12_1812136_A_G  -9.289620e-03
+12_1965763_G_A  -1.033435e-02
+12_2076620_A_C   5.253650e-03
+12_2258049_T_C  -1.757521e-03
+12_2263704_A_T   5.623490e-03
+12_2281176_G_A   5.013937e-03
+12_2299562_G_A  -5.418923e-03
+12_2308083_C_A  -4.284387e-03
+12_2350096_A_G  -6.393287e-03
+12_2389830_C_T   9.254045e-03
+12_2412511_A_T  -5.829064e-03
+12_2440339_C_T  -6.831345e-03
+12_2507894_A_G  -6.888101e-03
+12_2521758_A_T  -4.762103e-03
+12_2546146_C_T   8.193337e-04
+12_2585666_G_A  -3.089910e-03
+12_2649900_T_A   8.201492e-04
+12_2650104_C_T   8.201492e-04
+12_2671957_A_T  -1.033022e-02
+12_2718153_T_A   4.326033e-03
+12_2723612_G_C  -3.306516e-03
+12_2724887_G_C   4.514830e-03
+12_2742293_A_G  -1.664410e-03
+12_3157886_G_A  -8.090091e-04
+12_3251362_A_C  -8.875138e-04
+12_3264933_A_G  -2.873197e-04
+12_3285346_A_G  -7.958130e-04
+12_3308907_A_G   4.894187e-04
+12_3419246_A_G   8.780515e-03
+12_3423023_A_G  -1.127257e-02
+12_3853791_T_C  -1.142153e-03
+12_4900327_A_G  -1.426671e-02
+12_4903331_T_C  -1.448027e-02
+12_5604936_C_T  -6.013481e-03
+12_5604991_A_G  -2.655734e-03
+12_5641685_T_A  -2.367779e-03
+12_5669660_G_T   1.355971e-02
+12_5797749_T_C   3.279296e-03
+12_5844796_G_A   5.799582e-03
+12_6149748_A_G   8.535332e-03
+12_7451616_C_A   1.759117e-04
+12_8037786_C_T  -9.852005e-03
+12_8472305_G_A  -2.375313e-03
+12_9198451_C_T   1.990182e-03
+12_14942545_A_C -7.110479e-03
+12_17916524_T_C -1.807729e-03
+12_18882712_T_A -5.868772e-03
+12_19451278_A_G -7.292456e-03
+12_20888149_C_T  6.438033e-03
+12_20888516_C_T -1.036493e-02
+12_22298664_G_C  2.352192e-03
+12_22463919_A_G -1.705214e-02
+12_22769825_A_G -1.183691e-02
+12_23530586_A_G -1.413757e-03
+12_23883538_A_G -1.128817e-03
+12_24076204_C_T -9.677809e-04
+12_24167504_T_C -1.234523e-02
+12_24346739_C_A -7.211087e-05
+12_24713759_C_T  8.910391e-03
+12_24886679_T_C -6.085566e-03
+12_25252605_C_T -3.513340e-03
+12_25381711_G_T -6.613318e-03
+12_25472471_T_C -6.725237e-03
+12_25472490_T_C -6.622293e-03
+12_25569384_C_G -1.397149e-02
+12_25686735_T_C  4.255937e-04
+12_25903436_T_C  1.333536e-02
+12_26028274_G_C  7.143828e-03
+12_26217807_C_G  1.266844e-02
+12_26816865_A_T  3.896064e-04
+12_26823652_A_G -1.499332e-03
+12_26904588_C_T -8.067391e-03
+12_26911828_T_C -1.853496e-03
+12_26912880_G_A  4.397601e-03
+12_26941180_G_A -1.578322e-03
+12_26971081_A_G -5.249096e-03
+12_26979984_T_C -2.170285e-03
+12_26980041_G_A  8.439008e-03
+12_27010809_G_C  1.397647e-03
+12_27188354_G_C  2.795787e-03
+12_27263016_T_C -6.189148e-04
+12_27373519_C_T  6.108500e-03
+12_27385059_C_A  1.020675e-02
+12_27456133_T_C  4.590734e-03
+12_27544253_G_A  4.046329e-04
+12_27786162_A_C -4.321697e-03
+12_27858475_G_T -4.910423e-03
+12_27880171_A_C -5.900781e-03
+12_27980589_T_G  1.047578e-02
+12_28029390_A_C -1.124622e-03
+12_28036889_A_G  3.526005e-03
+12_28083604_G_T -6.572470e-03
+12_28102374_G_T -1.352435e-02
+12_28102508_T_C -5.325986e-03
+12_28158124_G_T  1.204277e-02
+12_28192714_A_C -1.123534e-02
+12_28268386_T_A  1.042827e-02
+12_28540193_A_G -4.341801e-03
+12_28547567_C_G  8.624852e-03
+12_28698085_T_C -1.111272e-02
+12_28788937_A_T  1.560432e-03
+12_28831525_G_C  4.163061e-03
+12_28851256_A_T  3.214552e-03
+12_29015607_C_T -9.173782e-03
+12_29054324_T_C -9.217149e-03
+12_29160238_G_A -1.065735e-02
+12_29160515_G_C -6.060766e-03
+12_29169385_T_G -3.186133e-03
+12_29203380_T_C -5.422615e-03
+12_29259596_T_A -1.159501e-02
+12_29260166_G_A -1.136892e-02
+12_29276495_C_G -6.883546e-03
+12_29397625_A_T -3.572319e-03
+12_29399067_T_G -1.326004e-02
+12_29399104_G_A -1.326004e-02
+12_29399691_A_G  1.125096e-02
+12_29399858_G_T -1.348359e-02
+12_29401390_G_A -1.447809e-02
+12_29407440_C_T -1.354578e-02
+12_29407543_T_A -1.342842e-02
+12_29414925_C_G  2.014197e-03
+12_29436298_A_T -2.064882e-03
+12_29543047_A_C -7.280780e-04
+12_29602830_A_C -5.467593e-03
+12_29656584_G_T  6.250721e-03
+12_29722383_A_G -2.083728e-03
+12_29909676_G_A -4.820932e-03
+12_30014653_C_A  5.348790e-03
+12_30449539_C_T  2.081457e-03
+12_30889023_G_C -1.612022e-02
+12_30897338_A_C  4.336804e-03
+12_31029452_G_T  2.644194e-02
+12_31063461_G_A  1.002499e-02
+12_31086069_G_A  1.226022e-02
+12_31160203_C_A  7.886431e-03
+12_31190787_C_A  8.794984e-03
+12_31358714_G_T  1.392971e-03
+12_31365236_A_T -1.176903e-03
+12_31369164_G_A  4.966658e-03
+12_31395880_A_G -2.127361e-03
+12_31410518_T_C  5.867925e-03
+12_31441183_C_A  1.607755e-03
+12_31447136_A_C  1.130253e-02
+12_31473263_T_A  9.226046e-03
+13_353598_C_T   -5.331307e-03
+13_367855_G_C   -8.561585e-03
+13_431693_C_T   -5.411929e-03
+13_711920_A_T   -4.402220e-03
+13_1340904_A_G   1.450537e-02
+13_1365489_C_T   1.061802e-02
+13_1453658_A_C   8.322266e-03
+13_1453669_G_A  -8.443769e-03
+13_1568432_G_A  -5.465391e-03
+13_1582008_T_A   6.990727e-03
+13_1911522_A_T  -1.466626e-02
+13_1977001_T_C   2.884595e-02
+13_2116469_T_C  -1.162670e-02
+13_2119809_T_C   1.208945e-02
+13_2126435_G_T   1.011997e-02
+13_2173171_T_C   1.333096e-02
+13_2328674_C_T  -1.323299e-02
+13_2373466_G_A  -1.190879e-02
+13_2574673_A_T   2.005257e-03
+13_2581169_C_A   2.846670e-03
+13_2644582_C_T  -1.517602e-03
+13_2645762_A_G   1.777723e-03
+13_2698139_C_T   6.844106e-03
+13_2803844_T_C  -2.963529e-03
+13_2876425_T_C   7.774280e-03
+13_2876437_T_C   1.091436e-02
+13_2887407_G_T  -2.288588e-03
+13_2974573_A_T  -3.884797e-03
+13_3012520_G_T  -3.454766e-03
+13_3014201_A_G  -3.392518e-04
+13_3183864_C_T  -3.982525e-03
+13_3189921_G_A   1.204723e-02
+13_3193320_T_G  -8.410082e-03
+13_3326844_T_A  -3.513361e-03
+13_3401596_G_A  -4.636562e-03
+13_3571915_T_A   9.553836e-03
+13_3726032_A_G   1.638354e-02
+13_3751766_T_C   1.452467e-04
+13_3777508_G_A  -7.453157e-03
+13_4707827_A_G  -1.298804e-02
+13_4803022_C_T   8.621338e-03
+13_4818351_T_A  -7.292176e-03
+13_4870098_C_T  -1.283136e-02
+13_4903335_T_A  -7.998356e-03
+13_4979343_T_G  -6.145381e-03
+13_5012768_T_C  -1.119137e-02
+13_5018633_G_A   8.568690e-03
+13_5019699_C_G   1.370401e-03
+13_5019704_A_G   1.370401e-03
+13_5052110_A_G  -6.854588e-03
+13_5070425_A_C  -1.124596e-02
+13_5189939_A_T   4.806316e-03
+13_5202300_G_T  -9.617574e-03
+13_5265249_T_C  -7.554540e-03
+13_5311941_C_T   4.824758e-03
+13_5325407_T_G  -2.716978e-03
+13_5333737_G_T   6.520674e-04
+13_5434427_G_A  -1.595445e-03
+13_6007254_T_C   3.599934e-03
+13_6013185_T_A   6.473285e-03
+13_6041311_A_C   6.507498e-03
+13_6083381_G_C  -2.988696e-03
+13_6265284_T_C   1.323857e-02
+13_6816408_G_C  -3.793999e-03
+13_6825304_G_A  -6.165416e-03
+13_7728532_G_A  -3.467631e-03
+13_9116637_G_A  -2.140590e-02
+13_9124039_C_T   1.841538e-02
+13_9212403_T_C  -4.865523e-04
+13_9279288_A_T   1.709754e-02
+13_9354548_G_T  -5.329538e-03
+13_9377601_C_G   7.047265e-03
+13_9748426_T_C  -1.411902e-03
+13_11387791_C_T  1.889378e-03
+13_11479623_C_T -1.444084e-03
+13_11492175_A_G -1.444084e-03
+13_11732396_C_A -4.000075e-03
+13_11796506_G_A -4.000075e-03
+13_11796520_T_C -4.000075e-03
+13_11983776_T_G  9.474245e-03
+13_12130254_C_G -3.373476e-03
+13_12334197_G_A  1.160090e-02
+13_12340670_A_T  1.634402e-02
+13_12740303_C_T  3.394962e-04
+13_12740403_T_C  3.998269e-03
+13_13463459_C_T -4.070205e-03
+13_13476426_A_T  5.149857e-03
+13_13516094_G_A -8.921521e-04
+13_13528647_T_G -9.110330e-04
+13_13718077_G_T  5.767346e-03
+13_14870177_A_C  6.717988e-03
+13_15276483_T_A -1.436390e-03
+13_16487160_A_G -1.189500e-02
+13_17215077_T_G -6.544216e-03
+13_17215163_C_T  9.710398e-03
+13_17217475_G_A  5.266803e-03
+13_17217476_T_C  5.266803e-03
+13_22164130_C_T  5.274432e-03
+13_22165990_C_T  1.775374e-04
+13_22348147_T_G  5.113200e-03
+13_22631329_G_C  2.430389e-03
+13_22634353_T_A  2.353322e-03
+13_22727155_T_C -5.808628e-03
+13_22997889_T_G  3.414185e-03
+13_23128397_T_G -1.383868e-02
+13_23140157_G_A -8.832450e-03
+13_23232273_G_C  1.167731e-02
+13_23244911_C_T  2.731043e-03
+13_23275667_T_C  1.421522e-02
+13_23333786_G_A -3.638855e-03
+13_23649492_T_C  3.556687e-03
+13_23659358_G_A  8.402530e-04
+13_23734234_G_A -4.432946e-03
+13_23734396_C_A  1.877901e-03
+13_23739609_G_A  4.322129e-03
+13_23850963_C_T  6.668120e-03
+13_23980752_G_T  5.370419e-03
+13_24008427_A_T  1.251046e-03
+13_24067379_C_T  6.142185e-03
+13_24247392_G_A  1.169807e-04
+13_24258413_C_T -1.931230e-02
+13_24659918_A_C  4.272676e-05
+13_24834013_C_T -2.856820e-03
+13_24835675_T_C -6.646984e-04
+13_24867644_T_G -3.223071e-03
+13_24876587_T_A -9.913498e-04
+13_24972261_A_T -3.126401e-03
+13_24984775_C_G  6.199913e-03
+13_24984822_G_A -3.569373e-03
+13_25001738_G_T -1.750179e-03
+13_25041602_G_T  7.444888e-03
+13_25058125_C_T  9.817880e-03
+13_25101582_C_T  2.364838e-03
+13_25106071_G_A  1.513175e-03
+13_25128523_C_T  7.764061e-03
+13_25237212_A_G -7.908760e-04
+13_25237983_G_A -1.387983e-03
+13_25242280_C_G -1.387983e-03
+13_25242495_G_T -4.291656e-03
+13_25310102_T_A  2.207915e-03
+13_25544227_C_A -3.024914e-03
+13_25560377_A_G  1.870826e-03
+13_25589410_G_A  3.257575e-03
+13_25840232_T_C -1.558821e-03
+13_25857382_A_T  3.966662e-03
+13_25929937_T_C -1.206484e-03
+13_26189353_T_C -1.347019e-03
+13_26288643_G_T  2.893897e-03
+13_26400972_A_C  6.795778e-03
+13_26407346_G_T -2.729364e-03
+13_26412251_C_G -1.678812e-03
+13_26412282_C_T  3.319394e-03
+13_26416694_T_C -9.327985e-03
+13_26544995_G_C -7.005148e-04
+13_26553759_G_A  8.448966e-03
+13_26615324_G_A -6.612945e-04
+13_26628880_C_G -2.984523e-03
+13_26645333_A_G -2.584176e-03
+13_26667580_G_C -1.983203e-02
+13_26833412_T_C -1.592454e-02
+13_27116011_T_A -2.689754e-03
+13_27116396_G_C -3.800525e-03
+13_27237900_A_T  2.048022e-04
+13_27252262_G_A  4.494162e-04
+13_27296623_T_C  3.107101e-03
+13_27372579_T_A -1.832285e-03
+13_27594259_A_G -2.286455e-03
+13_27599202_G_A -2.354763e-03
+13_27635366_A_G -7.325318e-04
+13_27756468_T_G -6.473411e-04
+13_27801632_G_A -3.505434e-03
+13_27825344_G_A  5.763797e-04
+13_27843147_T_C -8.814261e-04
+13_27898919_G_A  3.959969e-03
+13_27899248_G_A  3.959969e-03
+13_27957199_C_A -3.330740e-03
+13_27972762_G_C -2.527080e-03
+13_27974670_A_G -3.795011e-03
+14_60691_A_C     9.025599e-04
+14_344818_G_C   -2.364317e-03
+14_347415_T_C   -4.320996e-03
+14_347451_G_C   -2.061648e-03
+14_354202_G_A   -3.795727e-04
+14_407363_A_T   -7.608972e-04
+14_433780_T_C    1.643468e-02
+14_531518_C_T   -5.200239e-03
+14_534819_G_C   -1.740683e-02
+14_554594_C_T    4.063042e-03
+14_575429_T_C    4.953518e-04
+14_575569_A_G    3.582665e-04
+14_604413_G_A    4.832031e-03
+14_657514_G_A   -3.125981e-04
+14_739702_C_T    1.808810e-03
+14_827635_G_T   -1.148401e-02
+14_978638_A_G   -6.300087e-05
+14_978747_C_T   -6.711752e-03
+14_1016534_A_G  -2.355065e-02
+14_1028116_G_A  -4.376614e-04
+14_1064303_G_A   1.121192e-02
+14_1139392_A_T  -1.270929e-03
+14_1139792_T_C  -1.293859e-02
+14_1139816_G_C  -1.575918e-02
+14_1343270_C_A   5.534290e-03
+14_1388901_T_C   1.504784e-02
+14_1394723_G_C  -5.790398e-03
+14_1394848_A_G  -1.521748e-02
+14_1405345_G_A  -1.721305e-02
+14_1635192_A_T   3.358859e-03
+14_1639503_T_C   1.185656e-02
+14_1670989_A_C   4.928787e-03
+14_1671171_A_G   1.293093e-02
+14_1684186_G_A   4.976050e-03
+14_1701999_G_C  -3.795727e-04
+14_1733684_T_C   6.155989e-03
+14_1807177_T_C   8.425896e-03
+14_1808208_C_A  -1.115105e-02
+14_1864724_C_A   9.493466e-04
+14_1880664_T_G   6.440951e-03
+14_1950930_T_C   8.045671e-03
+14_1998802_T_G   7.442952e-03
+14_2127076_C_T  -1.291721e-03
+14_2188835_C_T   1.051194e-02
+14_2197222_T_C   1.705671e-03
+14_2274594_G_A  -2.274152e-03
+14_2312160_A_G   1.124621e-02
+14_2340738_C_T  -8.154471e-03
+14_2386225_A_G   9.716222e-03
+14_2391290_C_A   1.596299e-02
+14_2399046_C_G   7.075733e-03
+14_2604898_A_C  -5.533484e-03
+14_2605587_A_T  -1.066767e-02
+14_2630270_C_G  -1.412758e-03
+14_2650298_A_T  -8.220913e-04
+14_2652577_G_A   2.709707e-03
+14_2758489_A_C  -1.412758e-03
+14_2809169_T_G  -6.138564e-03
+14_2863338_G_T   3.908325e-03
+14_2912180_G_A   7.463096e-03
+14_2974408_G_C  -1.299783e-02
+14_3005058_G_C  -4.158699e-04
+14_3006417_A_G   1.158918e-03
+14_3009299_G_A  -1.471561e-03
+14_3015858_T_C   6.852111e-05
+14_3035403_G_T  -6.622051e-03
+14_3037325_G_A  -1.097915e-03
+14_3054219_T_C   3.836131e-03
+14_3061347_C_T   4.938461e-03
+14_3083062_A_G   3.659927e-03
+14_3132843_A_G   3.146537e-03
+14_3479843_G_A   4.627522e-03
+14_3484521_C_T   3.050315e-04
+14_3488285_A_T  -4.339053e-04
+14_3488317_T_C  -4.339053e-04
+14_3509690_A_G  -1.090989e-03
+14_3509701_A_G  -2.170323e-03
+14_3560691_G_A   3.313370e-03
+14_3661598_T_A  -7.711807e-03
+14_3686354_A_C  -1.243639e-03
+14_3720142_C_G  -1.359200e-03
+14_3805500_A_G   7.255601e-03
+14_3857123_G_T  -9.283421e-04
+14_3909862_C_G  -4.230493e-03
+14_3918143_T_C  -9.283421e-04
+14_3975815_G_A   7.611961e-03
+14_4008967_T_C   1.484132e-03
+14_4017103_T_C  -1.089657e-03
+14_4080147_C_A   2.861135e-03
+14_4092602_C_A   2.807524e-03
+14_4126981_C_A  -2.833013e-04
+14_4151401_G_A   2.071190e-04
+14_4176040_T_A  -4.889324e-03
+14_4201772_A_G  -1.031342e-03
+14_4262725_T_A   1.739201e-03
+14_4349060_G_T  -5.885885e-03
+14_4370673_T_C   7.359840e-03
+14_4394898_C_T  -6.995020e-04
+14_4758137_T_C   1.221348e-03
+14_4963518_C_A   4.664219e-03
+14_4994070_A_G  -1.873432e-03
+14_5108264_T_G  -8.711752e-04
+14_5108268_T_C  -8.711752e-04
+14_5111101_T_A   1.647553e-03
+14_5119324_A_G   1.997884e-03
+14_5171089_A_T   2.950843e-03
+14_5214080_G_C   5.916870e-03
+14_5216544_G_C   9.498809e-04
+14_5300866_A_T  -1.638677e-03
+14_5362411_A_C  -7.856178e-03
+14_5422600_A_G   8.988989e-04
+14_5437673_T_C   1.054822e-02
+14_5443161_A_G  -8.854449e-03
+14_5500981_A_G   1.277310e-03
+14_5544323_A_G   3.843039e-03
+14_5610650_G_T  -1.454590e-03
+14_5611744_C_G   9.440227e-05
+14_5677687_C_T  -8.044408e-03
+14_5711919_T_C  -1.674879e-03
+14_5738880_A_G   5.254451e-03
+14_5775871_A_G  -1.793275e-03
+14_5795986_A_T  -1.953248e-03
+14_5800521_T_C   1.019912e-03
+14_5800933_T_C  -2.029910e-03
+14_5814376_A_G   8.368434e-03
+14_5838937_T_C  -7.654819e-03
+14_5854200_T_C   1.258011e-03
+14_5856545_T_G   1.258011e-03
+14_5871691_C_G   4.235016e-03
+14_5876173_T_C   2.965284e-03
+14_5889994_C_T  -6.556716e-04
+14_5906744_T_C  -2.971171e-03
+14_5910693_C_T  -2.029910e-03
+14_5917835_C_T  -2.274006e-03
+14_6012112_G_A   8.930800e-03
+14_6029482_G_C  -1.740415e-03
+14_6050188_T_C  -1.691307e-03
+14_6085116_G_T  -1.055413e-02
+14_6110652_C_A   2.846829e-03
+14_6110904_C_A   3.620191e-03
+14_6122948_T_C  -3.850636e-03
+14_6148156_A_G   1.342704e-02
+14_6178407_A_G  -2.124637e-03
+14_6178860_T_A  -5.415940e-03
+14_6231435_T_G   1.262597e-02
+14_6233185_C_T  -4.155941e-03
+14_6249805_T_C   7.715435e-04
+14_6259239_G_C  -1.691307e-03
+14_6332926_G_A  -1.691307e-03
+14_6367974_T_C   8.431022e-03
+14_6459392_T_A  -1.076410e-02
+14_6495606_A_C   4.723648e-04
+14_6517582_G_A   4.092920e-04
+14_6549477_G_T  -5.853728e-04
+14_6607384_T_C   1.925856e-03
+14_6667223_A_C   1.154013e-02
+14_6667583_A_C   2.087802e-04
+14_6681479_C_T  -1.413546e-03
+14_6716520_G_T   3.319483e-03
+14_6746376_T_G   3.026247e-03
+14_6778919_T_C  -1.337981e-03
+14_6792933_A_C   3.052921e-03
+14_6792996_A_G   1.232047e-02
+14_6798683_T_C  -2.343240e-03
+14_6816979_A_G  -3.877139e-03
+14_6818332_G_A   1.166260e-02
+14_6830781_C_T   1.144167e-02
+14_6830884_G_T   1.228842e-02
+14_6887297_C_T   4.411417e-03
+14_6965250_G_A   7.515989e-04
+14_6997667_T_C   6.749367e-04
+14_7079995_T_C   4.524792e-05
+14_7103718_T_C   4.524792e-05
+14_7112006_A_T   1.043385e-03
+14_7151645_G_A  -2.334931e-04
+14_7153807_G_T  -4.528643e-03
+14_7248014_G_A  -2.329666e-05
+14_7253051_A_G   5.150869e-03
+14_7322654_T_C   1.386175e-03
+14_7386813_A_T   6.199153e-03
+14_7389485_A_G  -1.234953e-02
+14_7497230_A_C  -3.065064e-03
+14_7512379_A_G  -3.888363e-03
+14_7564013_C_T  -2.603818e-03
+14_7585698_C_A  -3.100701e-04
+14_7718666_A_G  -2.872311e-03
+14_7734637_C_T  -1.043481e-02
+14_7757886_G_A   4.002263e-03
+14_7789334_C_T  -3.406546e-03
+14_7789927_G_C   4.741581e-03
+14_7859288_A_C   9.442915e-03
+14_7908285_A_T   4.624974e-03
+14_7917865_T_C   4.732101e-03
+14_7950324_A_T   2.760038e-03
+14_7972649_G_A  -3.539274e-03
+14_7985269_T_A  -2.157225e-03
+14_7985278_T_C  -2.157225e-03
+14_7992668_C_T  -3.066299e-03
+14_8038940_A_C  -8.303402e-04
+14_8069136_T_C   2.711798e-03
+14_8082234_G_A  -9.718273e-04
+14_8087170_A_G   1.584565e-03
+14_8107775_G_C  -2.188746e-03
+14_8107865_G_C  -2.250817e-03
+14_8107937_T_C  -2.029633e-03
+14_8116791_G_A  -2.188746e-03
+14_8153722_T_A  -1.971330e-03
+14_8194419_C_A   8.365548e-03
+14_8210717_T_C  -2.963152e-03
+14_8261169_A_G  -2.963152e-03
+14_8273926_A_G  -2.686130e-03
+14_8280701_G_A   8.983698e-03
+14_8341296_G_A   5.440722e-03
+14_8442386_T_C  -4.339461e-03
+14_8554103_T_A  -5.127228e-03
+14_8569406_A_G   4.435271e-03
+14_8569622_T_G   4.567065e-03
+14_8581897_C_A   7.421882e-03
+14_8600821_C_T  -2.704332e-03
+14_8764171_T_C  -6.580083e-04
+14_8793178_A_T   3.190091e-03
+14_8838394_A_G  -3.547205e-03
+14_8838417_C_T   4.382955e-04
+14_8838733_G_A  -3.547205e-03
+14_8838753_A_C  -3.547205e-03
+14_8838851_C_T  -2.990264e-03
+14_8874624_G_C  -7.042545e-03
+14_8883146_C_G  -2.354899e-03
+14_8907703_A_G   5.014714e-03
+14_8928083_G_A  -2.743580e-03
+14_8943036_T_A   1.191709e-02
+14_8943140_T_A  -3.675475e-03
+14_8950617_T_A   1.790678e-03
+14_9380525_G_A  -6.165486e-03
+14_9963788_G_A  -1.744037e-03
+14_9981489_C_T  -2.280629e-03
+14_10124064_A_T -2.814849e-03
+14_10151822_C_T -2.814849e-03
+14_10352470_T_C -1.067763e-02
+14_10355089_T_G -4.527086e-04
+14_10431419_G_A -8.914407e-03
+14_10431485_C_A  6.217342e-03
+14_10433482_A_G -1.015793e-02
+14_10436313_T_C  1.163727e-02
+14_10481997_T_C -9.081450e-03
+14_10517630_A_T  2.732857e-03
+14_10552098_C_T -2.814849e-03
+14_10555924_G_A -1.582646e-03
+14_10615620_T_C -8.068088e-03
+14_10630936_T_C -3.169880e-03
+14_10630974_A_G -2.149247e-03
+14_10638093_C_G -3.209092e-03
+14_10638454_G_T -1.062972e-03
+14_10662213_A_G -1.034933e-02
+14_10670697_T_A -1.081078e-02
+14_10687779_C_G  1.353489e-02
+14_10758148_A_G  1.350900e-03
+14_10760281_C_T  4.347460e-03
+14_10843191_C_T  1.128878e-02
+14_10929887_G_T -4.760883e-03
+14_10958258_T_C -3.456712e-03
+14_10982717_A_G -1.108196e-02
+14_11000914_G_A -3.815222e-03
+14_11016152_G_T -3.403234e-03
+14_11056776_C_A  5.023409e-03
+14_11174513_G_A -3.229208e-03
+14_11224354_C_T  8.552220e-04
+14_11244443_A_T -1.345952e-02
+14_11275221_G_A -1.207828e-02
+14_11285555_A_T -1.548711e-02
+14_11302184_A_G -1.692553e-02
+14_11332204_A_G -1.390150e-02
+14_11393568_G_A -1.442900e-02
+14_11513919_T_C -1.713195e-02
+14_11571419_C_A -1.200925e-02
+14_11580519_G_A -3.163531e-03
+14_11580707_A_C -3.452342e-03
+14_11589609_G_T -1.026848e-02
+14_11650755_T_G -3.452342e-03
+14_11665837_A_G -4.208722e-03
+14_11665956_C_A -4.208722e-03
+14_11675860_C_T -3.761318e-03
+14_11686556_T_C  1.500049e-02
+14_11718591_A_G -1.203757e-02
+14_11742348_A_G -2.604663e-03
+14_11805981_C_T  3.464066e-03
+14_11809303_C_G -2.604663e-03
+14_11829565_G_A  1.788240e-03
+14_11861085_C_G  6.532357e-03
+14_11890624_G_A  2.682107e-03
+14_11912056_G_A -3.452342e-03
+14_11932295_T_C  4.957153e-03
+14_11966188_G_A -3.226347e-03
+14_11976990_C_T -2.269930e-03
+14_12000171_A_G -1.377718e-02
+14_12030898_A_G -3.568494e-03
+14_12040411_A_G  7.121029e-03
+14_12042055_C_A -1.505803e-02
+14_12044737_G_T  2.999305e-03
+14_12044886_C_G  2.999305e-03
+14_12076817_A_C -3.430595e-03
+14_12076844_C_T  4.236180e-03
+14_12094354_G_T  2.984347e-03
+14_12094399_G_C -7.126697e-03
+14_12105103_A_G -3.430595e-03
+14_12279041_T_C  1.815740e-03
+14_12288212_T_C -1.296833e-03
+14_12322623_C_T -3.006343e-03
+14_12332661_A_T -1.764758e-02
+14_12488439_T_A  1.040298e-03
+14_12498256_T_A  1.435077e-02
+14_12515693_A_C -6.822916e-04
+14_12529598_C_A -3.375121e-03
+14_12701634_T_C -1.726115e-02
+14_12753445_G_A -3.318713e-03
+14_13010440_A_C  1.296513e-02
+14_13010608_T_C  4.961520e-03
+14_13011450_A_G  1.339867e-02
+14_13530054_T_A  2.902859e-03
+14_13744185_G_A -8.976547e-03
+14_14152456_A_G -4.945984e-03
+14_14152476_T_C -4.945984e-03
+14_14860354_A_G -2.492008e-03
+14_21273489_C_A -7.833227e-03
+14_21723746_A_T -9.757580e-03
+14_21804023_A_G -7.432430e-03
+14_21804149_T_A -8.924274e-03
+14_21847045_A_G  1.587296e-02
+14_21848981_T_C  1.623348e-02
+14_21852097_C_A -8.119415e-03
+14_21857819_G_C -8.119415e-03
+14_22557139_T_A -1.092182e-02
+14_22615145_C_A  8.994753e-03
+14_23140340_C_T -1.011310e-03
+14_23380367_A_G  1.265494e-02
+14_23385718_A_C -4.766677e-03
+14_23386637_A_C  1.727447e-02
+14_23386672_A_C -1.068379e-02
+14_23419342_G_T  3.904908e-03
+14_23450246_G_A  2.100669e-02
+14_23782291_G_C -3.642573e-03
+14_23858983_A_C -3.015107e-03
+14_23900443_C_T -7.459025e-04
+14_23998679_T_G  8.480264e-04
+14_24043967_T_G  3.581172e-03
+14_24077964_A_C -1.955655e-04
+15_19461_G_A    -2.879549e-03
+15_23945_T_C    -6.718416e-04
+15_36818_C_T    -4.307790e-03
+15_117794_C_T   -2.932423e-03
+15_141882_A_T   -3.060895e-03
+15_156996_G_A   -8.211542e-03
+15_238647_T_C    4.042954e-04
+15_247515_T_A   -8.157763e-03
+15_465248_A_G   -1.358542e-02
+15_551768_C_T   -4.282507e-03
+15_574769_C_T   -1.407347e-02
+15_702825_C_T    3.580112e-03
+15_770233_G_A    3.426426e-03
+15_793927_T_C   -1.122203e-02
+15_1050157_G_T  -1.921572e-03
+15_1054728_A_T   2.334576e-04
+15_1070173_C_T  -1.132573e-02
+15_1174918_C_G  -1.138906e-02
+15_1259639_T_C   1.083908e-03
+15_1284628_A_G   8.427509e-03
+15_1311545_A_G  -6.714533e-04
+15_1311805_G_A  -5.051863e-03
+15_1345728_T_C  -2.578126e-03
+15_1345729_T_A  -2.546769e-03
+15_1459861_T_C   5.991925e-03
+15_1501177_G_A  -1.663842e-03
+15_1508584_T_C   4.375345e-04
+15_1516764_A_C  -5.285940e-04
+15_1557674_A_T  -1.443167e-03
+15_1557930_C_T  -1.071666e-02
+15_1557955_C_T  -1.333624e-03
+15_1569307_T_G   2.984488e-04
+15_1592235_T_C   3.017981e-03
+15_1643788_T_A   4.613896e-03
+15_1682032_A_T   5.772067e-03
+15_1695594_G_T   7.375214e-03
+15_1794401_A_G  -6.139177e-04
+15_1893570_T_C  -8.001078e-03
+15_1902618_G_A   2.283974e-03
+15_2152214_A_G  -1.117066e-02
+15_2152227_T_C  -1.060357e-04
+15_2231748_C_T  -1.240324e-02
+15_2272252_G_T   7.988447e-04
+15_2274188_C_T  -1.070410e-02
+15_2278023_T_A   2.493178e-04
+15_2303408_T_C   4.573024e-03
+15_2351033_C_A  -6.575918e-04
+15_2357046_C_T  -1.045431e-02
+15_2493944_G_A  -8.539018e-04
+15_2493947_C_A  -4.093129e-04
+15_2524123_A_T   3.187738e-03
+15_2524124_A_T   3.187738e-03
+15_2535306_T_G  -1.241018e-02
+15_2535665_T_G  -1.228340e-02
+15_2556405_T_G  -1.583841e-02
+15_2609439_C_T   3.427345e-03
+15_2683376_T_C   4.100228e-03
+15_2719967_T_C  -5.009862e-03
+15_2722576_C_T   2.019829e-03
+15_2722578_C_T   2.882601e-03
+15_2735778_T_G  -1.055086e-02
+15_2756210_T_C  -1.391933e-02
+15_2889971_A_C   5.759839e-04
+15_2897730_G_A   1.190356e-03
+15_2993557_A_G   1.925479e-03
+15_3058137_A_T   1.136208e-02
+15_3082609_G_T  -9.196057e-04
+15_3152884_A_C   9.003546e-03
+15_3153523_A_G  -4.892917e-03
+15_3241290_G_C  -5.347493e-03
+15_3287165_A_C   9.710015e-03
+15_3384727_G_T  -3.069414e-03
+15_3440092_C_T  -4.103359e-03
+15_3501303_G_C  -7.136578e-04
+15_3509119_G_A  -1.634629e-03
+15_3612335_A_C  -4.630949e-03
+15_3641729_A_C   1.477544e-04
+15_3641731_G_A  -1.134782e-03
+15_3705788_A_T   1.528312e-03
+15_3757578_A_T   8.228782e-03
+15_3897019_G_A   1.526356e-03
+15_3997993_T_A   3.451060e-04
+15_4074787_A_T   1.802280e-03
+15_4081860_A_T   7.898270e-03
+15_4103203_G_A  -4.241090e-04
+15_4193623_A_G  -1.612995e-03
+15_4204124_C_G   5.260540e-03
+15_4231575_T_C  -3.376117e-03
+15_4337509_G_T   9.555748e-04
+15_4360419_A_G   2.145629e-03
+15_4396374_C_A  -5.665745e-03
+15_4686871_G_T   7.159844e-04
+15_4701987_C_A  -7.182836e-03
+15_4721705_C_T  -5.779874e-03
+15_4749024_G_A  -4.383644e-03
+15_4836525_C_A   1.256822e-03
+15_4888426_T_C  -1.219480e-03
+15_4971566_G_T   1.417167e-02
+15_5169194_G_A   1.381630e-02
+15_5173151_G_T   1.042536e-02
+15_5259033_T_C  -1.104142e-02
+15_5291177_T_A   1.147812e-02
+15_5303952_A_C  -1.075140e-02
+15_5308008_T_C  -1.694186e-02
+15_5351748_C_T   3.130321e-03
+15_5371193_G_T  -8.176914e-03
+15_5469776_A_C   1.030151e-02
+15_5496221_C_A  -3.694870e-03
+15_5508456_C_A  -3.732628e-03
+15_5524764_A_G  -2.138168e-03
+15_5528886_C_A   7.464667e-03
+15_5593261_G_A  -2.059719e-03
+15_5636225_A_C  -8.016784e-03
+15_5913386_G_T   5.496637e-03
+15_6243331_G_A   1.361047e-02
+15_6315689_A_T  -1.377745e-04
+15_6397361_A_T  -1.515553e-03
+15_6667490_A_G  -2.927471e-03
+15_6745193_G_T   3.296966e-03
+15_6790299_A_C  -4.392995e-03
+15_6816281_G_A  -2.862462e-03
+15_6832433_A_G   8.781934e-04
+15_6851477_C_T  -1.716521e-02
+15_6851479_C_T  -1.797398e-03
+15_6860094_C_A  -1.797398e-03
+15_6860234_G_A  -1.192266e-02
+15_6906122_T_C  -1.546298e-03
+15_6909868_T_C  -1.546298e-03
+15_6968767_G_C  -7.923921e-03
+15_7004649_T_A  -7.929964e-03
+15_7004662_A_T  -8.869045e-03
+15_7068402_C_T  -7.358211e-03
+15_7092793_G_A  -7.664498e-03
+15_7209664_C_G  -6.732785e-03
+15_7212490_C_T  -2.557548e-03
+15_7214714_G_C  -4.565176e-03
+15_7227513_A_C  -3.783531e-03
+15_7232224_A_G  -6.094060e-04
+15_7247352_A_G   6.539093e-04
+15_7278889_C_T   1.942468e-03
+15_7324297_T_C  -6.636197e-03
+15_7409195_T_C   3.413590e-03
+15_7437095_C_A  -1.161616e-04
+15_7583377_C_G   2.717319e-03
+15_7647382_T_A   8.276752e-04
+15_7659485_C_A   2.267830e-03
+15_7726329_G_A   4.403076e-04
+15_7785676_A_T   7.514742e-03
+15_7846736_T_A   1.928786e-03
+15_7928581_G_A  -5.775904e-03
+15_8041414_G_A   5.492818e-03
+15_8046398_T_C  -9.901319e-03
+15_8210449_A_C  -8.970257e-03
+15_8211952_C_T  -5.168538e-04
+15_8244671_A_G  -9.459698e-03
+15_8275732_T_C   6.110789e-03
+15_8314861_T_C  -2.362246e-03
+15_8375241_G_A   4.218233e-03
+15_8466543_T_C  -4.806160e-03
+15_8494466_A_G  -4.668954e-03
+15_8589335_C_T  -6.914452e-04
+15_8608834_C_A  -5.835529e-04
+15_8971062_T_A   1.194621e-02
+15_8976310_G_A   9.496969e-03
+15_9040367_G_A   3.509983e-03
+15_9075008_T_C  -4.199526e-03
+15_9160942_T_C   1.980275e-03
+15_9273766_G_C  -2.786084e-03
+15_9353625_G_A  -1.783285e-02
+15_9411598_C_A  -1.329352e-02
+15_9653263_T_C   1.067208e-02
+15_10082536_A_T  3.068954e-03
+15_10084929_G_A  6.035146e-03
+15_10084959_T_A  2.694241e-03
+15_10090047_G_A  3.740093e-03
+15_10090048_A_C  6.262541e-03
+15_10096802_G_C -2.539448e-03
+15_10213484_T_A  1.524963e-02
+15_10253883_T_G  8.415340e-03
+15_10265364_T_C  2.967028e-03
+15_10265379_C_G  2.913144e-03
+15_10383157_C_T  8.990527e-03
+15_10402887_T_A  7.501262e-03
+15_10412171_T_G  3.369670e-03
+15_10492400_G_A  1.743568e-03
+15_10508315_A_T  1.767854e-02
+15_10550835_A_G  1.069259e-02
+15_10559973_C_A  9.233021e-03
+15_10604752_A_G  1.428940e-02
+15_10842675_A_T  5.014501e-03
+15_10846867_A_T  1.499185e-03
+15_10888679_T_C -6.707138e-03
+15_10938382_G_C  2.296213e-04
+15_11085941_G_A  1.276633e-03
+15_11085954_T_G -7.105519e-04
+15_11303097_G_C  1.406484e-03
+15_11459079_T_A  3.920340e-03
+15_11588671_C_A  2.016922e-02
+15_11699488_C_T  1.765183e-02
+15_11749663_C_T  1.423658e-02
+15_11788610_G_A  1.878547e-02
+15_11822314_A_G -4.895426e-03
+15_11978263_T_C  1.478622e-02
+15_12113642_C_T  7.892759e-03
+15_12207541_A_G  2.560899e-03
+15_12230365_C_T  2.431558e-03
+15_12441885_T_C -2.328952e-03
+15_12497348_G_A -3.028847e-03
+15_12683458_C_A -9.197034e-03
+15_12903637_C_T -3.592437e-03
+15_12919984_G_A -1.158497e-02
+15_13101861_C_T -5.384261e-03
+15_13178915_A_T -3.623067e-03
+15_13475098_T_C -1.565707e-03
+15_13711002_C_A -5.144971e-03
+15_13817221_T_C -1.156354e-02
+15_13885197_T_C -8.045569e-03
+15_14540921_T_C -1.000702e-03
+15_14634961_G_A -1.351588e-02
+15_14658518_C_T  1.353505e-03
+15_15361078_C_G -4.249389e-03
+15_15513746_C_T -2.992053e-03
+15_16690745_T_C -1.546919e-03
+15_18400253_C_T -1.351132e-02
+15_23763843_A_T -1.846665e-03
+16_52580_T_G    -4.014004e-03
+16_52602_T_G    -4.014004e-03
+16_54574_C_T    -3.966340e-03
+16_336584_C_T    2.613747e-04
+16_354002_A_G   -6.199230e-03
+16_443870_G_A   -2.993454e-04
+16_603657_A_G   -4.971891e-04
+16_623001_T_G   -1.697430e-03
+16_649361_C_T   -2.945560e-03
+16_649370_T_A   -2.858010e-03
+16_690681_C_A   -1.891757e-03
+16_704283_G_A   -2.632759e-03
+16_727580_A_G    2.696986e-04
+16_795990_T_A    1.069640e-03
+16_796188_A_T    6.269314e-04
+16_833667_T_G    5.912488e-03
+16_1005358_A_T  -1.016769e-02
+16_1018703_A_C  -4.732173e-03
+16_1037645_T_A  -5.632521e-03
+16_1038112_C_T  -1.229828e-02
+16_1361060_T_C  -1.872994e-02
+16_1501762_A_G  -1.629199e-02
+16_1646500_T_C  -1.378034e-02
+16_1647046_C_T   1.685051e-02
+16_1712154_T_G  -1.059259e-02
+16_1722458_G_A  -1.385342e-03
+16_1866812_T_C   1.973029e-02
+16_2009116_C_T   3.527057e-03
+16_2021693_C_A  -1.435403e-02
+16_2167036_C_T   4.712540e-03
+16_2167159_A_T  -7.267523e-04
+16_2181386_A_G  -1.229460e-02
+16_2181406_G_T  -1.195210e-02
+16_2195864_C_A   6.243271e-03
+16_2195907_C_G  -1.318237e-02
+16_2196072_G_C  -1.331954e-02
+16_2251022_T_C  -1.320477e-02
+16_2295969_T_A   1.199145e-02
+16_2433548_C_A   5.382856e-03
+16_2532449_G_A  -1.554272e-03
+16_2552973_T_G  -2.843198e-03
+16_2709576_T_C  -6.709992e-03
+16_2864312_T_C   1.883430e-02
+16_2904667_A_C  -3.443923e-03
+16_3096864_T_A  -2.115834e-03
+16_3374667_T_A  -2.203359e-02
+16_3436852_A_G  -1.804449e-02
+16_3436882_A_G  -9.418278e-03
+16_3666002_A_C  -2.711664e-03
+16_3675980_T_G   3.496225e-03
+16_3689077_A_T   3.473004e-03
+16_3882638_A_G   1.380253e-03
+16_4853249_T_G  -9.357688e-03
+16_5032831_G_A  -7.171922e-03
+16_5848466_G_A  -4.466160e-03
+16_11828635_C_T  9.620039e-03
+16_11851387_A_C  1.333417e-03
+16_12141969_T_C -5.100841e-03
+16_12142018_A_C  3.942127e-03
+16_12334622_G_A  6.277745e-03
+16_12599030_G_C -1.043344e-02
+16_13539527_C_A  2.505399e-03
+16_14981423_T_C -8.807196e-04
+16_16072299_C_T -4.334934e-03
+16_16921536_T_A  2.084809e-03
+16_19831866_G_C  6.695432e-04
+16_20386616_A_G -7.337298e-03
+16_20433201_C_A -1.486408e-02
+16_20719789_G_T -5.672948e-03
+16_21317307_A_G -5.008170e-04
+16_21428873_G_T -2.337127e-03
+16_21902532_G_A  1.075884e-02
+16_21904018_G_A -2.518713e-03
+16_22498926_G_A  1.442985e-02
+16_22520367_A_C  9.915191e-03
+16_22582410_A_C  3.382411e-03
+16_22599537_T_C -1.920308e-02
+16_22627151_C_G -2.327284e-02
+16_22639828_T_A -3.022742e-02
+16_23028597_A_G -1.006920e-02
+16_23028890_C_A -1.073705e-02
+16_23191071_T_A -1.119357e-03
+16_23244358_A_G -5.887293e-03
+16_23360629_A_G  7.963497e-03
+16_23382658_T_C  6.569452e-03
+16_23444333_G_C -7.566102e-03
+16_23497942_C_T -9.186114e-03
+16_23858393_T_C  1.425035e-02
+16_23864487_C_G  1.066009e-02
+16_23864681_A_G -4.605198e-03
+16_23959755_T_C  4.533065e-03
+16_23966628_T_C  4.533065e-03
+16_24052777_A_C -1.566713e-03
+16_24065049_G_T  8.412268e-03
+16_24078250_T_C -7.175636e-03
+16_24098910_T_C -4.733448e-03
+16_24183174_A_T  4.701657e-03
+16_24187229_G_A -5.806900e-03
+16_24427675_C_T  4.433635e-03
+16_24491431_A_G -1.541611e-03
+16_24574949_C_T  2.055897e-03
+16_24599559_G_T -2.577620e-03
+16_24638143_T_G  8.480502e-04
+16_24715924_C_T -1.950235e-03
+16_24740772_G_A  2.735980e-03
+16_24760849_G_A -7.314971e-03
+16_24779179_A_C  3.730459e-04
+16_24779880_A_G -4.290138e-03
+16_24826966_A_G -1.946836e-04
+16_24827014_A_G  1.657690e-03
+16_24829851_C_T -2.089905e-03
+16_24919130_C_T  6.555880e-04
+16_24931849_A_T  1.752858e-03
+16_24966479_G_T  2.387364e-03
+16_25003815_T_C  3.969730e-03
+16_25191146_C_A -8.198458e-03
+16_25230873_G_T -8.042649e-03
+16_25364074_A_T  8.879559e-03
+16_25603735_A_G  6.691055e-03
+16_25609954_T_G  6.396774e-03
+16_25614008_C_T -1.716413e-03
+16_25802895_A_T  2.703610e-03
+16_25854158_T_G -2.790569e-03
+16_25892010_T_C  1.315512e-03
+16_25894243_C_A  1.153819e-02
+16_26101097_C_T  1.739354e-02
+16_26111827_A_T -2.827125e-03
+16_26159984_G_A -2.657784e-03
+16_26184644_A_G  7.888280e-03
+16_26211533_C_T  1.512261e-02
+16_26222761_A_T -1.939844e-02
+16_26248426_T_G  6.892642e-03
+16_26249551_A_C -5.272005e-03
+16_26259578_T_C  1.511176e-03
+16_26387533_A_G  9.621983e-05
+16_26466866_T_C -1.149930e-02
+16_26480153_G_T -4.420793e-04
+16_26480202_G_A -6.382011e-05
+16_26498961_G_C  1.239352e-03
+16_26525999_G_A  2.631549e-03
+16_26575495_G_T  1.268691e-03
+16_26593596_A_G -4.426040e-04
+16_26633007_T_C  1.369271e-02
+16_26687972_A_T  4.371708e-03
+16_27008725_G_T -7.497655e-03
+16_27097815_C_A  2.897828e-03
+16_27105569_C_T -9.914133e-04
+16_27122215_G_A  2.432315e-03
+16_27132366_C_G  3.039355e-03
+16_27133608_T_G  1.011727e-02
+16_27137926_C_G -1.620201e-03
+16_27153851_A_G  3.654095e-03
+16_27168676_G_C  9.503179e-03
+16_27239540_C_A  6.087212e-04
+16_27240670_T_G -5.878362e-03
+16_27326438_G_T  4.829422e-03
+16_27361995_A_G -4.091581e-03
+16_27362760_A_G -7.848195e-03
+16_27491436_A_T -9.928206e-03
+16_27560785_C_T  8.732199e-04
+16_27587800_C_T -2.348431e-04
+16_27591424_G_T -1.191910e-03
+16_27633550_T_C -1.418264e-03
+16_27633944_T_A -1.505403e-03
+16_27671853_A_C -2.569604e-03
+16_27915140_A_G -4.192324e-04
+16_28099459_C_T -2.135115e-04
+16_28099486_C_G -2.135115e-04
+16_28153745_C_T -6.215508e-04
+16_28154955_C_G  1.275990e-03
+16_28238912_A_G  2.925990e-04
+16_28327831_T_C  4.122328e-03
+16_28341950_C_T -1.055943e-04
+16_28585897_A_C -1.366184e-03
+16_28649981_G_A -1.124975e-05
+16_28665607_G_A  1.375684e-03
+16_28668240_T_C  3.762237e-03
+17_345791_A_G   -5.151014e-03
+17_437171_A_T   -4.532127e-03
+17_1189212_A_T  -8.478203e-03
+17_1425159_A_G  -1.504894e-02
+17_6546471_G_C  -1.361367e-02
+17_8179527_T_A   2.196345e-03
+17_10023647_T_G -1.673040e-02
+17_10024402_G_C -1.289368e-02
+17_10125425_C_T -1.796254e-02
+17_10498133_T_C -1.264878e-02
+17_10662252_T_A -1.283543e-02
+17_10675954_T_C -2.822528e-02
+17_10686740_A_G -2.216855e-02
+17_10722825_T_C -2.519361e-02
+17_11543047_T_C  7.010346e-03
+17_11739691_A_C  4.504357e-03
+17_12452588_C_T -3.410658e-03
+17_12520030_C_T -3.052301e-03
+17_12972949_G_A -1.260660e-02
+17_12973047_T_C -8.589581e-03
+17_13080139_A_G -1.006213e-02
+17_13205184_G_A  5.402806e-03
+17_13546922_G_C  8.500674e-03
+17_13553649_T_G  1.556234e-03
+17_13713142_T_C  5.963734e-04
+17_13745756_G_A  1.587347e-02
+17_13794523_A_G  6.566369e-04
+17_13794535_G_A  2.219645e-03
+17_13866899_T_A  5.068861e-03
+17_14199103_C_A -1.124870e-02
+17_14446353_G_A  1.110871e-02
+17_14561349_A_G  1.162365e-02
+17_14561616_G_A  5.080108e-03
+17_14599453_C_T  5.012991e-03
+17_14632055_C_G  1.875588e-02
+17_14647278_G_T  1.311681e-03
+17_14723454_A_T  5.284326e-03
+17_14963445_C_T  4.748572e-03
+17_15056466_G_A  4.310993e-03
+17_15061819_T_A -9.001533e-03
+17_15062953_G_C  7.478183e-03
+17_15075618_C_T  5.101220e-03
+17_16040550_T_G -9.670785e-03
+17_16191180_T_A -1.005037e-02
+17_16369662_A_G  5.295742e-03
+17_16563024_T_C  2.620425e-03
+17_16589300_T_C -3.789754e-04
+17_16778024_C_T -1.380164e-03
+17_16888751_A_C  5.295742e-03
+17_16893724_C_T -1.321459e-02
+17_16893887_G_A  5.135445e-03
+17_16894287_C_T  5.135445e-03
+17_17069106_A_G -2.704979e-03
+17_17134652_A_G -8.850785e-03
+17_17210488_T_G -7.537706e-03
+17_17263035_C_T  4.827195e-03
+17_17266218_T_C  1.554722e-02
+17_17269348_G_A -1.681865e-02
+17_17317037_T_C -9.460124e-03
+17_17364314_T_G  6.469803e-03
+17_17412606_T_G -4.047794e-03
+17_17417856_A_T  5.174394e-03
+17_17448578_C_T -7.760136e-03
+17_17638876_C_T -2.617634e-03
+17_17653589_A_T -3.684428e-03
+17_17658766_G_T  2.916299e-03
+17_17667296_T_A -7.763131e-04
+17_17770478_G_A -6.232444e-03
+17_17772802_G_C -6.148999e-03
+17_17793418_T_A  4.492732e-03
+17_17875774_A_G  2.789707e-03
+17_18197622_T_C  2.801124e-03
+17_18197635_T_A  5.666406e-04
+17_18198276_A_C -2.340057e-03
+17_18201170_C_A -5.355742e-03
+17_18245427_C_A -3.256047e-05
+17_18261798_A_G  3.544122e-03
+17_18405607_A_G  2.508398e-03
+17_18414057_C_G -1.005867e-02
+17_18449499_T_A  2.792891e-03
+17_18472668_C_G  3.146363e-03
+17_18732020_G_A -1.260167e-02
+17_18789229_G_C  5.486691e-03
+17_18797508_C_T  2.634989e-03
+17_18837182_T_C  1.592511e-02
+17_18863171_C_T -7.594420e-03
+17_18878588_C_G  2.634989e-03
+17_18894518_C_T  1.880276e-03
+17_18920430_G_A  2.440217e-03
+17_18926116_C_G  2.322791e-03
+17_19122974_A_G  1.335361e-02
+17_19169670_A_T -1.413005e-03
+17_19189855_G_A -5.114039e-03
+17_19189878_T_C -9.835817e-03
+17_19240768_C_T  4.810515e-06
+17_19285726_C_T  7.376666e-04
+17_19290096_T_A  5.268918e-03
+17_19291180_G_T  9.341956e-04
+17_19567478_T_A -8.495836e-04
+17_19609039_A_T -8.278364e-04
+17_19658759_T_C -1.148315e-03
+17_19797383_A_G -3.475930e-03
+17_19797428_T_C  2.806461e-03
+17_19813818_G_A  3.332164e-03
+17_19869054_C_T -4.561783e-04
+17_19871570_C_T  9.464966e-04
+17_19887154_C_A -8.495836e-04
+17_19891953_C_T -8.495836e-04
+17_19994258_G_T  2.357834e-03
+17_20064117_G_A -2.045678e-03
+17_20064660_T_A -1.325209e-03
+17_20064693_C_A  1.613161e-03
+17_20122308_A_G -1.797049e-03
+17_20135852_A_T -1.495735e-03
+17_20378999_T_C -8.495836e-04
+17_20385221_G_A -1.076465e-03
+17_20456528_G_A  7.977129e-04
+17_20462358_T_C -1.177553e-03
+17_20476818_T_C -1.954313e-03
+17_20497402_A_G  1.932539e-03
+17_20712646_C_T -1.202836e-02
+17_20731104_C_G -2.835002e-03
+17_20905496_T_G -5.502431e-05
+17_21007401_C_A  5.024344e-03
+17_21061230_A_G  2.800536e-03
+17_21103347_C_T -8.674022e-03
+17_21193780_A_T  1.623291e-03
+17_21197709_G_A -4.960354e-04
+17_21214201_C_T -1.015949e-03
+17_21244154_A_C -1.196146e-03
+17_21320128_T_C -5.676848e-03
+17_21486287_C_A -3.321604e-03
+17_21642595_A_G  1.771508e-03
+17_21698638_A_G -4.629399e-03
+17_21732243_G_A  3.477674e-03
+17_21741449_C_G  1.528717e-03
+17_22090677_G_C -5.326970e-03
+17_22651913_C_T -7.382259e-03
+17_22772175_G_A  6.662232e-03
+17_22784673_T_G -6.999702e-03
+17_22829211_A_G -9.709397e-03
+17_22932491_A_C -1.159506e-02
+17_23292779_C_T -2.725479e-03
+17_23368015_A_C -1.260716e-03
+17_23387311_T_C -8.437967e-03
+17_23431086_T_A -2.140244e-04
+17_23438928_T_C  2.873847e-03
+17_23529782_G_T  3.077151e-03
+17_23531898_A_T -2.343934e-04
+17_23550564_A_G -1.342097e-03
+17_23770097_T_C  6.280659e-03
+17_23918286_G_C -5.414047e-03
+17_23919229_C_T  5.606635e-03
+17_24013673_T_A -2.089544e-03
+17_24018542_T_A  5.864229e-04
+17_24107580_A_G  1.265662e-03
+17_24239906_G_T  2.498977e-04
+17_24488312_C_T  3.251468e-03
+17_24521288_G_A -1.037554e-02
+17_24521297_A_G  3.048191e-03
+17_24559358_T_C  5.802263e-03
+17_24559359_C_T  1.296669e-03
+17_24625213_C_T  1.314048e-03
+17_24653456_T_G  4.251119e-03
+17_24684657_A_G  4.412359e-04
+17_24689037_A_G  1.656070e-03
+17_24702018_T_C  1.617766e-03
+17_24877891_A_T  1.800531e-03
+17_25225324_C_T  2.959990e-03
+17_25346602_C_T  3.369204e-03
+17_25357326_T_C  4.595744e-03
+17_25602288_C_T -4.151532e-03
+17_25634744_A_G  4.120466e-03
+17_25994490_A_C -9.105490e-03
+17_25997828_G_T  3.120197e-03
+17_26021072_T_A  6.269148e-03
+17_26022790_T_C  1.053770e-03
+17_26025780_C_T  5.921091e-03
+17_26877293_C_A  3.397691e-04
+17_26935128_G_A -4.539548e-03
+17_27035855_G_A  4.041249e-03
+17_27161081_T_C -1.049215e-02
+17_27329486_C_T -8.383229e-03
+17_27338115_T_C  5.942095e-03
+18_361199_T_G   -1.423166e-02
+18_408718_A_T    4.246312e-03
+18_452996_C_A    1.847154e-02
+18_677792_A_C    6.414416e-03
+18_722325_G_C   -1.576764e-03
+18_768024_G_A    3.532935e-03
+18_772877_A_G    7.676115e-03
+18_805161_C_T    3.752220e-03
+18_823594_G_T    2.265417e-03
+18_841247_G_C   -2.242313e-03
+18_938112_T_C    4.264229e-03
+18_948839_C_T    9.862125e-04
+18_949305_T_C   -4.615712e-03
+18_1119951_G_C   6.819216e-03
+18_1135078_T_A  -6.029802e-03
+18_1233367_G_A   2.461554e-03
+18_1319304_G_T   5.497788e-03
+18_1407848_G_T   1.967733e-02
+18_1433850_A_G   2.681874e-03
+18_1484717_C_T   2.506602e-03
+18_1510530_A_G   2.529707e-03
+18_1576234_A_T   3.127774e-03
+18_1591545_G_C   2.204774e-03
+18_1691074_A_T   1.526109e-02
+18_1692572_G_C  -2.713166e-04
+18_1706307_G_A   1.437542e-02
+18_1707318_T_A   5.335006e-03
+18_1735616_A_G   5.985461e-03
+18_1761098_G_T   2.917633e-03
+18_1768547_G_A   8.977903e-03
+18_2521911_A_G   3.580335e-03
+18_2641009_G_T   3.672675e-03
+18_2663912_C_T  -5.013027e-03
+18_2670872_A_G  -9.016898e-03
+18_2908668_C_T  -3.562719e-03
+18_2933926_T_C   1.086013e-03
+18_2981177_C_A  -4.658416e-03
+18_2993717_A_G  -3.496503e-03
+18_3023521_C_A  -1.643541e-03
+18_3023677_A_T  -3.906515e-03
+18_3091824_C_T  -3.260940e-03
+18_3102263_A_T   6.016541e-03
+18_3108177_T_C   3.582934e-03
+18_3184455_A_T  -3.472981e-03
+18_3275988_G_A   7.062303e-03
+18_3279684_C_T   6.015718e-03
+18_3282502_T_C   4.772711e-04
+18_3320376_C_A   8.273788e-03
+18_3549117_G_T   5.230729e-04
+18_3604082_A_C   1.134712e-02
+18_3742234_G_C   1.788778e-03
+18_3808823_T_C  -9.584756e-03
+18_3851453_G_C   3.559509e-03
+18_3861560_C_T   3.559509e-03
+18_3935775_C_T   1.005549e-03
+18_3938450_A_G   9.615814e-03
+18_4015229_C_T  -9.832500e-03
+18_4034201_T_C   3.220262e-03
+18_4048024_G_C   3.466963e-03
+18_4053334_T_C  -6.568347e-03
+18_4169406_G_T   1.701093e-03
+18_4198049_C_T  -6.016044e-03
+18_4214165_T_G   3.593233e-03
+18_4216289_C_G  -3.089233e-03
+18_4241557_A_G   3.084112e-04
+18_4246826_A_G  -2.834007e-04
+18_4258653_G_A   1.023514e-03
+18_4258679_C_G   1.023514e-03
+18_4312948_A_T  -1.037635e-04
+18_4342689_A_G   9.421076e-04
+18_4452405_T_G  -1.774169e-03
+18_4472031_G_A   2.468253e-03
+18_4573161_C_A  -5.752751e-03
+18_4573188_C_T  -3.849794e-03
+18_4586321_G_A  -4.031604e-03
+18_4607556_G_A  -9.513247e-03
+18_4706528_A_C  -8.766254e-03
+18_4871507_G_A   5.337701e-04
+18_4911731_T_C   8.499273e-04
+18_4916076_C_T  -7.389882e-03
+18_5033525_A_T  -1.558777e-02
+18_5039206_C_T  -1.693864e-02
+18_5067680_G_T  -6.193162e-03
+18_5075038_T_A   7.296832e-03
+18_5207530_T_C   3.566720e-03
+18_5254258_A_T   4.161769e-03
+18_5254504_A_G   7.542628e-03
+18_5357139_G_A   6.108860e-03
+18_5363594_G_C   5.574082e-03
+18_5372423_C_T  -7.796223e-04
+18_5405116_T_C  -4.416270e-03
+18_5569007_C_A   1.535044e-03
+18_5602919_T_C  -8.929465e-03
+18_5659354_C_A  -1.072415e-02
+18_5747122_G_T   3.977233e-03
+18_5785261_A_C  -1.145860e-02
+18_5873857_A_G  -7.706607e-03
+18_5907981_G_A  -6.673473e-03
+18_5909112_A_G  -6.018787e-03
+18_5909122_G_A   6.586741e-03
+18_5964082_T_G  -1.097906e-03
+18_5965989_C_T   7.972860e-03
+18_5993035_C_A   7.720669e-03
+18_5993252_T_C   7.720669e-03
+18_6005916_G_A  -8.220382e-03
+18_6039898_A_G  -4.588811e-03
+18_6072156_C_T  -6.729972e-03
+18_6072233_G_T  -4.939483e-03
+18_6104206_A_T   2.057593e-02
+18_6111650_T_C  -7.787610e-03
+18_6133046_T_A   7.064338e-03
+18_6138702_G_T   8.364512e-03
+18_6143117_T_G  -1.684544e-03
+18_6163885_T_C   3.759896e-03
+18_6209101_A_T  -3.834079e-03
+18_6213180_G_T  -4.062039e-03
+18_6368288_A_G  -1.072553e-03
+18_6376802_G_C  -7.256204e-04
+18_6420192_A_G   3.545603e-03
+18_6468005_A_T   8.343196e-03
+18_6617891_A_C   7.744161e-03
+18_6663186_T_A   8.463868e-03
+18_6737509_G_A   1.051049e-02
+18_6954181_G_A  -5.802645e-03
+18_6997756_T_G   1.843193e-03
+18_7007428_G_A   9.695196e-03
+18_7007507_T_C   2.855514e-03
+18_7009203_A_G   6.834959e-04
+18_7034233_C_T   8.927360e-04
+18_7056241_G_A   2.337278e-03
+18_7057451_A_G  -4.634779e-03
+18_7127281_C_G   8.441018e-04
+18_7130967_A_T   2.337278e-03
+18_7151236_T_G  -2.592227e-03
+18_7248838_G_A  -3.273279e-03
+18_7248976_A_G   7.894964e-03
+18_7309155_C_T  -2.285838e-03
+18_7472357_G_A  -1.180506e-02
+18_7501324_A_T  -1.053143e-02
+18_7514402_G_C  -9.582447e-03
+18_7521344_A_G  -3.021027e-03
+18_7532783_G_T   2.976966e-03
+18_7577154_G_A  -5.437212e-03
+18_7716921_T_A   2.987771e-03
+18_8217270_G_C  -1.146565e-02
+18_8246997_A_G   4.510493e-03
+18_8247026_T_C   4.510493e-03
+18_8248949_G_T  -4.719025e-03
+18_8414341_A_T   3.186707e-03
+18_8427412_G_A   1.239163e-02
+18_8486845_A_G  -5.126912e-03
+18_8510443_T_C  -1.390903e-02
+18_8604242_A_G   4.986637e-03
+18_8764272_T_A  -7.770878e-04
+18_8767226_T_G   3.648781e-03
+18_8815703_T_C   3.965847e-03
+18_8872990_C_G   1.241605e-04
+18_8937232_G_T   5.149405e-03
+18_9072744_G_A  -1.339565e-02
+18_9074856_G_T  -1.385288e-02
+18_9075607_C_G  -1.352635e-02
+18_9151875_C_A  -1.961241e-03
+18_9235324_T_C   2.448904e-04
+18_9443622_C_A  -1.311554e-02
+18_9778154_T_A   4.640378e-03
+18_10080162_A_T -2.087919e-03
+18_10386825_T_G  5.904655e-03
+18_10519025_T_A -3.028796e-03
+18_10768988_T_C -8.888661e-04
+18_10984151_C_G -4.260175e-03
+18_11643957_A_G -1.691717e-03
+18_11643975_G_A -1.861923e-03
+18_11643978_T_C -5.155663e-03
+18_12324706_T_C  6.868598e-03
+18_12887591_G_A -4.289121e-03
+18_13624622_A_G -8.324293e-03
+18_13880743_T_C -9.558976e-03
+18_14001089_A_G -1.179437e-02
+18_14465922_T_C -6.694793e-04
+18_14466184_A_C  3.633597e-03
+18_14736293_T_G -4.049361e-03
+18_15787677_G_A  2.237507e-04
+18_15990706_A_C  6.487355e-03
+18_16736494_A_T -1.438479e-02
+18_17673912_G_A  2.203767e-03
+18_17673946_C_T -1.377070e-02
+18_17771813_T_C  1.617306e-03
+18_18103177_T_A -5.628374e-03
+18_18273830_G_A -5.731914e-03
+18_18648194_G_A -5.882030e-03
+18_18652752_A_C  5.002664e-03
+18_20108611_A_C -1.876465e-03
+18_20306053_G_C -5.372340e-03
+18_20306166_C_A -1.013775e-02
+18_20512589_A_T -3.412620e-03
+18_20869653_T_C -5.845416e-03
+18_20869674_C_T -3.699119e-03
+18_21669051_G_A -2.209527e-03
+18_21672123_C_G -6.608870e-03
+18_21928984_A_G  7.623333e-03
+18_23850111_G_A -7.146991e-04
+18_23856801_T_C -7.092224e-03
+2_263483_T_C     9.178751e-03
+2_292306_A_G     4.468098e-03
+2_525353_C_G     3.457023e-03
+2_531478_G_T     3.923692e-03
+2_552651_G_C    -6.534800e-03
+2_552839_A_T    -8.946334e-03
+2_695481_T_C     5.893828e-03
+2_707264_T_A     5.134502e-03
+2_743567_T_C     4.188578e-05
+2_755723_G_A    -1.685616e-03
+2_755937_A_T    -1.542660e-03
+2_883530_A_C     6.517182e-03
+2_942271_T_G    -2.825036e-03
+2_976260_A_G    -7.090104e-03
+2_1015369_C_T   -6.336425e-04
+2_1206838_A_C   -4.712772e-03
+2_1220357_A_T   -1.401723e-03
+2_1244768_G_A   -3.450958e-04
+2_1414069_A_G    4.124814e-03
+2_1424181_G_T    1.750955e-03
+2_1425077_A_G    6.708223e-03
+2_1475924_A_T    5.872284e-03
+2_1482236_C_T    1.614312e-03
+2_1492629_C_T    9.626182e-03
+2_1525540_G_T    4.006756e-03
+2_1569971_C_T    6.963002e-04
+2_1586891_C_T    1.230589e-02
+2_1594418_C_T    8.602255e-03
+2_1598933_A_T    5.615124e-03
+2_1602611_T_C    7.518934e-03
+2_1625897_G_A    8.253636e-03
+2_1660099_T_A   -9.280551e-03
+2_1721125_C_T    3.054323e-03
+2_1758558_G_A    2.276810e-03
+2_1992822_G_T    3.723401e-03
+2_2011812_G_A    1.599748e-03
+2_2058717_T_C    1.160703e-03
+2_2073445_C_A   -2.075466e-03
+2_2077379_T_C   -2.291100e-03
+2_2135786_G_T    1.098396e-02
+2_2306684_A_C   -2.060745e-02
+2_2306685_T_A    4.846438e-03
+2_2313539_C_T   -1.387813e-04
+2_2428280_G_A    2.557161e-03
+2_2444033_C_T    3.195353e-03
+2_2568430_C_T   -8.495461e-03
+2_2568499_G_A    6.137873e-03
+2_2595870_T_A    1.596765e-02
+2_2818469_C_T   -5.897851e-03
+2_2856869_A_G    1.189997e-02
+2_2909068_T_C    2.802772e-02
+2_3004597_G_A    1.474114e-02
+2_3077692_A_C   -6.112498e-03
+2_3115124_A_C    1.397799e-02
+2_3116550_C_T    8.286982e-03
+2_3124337_T_A    3.683337e-04
+2_3167439_T_C    7.546599e-03
+2_3172919_C_A    4.327587e-03
+2_3197151_T_A    1.041081e-02
+2_3268661_A_T    7.596049e-03
+2_3332337_G_A   -6.893545e-03
+2_3464739_T_C    8.738670e-03
+2_3513050_C_A    4.216609e-03
+2_3661596_T_C   -9.563286e-03
+2_3661675_G_C    1.053075e-02
+2_3694303_C_G   -8.582230e-03
+2_3777767_G_C   -1.314756e-02
+2_3812586_A_G    4.270923e-03
+2_3835037_T_C   -1.916482e-02
+2_3835276_G_C    5.324481e-03
+2_3900491_A_T   -1.696299e-02
+2_3910673_C_A   -1.254297e-02
+2_4173614_G_C   -9.630589e-03
+2_4175884_G_C   -9.560784e-03
+2_4220575_G_A    1.868936e-02
+2_4342855_G_A    7.476542e-03
+2_4362889_G_T   -5.333550e-03
+2_4393102_G_C   -4.245422e-03
+2_4448723_G_A    6.290606e-03
+2_4622116_G_A    9.518368e-03
+2_4734127_T_A    6.456764e-03
+2_4744581_C_T   -5.052381e-04
+2_4747574_C_G    4.268665e-04
+2_4797870_A_G    2.461960e-03
+2_4822508_T_G   -1.595228e-03
+2_4856096_T_C    5.082907e-03
+2_4919005_A_C   -1.103767e-03
+2_4960520_T_C   -1.602987e-03
+2_4964411_T_A    6.865961e-03
+2_4973297_A_G    3.749777e-04
+2_4984073_C_T   -1.619058e-02
+2_5102509_T_C   -5.754476e-03
+2_5114608_A_C   -4.825961e-03
+2_5118934_T_A    1.740708e-03
+2_5167275_A_T    1.722772e-03
+2_5239174_C_T   -1.379602e-02
+2_5313090_T_A    4.157657e-03
+2_5319903_T_C   -1.296377e-02
+2_5365689_T_A   -2.820051e-03
+2_5373767_G_A   -2.077889e-02
+2_5461822_G_T   -1.363488e-02
+2_5511765_A_T   -1.227883e-02
+2_5632415_A_G    1.222167e-03
+2_5633229_C_T    2.403183e-03
+2_5671198_A_T   -7.960476e-03
+2_5706248_A_G   -7.538380e-03
+2_5751833_C_T   -7.408985e-03
+2_5756643_A_T    3.659280e-03
+2_5854341_G_A    1.639984e-03
+2_5903178_C_T   -3.553309e-03
+2_5964381_C_T   -7.364478e-04
+2_5977842_A_G   -1.045238e-03
+2_6234527_A_G   -8.255631e-04
+2_6235609_A_C    3.904279e-03
+2_6271208_G_A    5.448731e-03
+2_6379053_T_C    4.886878e-03
+2_6422830_A_G    1.094931e-02
+2_6434085_G_A    1.318558e-03
+2_6566660_C_G   -1.257653e-03
+2_6609241_G_A    2.094938e-03
+2_6624176_T_G   -5.246286e-03
+2_6629091_C_T    1.987327e-03
+2_6692061_C_A   -8.049923e-03
+2_6730736_A_T   -1.095723e-03
+2_6764300_G_T   -1.001991e-02
+2_6954004_C_T    3.785012e-03
+2_6962821_T_C    1.374929e-02
+2_6964851_A_G   -8.604295e-03
+2_7018340_A_G    2.466942e-03
+2_7152134_T_A    2.841282e-03
+2_7203807_A_G   -4.120121e-03
+2_7332440_G_C    2.437067e-03
+2_7429049_T_C   -1.783521e-03
+2_7463296_A_C    6.967128e-03
+2_7481704_G_C   -2.861263e-03
+2_7620104_T_C    1.632101e-03
+2_7715791_C_T   -1.513290e-03
+2_7859681_A_C   -4.263941e-03
+2_7887584_T_C   -7.116406e-03
+2_7965129_C_T   -7.753212e-03
+2_8030331_T_C   -6.252342e-03
+2_8030347_G_A   -6.025068e-03
+2_8037001_G_T   -3.741102e-03
+2_8110840_G_A    1.386426e-02
+2_8111354_A_G    6.191032e-04
+2_8111503_T_G    1.445875e-02
+2_8176572_T_A    9.711079e-03
+2_8187633_C_A    7.975681e-03
+2_8226760_T_C    7.146231e-04
+2_8252945_A_C    1.325062e-03
+2_8328106_T_C   -2.660197e-03
+2_8337385_T_C    5.686059e-03
+2_8370514_T_C    3.476635e-03
+2_8489781_C_T   -1.225410e-02
+2_8490994_A_G    4.371801e-03
+2_8560909_A_T   -9.931723e-03
+2_8660344_A_T    1.226012e-02
+2_8686700_T_A    5.585503e-03
+2_8699384_G_C    8.038409e-03
+2_8738431_G_T   -1.807527e-03
+2_8754456_A_G   -1.974408e-03
+2_8786262_T_C    9.662106e-03
+2_8823928_G_T    7.408043e-03
+2_8931698_T_G    4.015961e-03
+2_9064393_T_C    5.786850e-03
+2_9154279_C_T    6.368088e-03
+2_9258095_T_A    1.468974e-02
+2_9541202_T_A    6.301122e-03
+2_9604246_C_T   -4.283347e-03
+2_9727395_C_T    1.415130e-03
+2_9794084_C_T    1.413007e-02
+2_9813011_C_T    1.027337e-02
+2_9878669_T_C    1.122074e-03
+2_9878686_C_T   -8.820206e-03
+2_9887167_A_C   -7.655789e-03
+2_10430450_T_A   7.662564e-03
+2_10452972_G_C   7.738583e-03
+2_10466101_A_T   1.544532e-03
+2_10647600_T_A  -4.309127e-03
+2_11032890_A_C  -7.034951e-03
+2_11332443_A_T  -1.140624e-02
+2_11652212_T_G   8.449556e-04
+2_11740094_A_T  -6.174481e-03
+2_11809042_C_T  -4.623116e-03
+2_11861752_A_C  -4.794505e-04
+2_11925732_T_C   2.506151e-03
+2_11951247_T_G  -3.938655e-04
+2_11963632_T_G  -5.617522e-03
+2_11963683_A_C  -5.617522e-03
+2_11993952_C_T  -1.643936e-04
+2_12005930_C_A  -3.251721e-04
+2_12007733_G_A  -2.798693e-03
+2_12118401_T_A  -3.368460e-03
+2_12131955_T_C  -6.113050e-03
+2_12146432_C_T  -4.359533e-03
+2_12297211_T_C   1.073445e-02
+2_12340855_G_A   5.163701e-03
+2_12355427_T_C  -1.837958e-02
+2_12451539_T_G  -7.559491e-04
+2_12737445_T_A  -4.885574e-03
+2_12754193_C_T  -9.927053e-03
+2_12754253_T_G   5.092187e-03
+2_12785439_G_C   6.947176e-03
+2_12845883_A_C  -1.792696e-03
+2_12850072_A_C  -9.722727e-03
+2_13535731_T_A   5.150916e-04
+2_13537217_G_A   6.416050e-04
+2_13573956_T_C   3.426189e-03
+2_13587192_A_T   6.664546e-03
+2_13682191_C_T  -3.709490e-03
+2_13745777_G_T  -2.959099e-03
+2_13768827_T_A   6.072149e-03
+2_15033516_G_C   8.844911e-03
+2_15122059_T_G   1.997039e-03
+2_15146353_G_T  -9.002961e-03
+2_15156931_A_G   1.071249e-02
+2_15542504_T_G   8.402872e-03
+2_21963685_C_G  -8.645333e-03
+2_25889902_T_C  -6.588054e-03
+2_29059731_G_T  -1.037520e-02
+2_29281692_A_G   9.097449e-03
+2_30614718_G_T   3.913719e-03
+2_30686514_G_A   1.029726e-02
+2_30996320_A_C   4.219053e-03
+2_31383589_C_T   1.846414e-03
+2_31593498_C_T   8.198533e-03
+2_31846477_C_T  -3.222725e-03
+2_31965923_T_G  -4.410361e-03
+2_32152330_A_T   1.700578e-03
+2_32236525_G_A   2.027838e-02
+2_32309988_C_T  -4.665473e-03
+2_32330906_T_A   3.841860e-03
+3_189769_A_G     9.837954e-03
+3_238272_C_G     1.342558e-02
+3_274463_A_G     8.054044e-03
+3_317266_A_T    -1.003330e-02
+3_324505_T_A    -1.054446e-02
+3_421010_A_G     7.291806e-03
+3_503187_A_G     8.850717e-03
+3_503460_A_T     1.757881e-04
+3_506275_T_C    -8.950909e-03
+3_569038_C_A     1.384910e-02
+3_785118_G_A     1.347301e-03
+3_1035996_C_T    7.988422e-03
+3_1039285_T_G    1.255708e-03
+3_1045467_A_G   -4.779464e-04
+3_1073007_A_C    1.116359e-02
+3_1181231_C_A   -4.943903e-04
+3_1290114_T_C   -2.584962e-03
+3_1290512_T_C   -7.447942e-03
+3_1359106_T_A    1.154681e-02
+3_1361971_A_G    1.090832e-02
+3_1368635_C_T    1.122165e-02
+3_1376547_T_C    4.122105e-03
+3_1377304_G_A    3.102813e-03
+3_1442986_T_C   -4.490922e-03
+3_1536481_C_T    9.782196e-03
+3_1542909_G_T   -1.034495e-03
+3_1632212_C_A   -9.329579e-04
+3_1650892_T_C    3.424735e-03
+3_1803644_G_A    6.061836e-03
+3_1943760_A_G    1.249850e-02
+3_2019251_C_A   -5.110916e-03
+3_2022589_A_G   -3.624154e-03
+3_2175014_C_A    3.287993e-03
+3_2322531_C_G   -3.087830e-03
+3_2369703_T_G   -1.486536e-03
+3_2635768_T_C   -3.020200e-03
+3_2651217_C_A    1.768593e-03
+3_2679005_T_A   -2.603107e-03
+3_2689291_A_G   -3.021940e-03
+3_2830371_C_G    1.121948e-02
+3_2874529_A_G   -3.139136e-03
+3_2973670_T_C   -1.573595e-03
+3_3054996_A_G   -2.005596e-03
+3_3066056_T_C    8.065534e-04
+3_3090086_T_C   -6.616751e-03
+3_3140129_A_T   -1.527578e-03
+3_3293602_A_C   -6.640716e-03
+3_3302402_C_A    7.238737e-03
+3_3321982_T_A   -1.751683e-02
+3_3423523_T_A    3.033436e-03
+3_3557935_T_A   -5.070264e-03
+3_3568154_T_C   -5.850180e-03
+3_3580637_T_A    6.804723e-03
+3_3606303_G_A   -1.578316e-02
+3_3800069_G_A   -9.026060e-03
+3_3946591_A_G    8.447443e-03
+3_4828696_C_G   -7.634878e-03
+3_4923978_T_C   -1.229084e-02
+3_4976708_G_C   -3.610409e-03
+3_5062694_T_G   -4.156209e-03
+3_5143164_G_A   -5.290344e-03
+3_5257379_G_A   -6.920707e-03
+3_5562646_C_A    1.592503e-03
+3_5676179_T_A    5.689574e-03
+3_6160793_T_A   -4.076028e-03
+3_6234321_A_C   -5.630313e-04
+3_6270528_C_T   -2.374253e-03
+3_6599031_T_C   -2.118527e-03
+3_6600218_T_G   -1.981360e-03
+3_6748943_G_A    3.326541e-03
+3_7062800_G_C   -2.173298e-04
+3_7093340_T_G   -8.531633e-03
+3_7096682_C_A    6.811820e-03
+3_7098146_C_G   -1.024280e-03
+3_7107769_A_T   -1.179251e-02
+3_7116472_G_A    2.558388e-05
+3_7116485_C_A    4.098078e-04
+3_7132037_T_C    8.726857e-03
+3_7132163_A_G   -8.496715e-03
+3_7151140_G_A   -8.585752e-03
+3_7652042_C_T   -4.642061e-03
+3_9462518_G_C   -5.968833e-03
+3_9668011_A_G   -5.469192e-03
+3_10091570_T_A   2.764765e-03
+3_10845074_A_G  -4.295272e-03
+3_11323667_C_A  -9.817714e-04
+3_11345052_T_C   1.882533e-03
+3_11406110_A_G  -9.739632e-03
+3_11449705_G_T   9.900844e-03
+3_11478282_T_C  -2.517897e-03
+3_11506490_C_G   3.835025e-03
+3_12145048_T_C  -5.907516e-03
+3_12826466_C_T   3.556845e-03
+3_12831709_T_G   1.046607e-02
+3_13137547_T_C  -1.513917e-02
+3_13604284_G_A   1.490246e-02
+3_14051680_A_G  -7.487666e-03
+3_14056313_C_A  -1.356619e-03
+3_15012321_G_C  -2.472215e-02
+3_15664453_A_G   2.804471e-03
+3_15733713_C_A  -9.175640e-03
+3_15740661_A_G   4.422871e-03
+3_16268273_A_G  -1.685268e-02
+3_17077970_A_T  -3.799551e-04
+3_17085349_A_C  -3.799551e-04
+3_17145871_A_G  -2.379747e-02
+3_17504218_T_G  -5.583866e-03
+3_17537632_G_T  -1.343205e-02
+3_17854509_G_T   9.503441e-03
+3_17974726_A_G  -3.922091e-03
+3_18027402_G_T  -1.430939e-04
+3_18065489_A_G   3.253749e-03
+3_18199895_G_T  -7.886007e-03
+3_20196181_G_A   1.851174e-03
+3_20196256_G_A  -6.399825e-03
+3_20806124_C_T  -1.704760e-03
+3_20898043_T_A   6.799460e-03
+3_20975823_C_T   4.090322e-03
+3_21131881_G_A   1.406664e-03
+3_21273036_A_G  -3.490378e-03
+3_21291512_T_C   1.342572e-03
+3_21388262_C_T   7.113134e-03
+3_21426246_A_G   1.001171e-02
+3_21507192_T_G   5.956979e-03
+3_21599869_C_T   3.972034e-03
+3_21651068_C_T   3.959074e-03
+3_21824786_T_C   1.525235e-03
+3_21826718_C_G   3.155171e-03
+3_22096166_C_G   3.359512e-03
+3_22159622_T_C   3.108978e-03
+3_22353684_C_G  -2.796691e-03
+3_22420310_G_A  -1.272975e-03
+3_22565804_A_T  -9.039508e-03
+3_22739674_G_T   5.423610e-03
+3_22740251_A_T   5.136877e-04
+3_22760912_G_C   1.434873e-03
+3_22814657_C_T   7.694366e-03
+3_22825850_T_C   1.515395e-03
+3_23029512_A_G  -2.422677e-03
+3_23152845_G_C  -2.877753e-03
+3_23194845_G_T  -3.627336e-03
+3_23290447_T_A  -2.243604e-03
+3_23362873_A_G   4.372224e-03
+3_23662685_C_T   2.708239e-03
+3_23680706_G_T   1.402152e-03
+3_23684177_T_A   1.663188e-03
+3_23786086_C_T   3.078240e-03
+3_23937308_T_C   2.672500e-03
+3_23937310_C_A  -1.698954e-02
+3_23939821_A_T   2.677711e-03
+3_24407051_C_G  -8.897626e-03
+3_24468915_C_T   6.241969e-03
+3_24474671_T_C  -7.145285e-03
+3_24496021_G_T  -3.487039e-03
+3_24496112_C_T   1.215194e-03
+3_24555518_T_G  -5.933229e-03
+3_24578880_A_G   4.325604e-03
+3_24578972_C_T   6.396557e-04
+3_24584708_C_G  -4.535664e-03
+3_24862776_T_G  -4.085394e-03
+3_25015501_T_C   5.214090e-03
+3_25028055_A_T  -3.491026e-04
+3_25083335_A_T   3.675238e-03
+3_25171869_G_T  -1.028348e-03
+3_25179793_A_T   8.269011e-03
+3_25182221_T_C  -3.024722e-03
+3_25191209_G_T   4.995635e-03
+3_25196578_T_G  -8.606720e-04
+3_25239486_T_C  -1.306539e-02
+3_25295862_C_G  -1.389747e-02
+3_25528143_G_A  -1.402339e-02
+3_25538584_C_A  -7.864332e-03
+3_25558245_C_T   5.255975e-03
+3_25583079_G_A  -1.342818e-02
+3_25599390_G_T  -1.483169e-02
+3_25644470_A_T  -7.857978e-03
+3_25807551_C_T   5.699819e-03
+3_25904113_T_A   4.304263e-03
+3_25904120_A_G   1.046767e-02
+3_26076695_A_T   2.800287e-03
+3_26150365_T_G  -6.065328e-03
+3_26223847_G_A   1.948241e-03
+3_26262365_T_A   4.718594e-03
+3_26303705_C_A   1.907107e-02
+3_26309958_A_T  -5.102459e-04
+3_26359447_C_T  -1.232664e-03
+3_26362389_C_T  -1.290703e-03
+3_26374090_A_G   1.024717e-03
+3_26442280_T_G  -2.539635e-03
+3_26518964_G_A   5.892585e-04
+3_26797198_A_C   1.027484e-02
+3_26803895_A_G   1.194802e-02
+3_26815627_G_A   7.164507e-03
+3_26858707_T_C   1.538814e-02
+3_26869656_T_C   6.170579e-05
+3_26899122_A_G  -3.912056e-03
+3_26955027_T_A  -6.004386e-03
+3_26997316_A_C   2.580357e-04
+3_27149229_A_G  -1.569940e-04
+3_27280399_G_T   6.341408e-03
+3_27306433_G_A  -7.892846e-03
+3_27449969_T_A   2.600532e-03
+3_27474356_T_C   1.070692e-02
+3_27478358_A_T  -1.159487e-02
+3_27523334_C_T  -1.115244e-02
+3_27524853_T_A  -3.716881e-03
+3_27530687_A_T  -1.053000e-02
+3_27554281_G_C  -1.225434e-02
+3_27742559_A_G   9.024107e-03
+3_27856663_C_T   1.468126e-02
+3_27875925_C_G  -3.478348e-03
+3_27921160_C_T   5.247366e-03
+3_27933001_T_G   7.214296e-03
+3_28008239_T_A   1.062654e-02
+3_28034609_G_A   1.273593e-02
+3_28044631_T_G  -1.134861e-02
+3_28083192_C_T   1.269227e-03
+3_28084132_G_T  -6.245020e-03
+3_28129163_A_C   1.809735e-03
+3_28158121_G_A   1.309861e-03
+3_28169453_A_C   3.775603e-03
+3_28200400_A_T  -7.664894e-04
+3_28200466_G_A  -5.317299e-03
+3_28389772_C_T  -3.214857e-03
+3_28405992_C_T   7.325536e-03
+3_28435792_A_G   3.042545e-03
+3_28437803_T_G   7.152593e-03
+3_28481065_A_C   7.660999e-03
+3_28688965_T_C  -4.881904e-03
+3_28700635_T_C   2.527697e-03
+3_28702062_G_C  -4.941059e-03
+3_28705681_T_A   1.603531e-03
+3_28707722_A_G  -2.360316e-03
+3_28838580_A_T   3.891496e-03
+3_29058712_T_A   3.718719e-03
+3_29067760_G_A  -3.896351e-03
+3_29261133_G_A   5.102292e-03
+4_512256_T_A     5.687606e-04
+4_529229_T_A    -1.689650e-03
+4_556631_A_G    -3.608516e-03
+4_699252_A_G    -4.189085e-03
+4_719643_T_C    -3.712379e-03
+4_732188_C_G    -4.144006e-03
+4_733898_T_C    -4.384551e-03
+4_733930_A_G    -5.023333e-03
+4_776511_C_G    -7.722172e-03
+4_837956_A_T     1.610424e-03
+4_839747_C_T     5.939641e-04
+4_1534117_G_A   -9.179508e-03
+4_1622287_G_T   -1.353655e-02
+4_1647547_G_A    1.479783e-04
+4_1649478_G_A    3.698633e-03
+4_1670419_A_C    1.027534e-02
+4_1734341_C_T   -7.708786e-03
+4_2040611_C_T   -1.234104e-02
+4_2211107_T_C    2.092204e-03
+4_2243253_T_C    6.393431e-05
+4_2357272_T_A   -1.207291e-03
+4_2357503_A_C   -7.590762e-03
+4_2422463_C_T   -7.138321e-04
+4_2442493_G_C   -2.270840e-02
+4_2442601_G_A   -2.256821e-02
+4_2452272_T_A   -2.165150e-02
+4_2452286_C_T   -2.190019e-02
+4_2477423_T_C   -7.170702e-04
+4_2496845_T_A   -1.057130e-03
+4_2562722_C_A    1.429022e-03
+4_2770334_C_A   -1.402665e-02
+4_2875554_G_A    9.722956e-03
+4_3015647_A_T   -1.436426e-02
+4_3047476_T_C   -4.887594e-03
+4_3149294_A_G    2.225862e-03
+4_3149325_A_C    8.024924e-03
+4_3311291_G_T    6.542640e-03
+4_3478162_G_T    2.094709e-03
+4_3558726_C_A   -4.484913e-03
+4_3650662_T_A    1.239661e-02
+4_3705283_T_C    2.718858e-03
+4_3801981_G_A    4.023662e-03
+4_3822637_A_C   -1.320101e-02
+4_4010286_G_A    6.391061e-03
+4_5226933_T_C   -2.800999e-03
+4_5594183_C_T   -6.502080e-03
+4_5907622_C_T   -1.811179e-03
+4_5944464_G_C    3.138849e-03
+4_5993200_T_G    3.026814e-04
+4_6801380_C_T    4.079293e-03
+4_6801433_G_T    3.278064e-03
+4_7246491_T_A   -4.258569e-03
+4_7277803_C_T    9.545463e-03
+4_7312040_A_G   -1.037500e-03
+4_7536042_G_A    7.173332e-03
+4_7572211_C_T    1.246709e-02
+4_7649490_G_A    5.058941e-03
+4_7790029_A_G   -4.414113e-03
+4_8019895_A_G   -3.453068e-03
+4_8026532_T_A   -1.690922e-03
+4_8290950_C_T   -2.202599e-03
+4_8355869_G_A   -5.895681e-03
+4_8448871_A_G   -3.626806e-03
+4_8851481_C_A   -5.774749e-03
+4_8855994_T_G   -5.456240e-03
+4_8856034_T_C   -1.597870e-03
+4_8856057_G_A   -1.597870e-03
+4_8865444_C_T   -3.327913e-03
+4_9011830_A_G   -7.711140e-04
+4_9400280_C_G   -1.663616e-03
+4_9955516_G_A    6.838109e-04
+4_10033795_A_G   9.305892e-03
+4_10498524_T_A  -5.010591e-03
+4_10515352_C_A  -7.471567e-03
+4_10625411_G_A  -3.315709e-03
+4_11416994_C_T   1.698729e-03
+4_11417739_A_C  -1.659704e-03
+4_11432542_T_A   2.876888e-03
+4_11515607_A_G  -2.851323e-03
+4_11825952_T_A  -7.393756e-03
+4_12104253_C_A  -2.518110e-03
+4_12691218_C_A  -3.739096e-03
+4_13169648_C_G  -4.335224e-03
+4_13169678_A_T   1.008406e-03
+4_13239713_T_A  -5.538464e-03
+4_13268910_G_A  -5.236234e-03
+4_13411309_G_A   1.225899e-02
+4_13648364_T_C   8.873859e-04
+4_14021111_T_C  -1.029852e-04
+4_14027608_T_C  -1.440495e-03
+4_15335863_T_C  -1.037178e-02
+4_15392525_C_T  -2.378043e-03
+4_15841423_C_T  -8.818574e-04
+4_15981120_A_C  -4.801416e-04
+4_16358458_C_A   1.441207e-04
+4_16546939_A_C  -1.582896e-03
+4_16658288_T_C  -4.059488e-04
+4_16760441_C_T  -7.811026e-04
+4_17136935_T_C   1.381310e-05
+4_17706500_C_T   8.984523e-05
+4_18234815_G_A  -4.692987e-04
+4_18852285_T_C  -2.555366e-03
+4_19252881_C_A  -1.074798e-03
+4_19342577_A_T   8.805011e-04
+4_19401918_T_A   9.897163e-04
+4_19971449_C_G  -6.259067e-04
+4_20107602_C_T   9.665188e-04
+4_20116737_A_G  -3.483688e-04
+4_20229303_A_G  -1.124437e-03
+4_20918394_A_T  -2.892776e-03
+4_20932584_G_T  -1.944225e-03
+4_21006447_G_A   7.697121e-04
+4_21021099_G_A  -1.636004e-03
+4_21354901_C_A  -7.567678e-04
+4_21517190_C_T   2.218843e-04
+4_21534948_G_T  -8.187305e-04
+4_21578251_C_T   8.763507e-03
+4_21615099_A_G  -4.563127e-04
+4_21636015_C_T  -2.309861e-04
+4_21673960_C_G   8.937518e-04
+4_21676254_G_T  -8.844367e-04
+4_21689877_T_G   3.889423e-03
+4_21736569_C_T   1.982355e-03
+4_21742095_C_T  -1.957997e-02
+4_21842843_A_G   1.423292e-03
+4_21919813_G_C   1.306296e-02
+4_21977534_C_G  -7.067063e-04
+4_22002594_G_C  -3.485730e-03
+4_22069347_C_T   1.053114e-02
+4_22070698_C_A  -1.504192e-03
+4_22076700_G_A  -1.160396e-03
+4_22126363_T_A   1.249265e-03
+4_22132715_T_G  -2.602526e-03
+4_22234528_A_T  -1.789255e-03
+4_22235109_G_A   1.420984e-03
+4_22260073_T_A  -5.580858e-04
+4_22324754_G_A   6.186307e-03
+4_22328730_T_A   8.994543e-04
+4_22435632_A_G  -5.908195e-04
+4_22498868_A_T  -8.532788e-04
+4_22551984_T_C   9.279085e-04
+4_22554701_T_C  -5.292527e-04
+4_22555146_C_T   2.086868e-02
+4_22565247_A_T  -3.442305e-03
+4_22602614_T_C  -7.136595e-04
+4_22685185_A_G  -7.814241e-04
+4_22688435_G_T  -1.303511e-03
+4_22689058_C_T   6.997180e-04
+4_22744509_G_A  -3.392466e-03
+4_22750636_A_T  -5.725112e-03
+4_22774795_G_C  -3.952975e-03
+4_22777578_A_G  -2.216240e-04
+4_22850895_G_C  -2.066239e-03
+4_22922689_C_T   9.480602e-04
+4_22936714_G_T   1.383308e-02
+4_22959545_A_C   1.294525e-02
+4_23010389_G_C   4.117864e-03
+4_23010405_A_G   3.654446e-03
+4_23154660_T_A   3.563967e-03
+4_23163806_T_G   4.083025e-03
+4_23167493_G_A   1.043043e-04
+4_23175826_A_T   1.043043e-04
+4_23182158_G_T   4.017441e-04
+4_23214739_C_A  -6.218939e-03
+4_23251993_C_A   5.887160e-03
+4_23290980_A_G   3.099732e-03
+4_23355926_G_A  -2.641971e-03
+4_23368081_G_A  -2.472911e-03
+4_23372167_G_T  -1.388694e-02
+4_23376022_C_T  -9.698013e-03
+4_23433480_A_T  -3.149384e-03
+4_23790307_G_T   1.584717e-05
+4_23995342_G_A   1.923976e-03
+4_24055711_T_C  -4.303387e-03
+4_24154237_G_A  -2.689155e-03
+4_24199284_G_A   4.005496e-04
+4_24282098_C_A  -4.205885e-03
+4_24282624_A_G  -3.688963e-03
+4_24307106_G_C  -1.159053e-03
+4_24335015_G_A  -1.694488e-03
+4_24430481_T_A  -4.819667e-03
+4_24501846_G_C  -3.112187e-03
+4_24521860_T_C  -4.900129e-03
+4_24555146_A_T  -4.513637e-03
+4_24597092_C_A  -4.573443e-03
+4_24600266_T_C  -3.884501e-03
+4_24610830_G_T  -1.502672e-03
+4_24612519_T_A  -5.210941e-03
+4_24625592_A_C  -4.586234e-03
+4_24805045_T_C  -2.102351e-03
+4_24807159_C_T  -2.606383e-03
+4_24884525_A_G  -1.367285e-03
+4_24933582_G_A  -1.638923e-03
+4_24990048_T_C  -3.337108e-03
+4_24991403_C_T  -1.916823e-03
+4_25132275_G_A  -4.040063e-03
+4_25141374_G_A  -1.196653e-03
+4_25201084_T_G   3.793464e-03
+4_25266534_A_T  -1.607610e-03
+4_25325605_A_G  -3.855402e-03
+4_25362521_A_G  -8.085051e-04
+4_25383365_C_A   4.729686e-04
+4_25982839_T_A  -5.130370e-03
+4_26006326_A_G  -1.595005e-03
+4_26006338_G_A  -1.595005e-03
+4_26171879_C_A   1.134734e-03
+4_26244054_A_C  -6.477592e-04
+4_26244217_A_G  -2.847221e-03
+4_26248604_G_A  -2.530600e-03
+4_26291504_G_T   4.246823e-03
+4_26307969_G_T  -3.321794e-03
+4_26315252_T_C  -4.403203e-03
+4_26335997_A_G   1.822308e-03
+4_26344392_A_G   5.418624e-04
+4_26352177_T_C   5.418624e-04
+4_26369510_G_T  -4.336522e-03
+4_26371779_C_A   1.101669e-03
+4_26388421_T_G  -7.785729e-03
+4_26452362_A_G   6.630607e-03
+4_26459518_G_A   5.017382e-03
+4_26460525_T_C   4.771467e-03
+4_26460631_T_A   4.099762e-03
+4_26554864_G_C   5.456147e-03
+4_26566330_C_T   1.044967e-02
+4_26567295_G_C  -6.321758e-03
+4_26580717_A_T   1.730613e-02
+4_26597715_T_A   1.387759e-02
+4_26613971_G_A   2.223423e-04
+4_26666089_G_A  -1.422021e-03
+4_26666328_T_A  -1.130593e-03
+4_26694336_G_A   4.061004e-03
+4_26694478_C_T  -1.491600e-02
+4_26719697_A_T   1.480975e-03
+4_26728785_T_C  -6.936792e-03
+4_26845337_C_G  -1.509801e-03
+4_26888706_A_G  -3.946146e-03
+4_27060045_A_G  -5.565583e-04
+4_27069660_G_A  -7.430959e-03
+4_27219488_T_G  -3.880764e-03
+4_27259395_T_G  -3.566979e-03
+4_27279313_A_G  -3.027607e-03
+5_92736_G_T      4.909772e-03
+5_142984_T_C     5.166451e-03
+5_201868_T_C     2.766946e-04
+5_210480_A_G     5.801352e-03
+5_225629_C_T     3.149792e-03
+5_412163_T_G     5.998341e-03
+5_420211_A_G     1.239401e-02
+5_616738_C_T     6.219370e-03
+5_677075_T_G    -2.391484e-03
+5_692326_G_A     5.562993e-03
+5_735579_G_A     6.753954e-03
+5_1112263_T_C   -8.385036e-03
+5_1177639_T_C    3.931534e-03
+5_1206764_C_T   -9.284301e-03
+5_1290387_A_T   -1.365546e-02
+5_1421964_G_T    8.776793e-03
+5_1474677_C_T    7.525951e-03
+5_1530708_A_T    6.101156e-03
+5_1531037_A_T    5.974565e-03
+5_1678320_A_T   -5.876791e-03
+5_1682017_G_A    4.407734e-03
+5_1694343_A_T    1.524173e-03
+5_1722577_G_T   -1.272909e-02
+5_1722602_C_A   -4.398914e-03
+5_1777087_G_A   -2.507547e-03
+5_1777966_C_A    5.538711e-03
+5_1807977_C_T    7.040824e-03
+5_1849126_C_G    6.616970e-04
+5_1939578_T_G    4.384224e-03
+5_1971830_C_T    7.501266e-03
+5_2229149_A_T   -3.416978e-03
+5_2230569_A_G    1.664386e-03
+5_2231263_A_T   -4.496984e-03
+5_2317071_A_G    1.679200e-03
+5_2608035_T_C   -7.208375e-03
+5_2808411_A_T    4.224866e-03
+5_3041850_A_G    3.820449e-03
+5_3169807_A_T    3.842197e-03
+5_3192363_T_C    2.078128e-03
+5_3516581_T_A    3.162506e-03
+5_3550684_T_C    3.422029e-03
+5_3643864_G_T   -6.074272e-04
+5_3647548_A_T   -1.290870e-03
+5_3857346_A_G    2.035573e-03
+5_3857348_G_A    2.035573e-03
+5_4012966_G_A    4.949749e-03
+5_4015448_A_G    4.522986e-03
+5_4021566_G_A    1.937461e-03
+5_4144480_A_G    1.541045e-03
+5_4189120_C_G    1.050599e-03
+5_4228604_A_G    3.280421e-03
+5_4391807_C_T    6.875455e-03
+5_4409167_C_T    7.252508e-03
+5_4449808_C_A    1.317354e-03
+5_4467111_A_T    9.599913e-04
+5_4639263_G_C    7.307495e-04
+5_4734572_C_A    3.444002e-04
+5_4781851_C_G    7.769486e-04
+5_4811471_T_C    7.769486e-04
+5_4819989_T_G   -1.011566e-03
+5_4896517_C_G    1.501853e-02
+5_5011862_C_T   -1.301940e-02
+5_5048820_G_A    1.386646e-04
+5_5097376_C_T    1.734502e-03
+5_5288752_G_A   -1.294794e-03
+5_5338782_C_A   -1.589373e-03
+5_5354610_G_C    3.337612e-04
+5_5458057_A_T    4.861835e-03
+5_5672428_C_T    5.948387e-03
+5_5703205_T_G   -9.925008e-03
+5_5738711_C_T   -4.164290e-03
+5_5769215_A_C   -4.893877e-03
+5_5836903_G_A    1.126587e-02
+5_5838994_C_A   -2.753782e-03
+5_5915268_T_C    1.884529e-03
+5_5915987_A_G   -4.839426e-03
+5_5920309_G_A    1.344523e-03
+5_5927002_A_G    7.961033e-04
+5_5927028_A_C    1.013496e-02
+5_6127964_A_G    9.543294e-04
+5_6133163_C_T    6.195868e-03
+5_6137749_A_C    9.841707e-03
+5_6179297_T_C    1.354370e-02
+5_6192840_T_C    5.004699e-03
+5_6221934_A_T    3.449273e-03
+5_6257289_T_A    1.604139e-02
+5_6271491_A_G   -9.096110e-03
+5_6310735_A_C   -1.525107e-03
+5_6322268_C_T   -5.896859e-03
+5_6452926_G_T   -3.663944e-03
+5_6465015_A_T   -9.201702e-03
+5_6465260_G_T   -1.110116e-02
+5_6873121_G_T   -2.862547e-03
+5_6889697_G_T   -8.209923e-06
+5_7477336_A_G   -1.215009e-02
+5_7840330_G_A   -3.739550e-03
+5_7853273_C_A   -9.855195e-03
+5_7872949_T_C   -6.257830e-03
+5_7920651_C_A   -9.894869e-03
+5_8117853_G_A    6.685031e-04
+5_8122945_A_C   -2.420568e-03
+5_8152541_G_A    2.816480e-04
+5_8152602_C_T   -1.477595e-03
+5_8152629_A_T   -1.376161e-03
+5_8248616_A_G    7.909462e-03
+5_8258454_A_G   -7.260723e-03
+5_8830088_T_G   -4.291129e-04
+5_8862803_T_A   -1.997185e-04
+5_8970458_C_T   -4.936997e-03
+5_9010398_G_A   -1.589621e-03
+5_9138163_A_T   -4.067764e-03
+5_9463176_G_A    2.065504e-03
+5_9469751_G_A    1.511017e-03
+5_9583788_T_C    7.970650e-04
+5_9962606_G_A    5.793993e-03
+5_10082519_G_A   2.451171e-03
+5_10203560_T_G  -5.052799e-03
+5_10262890_G_A   7.117683e-03
+5_10970687_T_C   4.453089e-03
+5_11131293_G_A   2.247597e-03
+5_11482839_A_T   2.794782e-03
+5_11496067_T_A  -4.112106e-03
+5_11531480_A_C   1.720113e-03
+5_11630882_G_T  -1.622092e-02
+5_11640433_T_A  -7.319540e-03
+5_11657206_A_G  -5.150287e-03
+5_11775836_G_A   8.909741e-04
+5_12636091_A_T   1.481968e-03
+5_12767998_C_T   9.324675e-04
+5_12892430_C_T  -3.685224e-03
+5_13857655_T_C   7.733262e-03
+5_14430636_T_C   6.352435e-03
+5_16112658_G_A   6.168979e-03
+5_16272923_A_T   5.238500e-03
+5_16466656_T_C   8.929794e-04
+5_16937313_A_G   6.151281e-03
+5_16967706_C_A   4.042597e-03
+5_17262353_C_G  -4.760706e-03
+5_17277400_G_C  -4.162686e-03
+5_17641292_A_G   4.072821e-03
+5_17832074_G_T  -1.496619e-03
+5_18558568_A_T   7.211659e-03
+5_18953881_G_A   4.987629e-03
+5_18954900_A_G   4.950935e-03
+5_19182648_C_G   4.103756e-03
+5_19277356_G_A   9.291738e-05
+5_19277833_T_C  -1.213134e-04
+5_20752523_T_C  -1.278299e-03
+5_20826994_G_A  -1.034525e-02
+5_20829967_A_T  -1.034525e-02
+5_20830821_G_C  -3.942887e-03
+5_20929086_T_A   3.166848e-03
+5_20938042_A_T   3.274506e-03
+5_21055466_T_A  -1.935254e-03
+5_21217342_A_G   6.503734e-03
+5_21491272_A_T  -7.546696e-03
+5_21522649_T_A  -6.193482e-03
+5_21537081_C_A  -1.010829e-02
+5_22093285_A_T   5.868940e-03
+5_22155046_C_A  -1.775156e-02
+5_22269037_A_C  -4.163539e-03
+5_22271114_T_A  -3.985008e-03
+5_22274195_T_A  -8.274153e-04
+5_22415993_A_G  -6.755628e-04
+5_22581617_A_G  -1.255840e-03
+5_22604608_A_C   4.438319e-03
+5_22613087_C_T   4.438319e-03
+5_22733263_G_A   3.452666e-03
+5_22773539_T_C   1.998866e-03
+5_22783852_G_T  -2.119876e-03
+5_23066176_T_G  -8.868286e-03
+5_23483065_C_A   6.410780e-03
+5_23572825_T_C  -2.733959e-03
+5_23600266_C_T   7.899215e-03
+5_23603405_G_A  -6.141755e-03
+5_23616052_G_A   4.495709e-03
+5_23624143_C_T   3.925046e-05
+5_23626949_G_C   5.974823e-03
+5_23630926_A_C   6.881220e-03
+5_23636028_T_A   8.245364e-03
+5_24136398_A_T  -3.588863e-03
+5_24301185_A_G  -6.771415e-03
+5_24315250_G_A   5.253432e-03
+5_24471258_A_C   1.253230e-02
+5_24527836_T_C  -8.302469e-03
+5_24541021_G_A   1.385901e-03
+5_24549900_C_A   1.057930e-02
+5_24983098_G_A  -5.719730e-03
+5_25186481_A_G   2.385920e-03
+5_25387991_C_G  -5.333172e-03
+5_25473378_C_T   9.543996e-03
+5_25504210_A_G   3.990635e-03
+5_25693302_G_C   7.087806e-03
+5_25844904_T_A  -8.835905e-03
+5_26158539_A_T  -3.099431e-03
+5_26165340_T_C   6.872692e-03
+5_26232140_T_G  -3.070014e-03
+5_26323428_G_A   8.309220e-04
+5_26358071_A_G   2.161449e-04
+5_26382485_T_C   5.628947e-04
+5_26563810_G_A   7.918012e-03
+5_26702320_G_T  -9.041912e-03
+5_26735681_G_A  -1.235284e-03
+5_26755397_C_G   4.324024e-03
+5_26772553_A_G   7.378582e-03
+5_26856986_C_G   8.949550e-03
+5_26899139_T_C   1.107106e-02
+5_26963932_T_C   3.371851e-03
+5_27167423_G_T   1.355592e-02
+5_27297448_C_G  -9.376729e-03
+5_27298074_C_A  -1.130632e-02
+5_27578998_T_C  -6.891853e-03
+5_27623683_A_G  -2.852133e-05
+5_27757019_A_G  -1.076487e-03
+5_27887983_C_T   4.656723e-03
+5_28147423_A_G   5.644293e-03
+5_28148860_T_G   1.226435e-02
+5_28193411_T_C   5.499617e-03
+5_28304839_A_C   6.026758e-03
+6_225552_T_C    -6.184783e-03
+6_428776_T_C    -6.100397e-03
+6_477711_T_A    -6.442476e-03
+6_547805_C_G    -5.697752e-03
+6_550540_A_G    -2.450118e-03
+6_550549_T_C    -2.450118e-03
+6_665867_A_G     4.850943e-03
+6_679020_G_A    -2.724119e-03
+6_811115_G_A    -1.196028e-03
+6_838008_G_A     3.808337e-03
+6_1269586_A_G    4.159213e-03
+6_1271196_C_T    2.539652e-03
+6_1488059_T_C    8.313663e-03
+6_1488094_A_T   -9.421588e-03
+6_1500598_A_G   -1.196490e-03
+6_1522775_T_A   -2.665453e-03
+6_1843866_T_A   -3.311886e-03
+6_1868602_T_C    3.596511e-03
+6_1875460_C_T   -2.745404e-03
+6_1887331_A_T   -3.421368e-03
+6_2036048_G_C   -4.841937e-03
+6_2113122_G_A    6.298632e-03
+6_2687442_G_A    1.201656e-03
+6_2698065_C_T    1.201656e-03
+6_7966355_T_A    2.891791e-04
+6_12946585_T_C  -3.803938e-03
+6_13703286_A_G  -2.619621e-03
+6_14489012_T_A   3.593564e-04
+6_15244907_T_C  -3.870285e-03
+6_15319261_T_G  -2.603826e-03
+6_15319435_G_T   7.203790e-03
+6_15572985_T_C  -7.274922e-04
+6_15584803_T_C  -3.406511e-03
+6_15610093_T_G   6.265828e-04
+6_15726020_T_C   1.784351e-03
+6_15731282_A_C  -3.692867e-03
+6_15847483_G_T   1.254270e-03
+6_15875211_G_A  -5.418872e-03
+6_15876036_G_A  -5.777502e-03
+6_15893399_T_C  -8.910895e-03
+6_16337099_G_A   4.214347e-03
+6_16751332_A_T  -1.837173e-03
+6_16839107_C_A  -7.709874e-03
+6_16935054_T_G  -7.634637e-03
+6_16935203_G_T  -7.634637e-03
+6_17010032_C_T   3.970921e-03
+6_17041233_A_G   1.073392e-03
+6_17083779_G_C   2.154399e-03
+6_17218920_C_A  -7.792028e-03
+6_17239976_G_A  -8.071869e-03
+6_17245183_C_G  -7.918023e-03
+6_17475315_T_C  -6.477087e-03
+6_17499668_A_C  -7.272234e-03
+6_17587549_T_C  -5.769441e-03
+6_17600848_T_C  -3.535481e-03
+6_17602393_C_A  -8.443657e-03
+6_17696808_T_C   3.528399e-03
+6_17697978_G_A  -7.221571e-03
+6_17729700_T_G  -8.491399e-03
+6_17776685_C_T  -5.434156e-03
+6_17882071_T_A  -7.920462e-03
+6_17937337_T_C   8.447717e-03
+6_17952823_G_A  -7.372131e-03
+6_18005786_A_G  -6.420742e-03
+6_18135876_A_T   5.851315e-03
+6_18144615_C_A  -4.724832e-03
+6_18251065_C_T   1.192835e-02
+6_18427425_G_A  -2.754416e-04
+6_18491997_T_A  -7.699204e-03
+6_18513555_C_G   9.565739e-03
+6_18765356_T_A  -6.319690e-03
+6_18765984_G_A  -1.022093e-04
+6_18774553_A_C  -7.460289e-03
+6_19068632_T_G  -5.637350e-03
+6_19092662_C_T  -6.682183e-03
+6_19170010_A_C  -4.307146e-04
+6_19181793_G_A  -2.882780e-03
+6_19233383_T_A   9.752069e-04
+6_19239960_T_C   1.204457e-03
+6_19283923_A_G  -3.035936e-04
+6_19305884_T_C  -2.305089e-03
+6_19407317_G_A  -1.992744e-03
+6_19452490_A_C  -7.832865e-04
+6_19495159_G_A  -3.339785e-03
+6_19641532_G_T  -1.235488e-02
+6_19642270_T_A  -1.803045e-03
+6_19690670_G_A   5.068064e-03
+6_19746824_T_C  -2.172974e-03
+6_19757640_A_T   1.098093e-02
+6_19757695_C_A  -1.361354e-04
+6_19792345_C_T  -3.598126e-03
+6_19867744_T_C   7.429168e-04
+6_19887548_C_A  -1.415086e-02
+6_19980780_A_G   3.895990e-03
+6_20152527_A_T  -2.270087e-03
+6_20189190_A_T  -1.335757e-02
+6_20358121_C_T  -1.822810e-02
+6_20468405_T_C   4.337871e-03
+6_20483375_T_C   5.842875e-03
+6_20541753_T_G   1.808810e-02
+6_20621802_G_A  -1.517187e-02
+6_20629103_C_T   7.517919e-03
+6_20719429_T_A  -1.738386e-02
+6_20845037_C_T   4.332227e-04
+6_20845310_G_A   1.041590e-02
+6_20845311_T_A   1.041590e-02
+6_20951374_C_T   6.845287e-04
+6_21031976_T_C   4.911848e-03
+6_21285773_T_A   3.741572e-03
+6_21387709_T_A   1.063869e-02
+6_21409313_T_A  -1.023965e-02
+6_21467217_A_T   9.000999e-03
+6_21582371_C_T   3.184548e-03
+6_21636528_G_A   7.666320e-03
+6_21636537_G_A   3.810286e-03
+6_21639243_A_G   4.314905e-03
+6_21652270_T_C   6.505133e-03
+6_21682984_G_A  -6.300239e-03
+6_21687264_A_G   8.227811e-03
+6_21688334_G_A   1.003223e-02
+6_21804467_C_T   8.013711e-04
+6_21952279_G_A   5.479850e-03
+6_21979150_A_G  -1.552901e-03
+6_22083088_T_G   3.096994e-03
+6_22084096_T_C  -7.208940e-04
+6_22090109_G_T   1.596479e-03
+6_22111425_G_T   3.830977e-03
+6_22121159_C_A   3.351760e-03
+6_22143246_A_C  -2.249220e-04
+6_22215869_T_C   4.533216e-04
+6_22467341_C_T   1.726276e-04
+6_22467559_T_G   6.529134e-03
+6_22467611_C_G   9.644182e-03
+6_22588852_T_A   5.474521e-03
+6_22619180_C_A   6.102724e-03
+6_22715591_T_A   5.475449e-03
+6_22884996_C_T   7.242507e-03
+6_23016189_T_G   5.889955e-03
+6_23021816_G_C   5.651050e-04
+6_23021818_A_C   5.651050e-04
+6_23040640_C_G   6.799183e-03
+6_23040834_A_G   5.776767e-03
+6_23153602_A_G  -4.203446e-03
+6_23167319_T_C   4.302140e-03
+6_23300975_C_T   5.012162e-03
+6_23306363_G_T   4.515835e-03
+6_23432504_G_C  -4.620615e-03
+6_23470243_G_T  -1.823892e-03
+6_23482361_T_C  -1.579296e-03
+6_23512724_C_A  -1.637894e-02
+6_23559821_T_A  -6.093612e-03
+6_23863972_T_C   5.063011e-03
+6_23869248_T_C  -5.442501e-03
+6_23888937_G_A  -1.845636e-03
+6_23907861_T_A   4.260954e-03
+6_23970598_G_A  -8.642656e-04
+6_24005120_C_T  -2.702577e-03
+6_24119925_G_A  -2.278014e-03
+6_24155468_C_T  -1.419158e-02
+6_24239305_A_T   1.236976e-02
+6_24330937_A_G   1.406326e-02
+6_24381898_T_A   1.416907e-02
+6_24441459_G_C   4.487763e-03
+6_24482778_G_C   4.555549e-03
+6_24523259_A_G   4.140308e-03
+6_24680150_C_T  -2.141135e-03
+6_24681284_A_T  -3.389442e-03
+6_24709263_A_G  -3.878060e-03
+6_24799187_C_G  -3.949687e-03
+6_24809679_A_G  -6.132911e-04
+6_24891656_C_G   3.495908e-05
+6_24897450_T_C   2.120142e-03
+6_24928427_G_A   7.116811e-04
+6_24969709_A_G  -6.805869e-04
+6_24973131_C_A  -2.561966e-03
+6_25023145_C_T  -1.374557e-02
+6_25035502_T_G  -1.184085e-02
+6_25044963_C_T  -1.183449e-02
+6_25072553_C_G  -1.192983e-02
+6_25085052_A_C  -1.051786e-02
+6_25096563_G_A   2.223765e-03
+6_25158743_T_G  -1.484104e-02
+6_25171138_C_T   1.489269e-03
+6_25694301_A_G   6.183656e-03
+6_25755735_T_A  -1.392874e-03
+6_25818558_C_T   3.597359e-03
+6_25838894_A_G  -8.297476e-03
+6_25842744_A_T   1.753436e-03
+6_25881516_T_G  -1.690712e-03
+6_25914386_C_T  -5.843740e-03
+6_25914678_G_A   1.728766e-03
+6_25920408_A_T   3.171449e-03
+6_26023455_T_A  -2.052148e-03
+6_26061506_C_T  -4.626307e-03
+6_26077359_G_C  -7.217691e-04
+6_26116266_T_G  -6.356261e-03
+6_26177258_T_A   9.521860e-03
+6_26470459_A_G   1.151929e-04
+6_26482409_G_T  -4.453165e-04
+6_26495877_C_G  -1.036336e-03
+6_26557279_T_A  -3.131691e-04
+6_26561387_G_A  -4.947050e-04
+6_26645297_C_A  -1.069719e-03
+6_26654250_G_A   3.646392e-04
+6_26699982_G_A  -3.741474e-03
+6_26865967_G_C  -1.761400e-04
+6_26876828_C_A  -2.590015e-04
+6_26903587_A_G  -3.522199e-04
+6_26906769_C_T  -5.954760e-03
+6_26920032_T_A   1.465238e-03
+6_26940973_A_T   4.794997e-05
+6_26957960_T_C  -5.636913e-04
+6_27145217_A_G  -5.952716e-04
+6_27164014_T_C  -2.016227e-04
+6_27184321_A_T   1.667055e-03
+6_27344915_T_G   1.569544e-03
+6_27391267_T_C  -8.455692e-04
+6_27445068_G_C  -5.505127e-03
+6_27536091_C_T   7.364322e-03
+6_27562753_C_T   9.686557e-04
+6_27564680_T_C  -5.347111e-03
+6_27572829_G_A   8.604288e-04
+6_27599159_A_G  -7.204459e-03
+6_27817221_C_T  -7.011816e-03
+6_27846124_G_A  -5.150099e-03
+6_27846140_T_A   1.872812e-03
+6_27852973_A_T   9.686557e-04
+7_241417_A_T     3.942508e-03
+7_551652_A_G    -7.295563e-03
+7_635546_A_G    -5.871738e-03
+7_705139_G_T    -2.181176e-03
+7_719186_C_T    -1.534127e-02
+7_794274_T_C    -1.226827e-03
+7_835400_T_C    -1.175795e-02
+7_858476_A_G    -2.473920e-03
+7_1146736_G_A    3.707299e-03
+7_1203929_G_A    4.197799e-03
+7_1319817_T_C    3.918132e-03
+7_1385109_G_A    1.502795e-03
+7_1466915_A_T    8.935621e-03
+7_1579246_A_G    1.332907e-02
+7_1586026_A_G    4.777799e-03
+7_1591992_A_G   -9.943913e-03
+7_1740424_C_G   -1.803050e-03
+7_1826917_A_G    9.850243e-03
+7_1993716_A_G    1.448632e-03
+7_2094846_A_G    3.600105e-03
+7_2099269_C_T    1.268984e-02
+7_2103319_A_G    1.757048e-03
+7_2132393_T_A    3.571750e-03
+7_2139176_A_C    1.587882e-02
+7_2160290_T_A    2.086402e-04
+7_2312072_A_G    7.249643e-03
+7_2312188_G_T    7.548364e-03
+7_2365958_C_A   -1.587374e-03
+7_2453115_A_T   -8.021436e-03
+7_2687337_C_T   -6.609665e-03
+7_2697319_A_T    2.290577e-03
+7_2703823_C_T    1.077357e-02
+7_3250109_C_T   -6.846024e-03
+7_3337352_A_G   -3.047820e-03
+7_3549465_A_G    5.255549e-03
+7_4488451_C_T   -3.819917e-03
+7_5048422_A_G   -5.201165e-03
+7_5050912_C_T   -7.297536e-03
+7_5473635_T_A   -2.541456e-03
+7_5721392_A_G    5.790126e-03
+7_5735065_C_T    1.508708e-02
+7_6933400_A_T    6.855762e-04
+7_6977950_C_T    4.566746e-04
+7_9575404_G_A    1.253556e-03
+7_11371722_A_G   4.263113e-03
+7_11499888_T_C   1.085793e-02
+7_11500975_C_T   6.470356e-03
+7_12074583_T_G  -4.029565e-03
+7_12880723_T_A   1.175744e-02
+7_13023147_G_C   3.715577e-03
+7_13521064_C_T   2.886190e-03
+7_18272481_G_T  -4.939184e-03
+7_21047061_T_C   3.139764e-03
+7_21076744_G_A   9.574282e-05
+7_22394053_C_T   9.282496e-03
+7_22411776_G_T   4.972905e-03
+7_23041431_G_C  -1.368926e-03
+7_23461057_T_G  -7.479185e-03
+7_23462004_C_A  -7.197785e-03
+7_23524148_G_A  -7.922964e-03
+7_23801025_T_C  -4.356601e-03
+7_23840707_T_C  -4.344168e-03
+7_23840708_T_A  -4.344168e-03
+7_23841124_C_T  -5.076769e-03
+7_23971205_T_C   9.795123e-04
+7_24217631_G_C  -3.498884e-03
+7_24276353_A_T  -1.552308e-03
+7_24494388_A_G  -1.597650e-02
+7_24515110_A_T  -1.536510e-02
+7_24538300_A_T   9.601822e-03
+7_24546915_C_G  -9.190994e-03
+7_24587871_A_G  -1.772915e-03
+7_24641728_C_A   6.768090e-03
+7_24659465_A_G  -1.199945e-02
+7_24709072_G_A  -5.132299e-03
+7_24722794_A_G   2.290611e-03
+7_24722829_C_T  -1.367734e-02
+7_24758991_A_G  -4.989122e-04
+7_24803922_G_A  -1.376439e-02
+7_24852515_A_C  -1.060146e-02
+7_24864443_C_T  -6.489150e-03
+7_24906327_A_T  -1.146572e-02
+7_24906477_T_C  -7.817773e-03
+7_24907799_T_C  -1.109953e-02
+7_24922315_C_T  -3.742230e-03
+7_24922416_G_A  -1.434587e-02
+7_24934057_C_T  -1.628986e-02
+7_24978431_T_A  -2.740097e-03
+7_25035178_G_T  -1.026703e-03
+7_25325220_G_A  -1.559458e-02
+7_25340539_C_G  -1.826950e-02
+7_25391854_A_C  -1.505525e-03
+7_25421352_G_T   5.597226e-03
+7_25611945_A_C  -1.302848e-02
+7_25669441_A_T   7.136561e-03
+7_25710045_G_A   8.978225e-04
+7_25883281_A_G  -1.352269e-03
+7_25883477_A_G   1.375936e-03
+7_25889077_A_T   1.093466e-03
+7_25940244_A_G   2.869020e-03
+7_25991908_G_T   1.701620e-03
+7_26164967_C_T   1.848396e-02
+7_26164998_T_C   2.412374e-02
+7_26168820_A_G  -6.695465e-03
+7_26208854_G_A   2.178364e-02
+7_26209378_A_G   2.225560e-02
+7_26358649_C_G   2.148509e-02
+7_26419828_G_A  -3.094207e-03
+7_26457070_T_A   8.746019e-05
+7_26510558_T_C  -1.697358e-03
+7_26730949_A_G   2.541038e-02
+7_26769615_C_T   8.839160e-03
+8_289509_C_G    -3.743522e-03
+8_323312_G_A     1.776414e-03
+8_349098_A_C     1.288446e-03
+8_350067_T_C     7.614937e-04
+8_379450_C_T     6.854384e-04
+8_462498_C_T     3.818634e-03
+8_471455_G_T    -1.916717e-03
+8_539682_A_G     2.768257e-03
+8_612842_A_G    -1.379067e-03
+8_622493_A_T     2.136712e-03
+8_702381_T_A    -2.079637e-03
+8_722210_A_T     3.772658e-03
+8_861979_A_G     3.132016e-03
+8_950676_G_A     4.109179e-03
+8_984928_T_C    -1.367197e-03
+8_986367_A_T    -2.128652e-03
+8_1346839_A_T    3.288334e-03
+8_1655106_T_C   -3.486261e-03
+8_1837626_C_A    1.490681e-03
+8_1895701_C_T   -3.450726e-03
+8_1900595_A_G   -2.524020e-04
+8_1905749_T_C    1.374739e-03
+8_1957162_G_C   -8.932245e-04
+8_2050269_A_G    1.045434e-02
+8_2065474_A_C    4.224729e-03
+8_2100035_T_C    5.536350e-03
+8_2293399_A_G    5.251367e-03
+8_2392175_C_T   -6.165960e-03
+8_2528592_A_G   -3.344915e-04
+8_2652782_T_C   -4.125385e-03
+8_2767701_T_C    9.834099e-03
+8_2795019_G_A    7.668575e-03
+8_2815651_C_G    7.783335e-03
+8_2830944_A_G    1.204674e-02
+8_2982187_T_C   -6.836009e-03
+8_3240964_A_T   -1.033402e-02
+8_3273466_T_C   -5.954804e-03
+8_3500293_A_G    2.747619e-04
+8_3500516_C_G    1.255547e-02
+8_3502257_C_A   -1.033949e-02
+8_3637104_A_G   -4.005477e-03
+8_3763147_G_T   -1.491532e-02
+8_3879605_C_G    1.570169e-03
+8_3894553_T_A    5.286884e-04
+8_3947475_G_C    6.067024e-03
+8_3995423_G_T    3.542276e-03
+8_4042641_C_T    2.225865e-03
+8_4189348_G_A    1.938994e-02
+8_4222727_G_A    2.013059e-03
+8_4222822_A_T   -1.090029e-02
+8_4239385_A_T   -4.162068e-03
+8_4284234_C_T    6.046437e-05
+8_4304424_C_A    5.273884e-03
+8_4329967_C_A    5.637991e-03
+8_4353045_C_A    1.814261e-03
+8_4390447_C_T    8.617312e-03
+8_4523380_A_G    9.656630e-03
+8_4676415_A_T    1.431300e-02
+8_4760867_C_T    3.063572e-03
+8_4763227_C_T    8.479933e-03
+8_4765105_C_T    1.037533e-02
+8_4784666_T_C    8.893942e-03
+8_5099852_C_T    8.078458e-03
+8_5179297_T_C    1.283006e-02
+8_5739228_G_A   -4.166087e-03
+8_6439483_T_A    2.323244e-03
+8_6643877_G_A   -2.605936e-04
+8_6730071_T_C   -3.754200e-03
+8_6851516_T_C   -1.266616e-02
+8_6939834_C_G    7.920417e-03
+8_6943278_T_A    7.935488e-03
+8_7985791_C_A    1.098129e-03
+8_7995452_C_A   -3.624456e-03
+8_11587567_A_G   3.248449e-03
+8_23294435_T_C  -3.306432e-03
+8_24904454_T_A  -9.451366e-03
+8_25500078_A_G   3.487315e-03
+8_25573711_C_T   3.964523e-03
+8_25603191_G_C  -1.306908e-02
+8_25608530_A_G  -7.371571e-03
+8_25728011_T_C   3.969108e-03
+8_25815183_C_T   1.879255e-03
+8_25830894_C_A   3.223037e-03
+8_25836038_A_T  -1.093040e-03
+8_25949776_T_A  -4.404929e-03
+8_25991570_T_G  -5.894671e-03
+8_25993784_G_T   6.816398e-03
+8_25999259_T_C  -4.840753e-04
+8_26133370_C_A  -3.627162e-03
+8_26905543_G_T  -4.030195e-05
+8_26939343_C_G  -9.946123e-03
+8_27179938_A_T   2.569754e-03
+8_27232313_T_C   8.469039e-03
+8_27245782_C_G  -3.713842e-03
+8_27312071_A_G  -3.373651e-03
+8_27433037_T_C  -4.761700e-03
+8_27443933_C_T   1.785725e-02
+8_27496190_A_G   1.625505e-02
+8_27521198_T_A  -8.489100e-03
+8_27521408_C_T  -4.529233e-03
+8_27574472_T_C   1.568745e-02
+8_27589518_T_C   9.137574e-03
+8_27597422_G_A  -6.201067e-03
+8_27623589_C_G   1.411244e-02
+8_27643901_C_T  -9.766209e-04
+8_27646042_A_C  -1.554049e-03
+8_27695714_A_G  -3.142142e-04
+8_27720147_T_C   2.167536e-03
+8_27733072_A_C   1.794203e-03
+8_27801210_T_C  -1.309747e-03
+8_27808171_G_T   3.556338e-04
+8_27840118_C_G   1.809727e-03
+8_27913642_C_T  -1.309739e-03
+8_28007252_G_T   1.269981e-02
+8_28245577_T_A  -1.258783e-03
+8_28245947_A_G  -2.716049e-03
+8_28361332_G_A   8.828365e-03
+8_28371011_G_A  -1.664087e-03
+8_28390255_G_A  -4.177447e-03
+8_28421300_C_T  -4.296121e-03
+8_28449488_A_C  -5.457735e-03
+8_28553373_C_T  -3.992966e-05
+8_28614082_G_C  -3.636390e-03
+8_28620170_T_A   2.862587e-03
+8_28708835_T_A  -3.182187e-03
+8_28777853_C_A  -5.464552e-03
+8_28778069_C_G  -3.129077e-03
+8_29001168_G_C   4.373223e-04
+8_29004956_T_C  -1.270636e-02
+8_29018729_T_G  -1.363597e-02
+8_29025352_T_A   3.616830e-03
+8_29028553_T_A  -1.063649e-02
+8_29081187_A_T   7.864657e-03
+8_29081464_A_T   5.543065e-03
+8_29315873_A_G   7.459532e-03
+8_30109217_T_C   3.436357e-03
+8_30121000_C_T  -3.453649e-04
+8_30190320_T_G  -2.434047e-03
+8_30227271_T_C  -8.194201e-05
+8_30620627_C_T  -1.751533e-02
+8_30663927_A_G  -6.757253e-03
+8_30753051_C_T  -8.885179e-03
+8_30818911_T_C  -8.768225e-03
+8_30973820_C_T  -5.663078e-03
+8_31064970_T_C   5.663551e-03
+8_31395520_A_C   1.128747e-03
+8_31507920_C_T   8.339213e-03
+8_31637110_T_G  -2.761819e-03
+8_31640824_T_C  -1.394496e-02
+8_31640950_G_A  -1.832725e-02
+8_31711017_T_G  -3.736717e-03
+8_31720097_A_C  -1.829741e-04
+8_31810587_A_G  -1.090350e-02
+8_32007453_T_G   1.492906e-02
+8_32032370_G_C  -1.179381e-02
+8_32044299_T_C   1.161907e-04
+8_32049019_G_C  -1.638965e-02
+8_32398743_G_T  -1.238702e-03
+8_32424455_T_C   5.787886e-03
+8_32437448_T_G   2.374416e-03
+8_32441891_A_G   9.647704e-03
+8_32527202_G_T   1.171216e-02
+8_32541428_C_T   9.692796e-04
+8_32570024_T_C   1.349880e-02
+8_32582671_T_A   2.328629e-03
+8_32582728_C_T  -1.825981e-03
+8_32582729_C_G  -1.825981e-03
+8_32610853_G_A   1.640285e-02
+8_32642148_T_C   6.116790e-04
+8_32657362_G_A  -1.298582e-02
+8_32664259_C_T  -2.439863e-03
+8_32971851_A_T  -2.366128e-02
+8_33038113_G_A  -3.405643e-03
+8_33059383_G_A  -5.000025e-03
+8_33189178_T_A  -2.360103e-03
+8_33363865_C_A   1.654415e-02
+8_33566059_G_A  -2.074033e-03
+8_33790592_C_T  -1.212564e-03
+9_100801_G_C    -8.316759e-03
+9_118356_T_G     1.101069e-02
+9_118443_T_C     1.080098e-02
+9_204214_G_T     7.890445e-03
+9_557870_A_G    -5.325623e-03
+9_944827_T_C     8.091995e-03
+9_950447_G_A     1.718940e-03
+9_1293874_G_A   -1.351327e-03
+9_1588034_G_A    2.547982e-03
+9_1667753_G_A   -1.001279e-02
+9_1785770_A_G    3.011911e-03
+9_1843683_A_C    3.006757e-03
+9_1868274_C_A    4.359655e-03
+9_2490778_A_T   -2.747335e-03
+9_2491562_G_C   -1.343530e-03
+9_2492314_A_G   -2.777159e-03
+9_2879016_A_G    9.047588e-03
+9_3021259_G_A    1.398236e-03
+9_3059389_A_T    4.201425e-03
+9_3066421_C_A    3.512089e-03
+9_3104051_T_C    1.507995e-03
+9_3164310_G_A   -3.024555e-03
+9_3168818_T_C   -1.917610e-03
+9_3492906_T_C    3.232019e-03
+9_3751079_A_G   -3.714594e-03
+9_4533415_A_G   -1.412471e-02
+9_4867235_A_G   -8.586918e-03
+9_5040912_T_C   -9.223556e-03
+9_5058762_G_T    2.446610e-03
+9_5146883_A_G   -2.402155e-03
+9_5152954_T_A    1.810401e-04
+9_5214545_A_T   -1.095662e-02
+9_5281272_T_A   -1.292053e-03
+9_5303828_T_A   -6.138414e-06
+9_5360932_C_A   -3.297361e-03
+9_5390176_G_A    5.508743e-03
+9_5515517_T_C    1.439625e-02
+9_5526597_A_T    1.287214e-02
+9_5559425_T_A   -8.235148e-03
+9_5897553_C_T    4.595063e-03
+9_5933370_T_C    3.381600e-03
+9_6293036_A_G   -1.013796e-02
+9_6697888_A_G   -9.828263e-03
+9_6813970_A_C   -3.124098e-03
+9_6819921_T_C   -3.493632e-03
+9_6887834_A_G   -9.771876e-03
+9_7039558_C_A   -2.993998e-04
+9_7159266_C_T   -4.135061e-03
+9_7339101_C_T   -1.011994e-02
+9_7344903_C_T   -9.145723e-03
+9_7374479_G_T   -3.439037e-03
+9_8271997_G_C   -5.193499e-03
+9_8598027_G_C   -1.077617e-02
+9_8640595_A_G    6.584769e-03
+9_8808199_C_G   -3.507908e-03
+9_8808851_A_T   -7.862769e-03
+9_8938182_C_G    4.737744e-03
+9_8938504_G_A   -4.469253e-03
+9_9230577_C_A    3.619320e-03
+9_9988027_C_A   -3.367308e-03
+9_10176909_G_A   8.517850e-03
+9_10250511_T_C   6.786994e-03
+9_11092907_C_T   1.169432e-02
+9_13540242_T_C  -5.234398e-03
+9_18294907_C_A  -1.441415e-02
+9_18730391_T_C   1.381281e-02
+9_21643992_C_T   4.977287e-04
+9_21940488_T_G  -2.361026e-04
+9_21940682_T_C   3.640843e-04
+9_22134846_C_T   6.790494e-03
+9_22205064_A_G  -2.525698e-03
+9_22529699_G_T  -1.180703e-02
+9_22529959_T_C  -2.913297e-04
+9_22697446_A_G  -4.976142e-03
+9_22742907_A_C  -8.112076e-03
+9_22932887_A_G  -6.601526e-03
+9_23173927_G_T  -5.959954e-03
+9_23186524_C_T  -4.985997e-04
+9_23311417_C_G  -1.218449e-02
+9_23355337_G_C  -4.090198e-03
+9_23532026_G_A   6.697674e-03
+9_23771075_G_A   1.197457e-02
+9_23808030_A_T   1.178437e-02
+9_23808559_A_G   9.544588e-03
+9_24119153_G_A  -1.861760e-02
+9_24153332_C_T  -2.164808e-02
+9_24195630_T_C  -4.435528e-03
+9_24250897_C_G  -6.676836e-03
+9_24413144_T_C  -1.679115e-02
+9_24466176_G_A  -3.167894e-05
+9_24467318_G_A   9.720797e-03
+9_24481458_C_T   2.879114e-04
+9_24518195_C_A   2.974912e-03
+9_24579448_G_C  -1.272464e-03
+9_24614626_A_G   1.276392e-04
+9_24936102_T_C  -4.403471e-03
+9_24970799_G_T   1.216981e-03
+9_25030530_C_T   2.330144e-03
+9_25031347_C_T  -1.401379e-03
+9_25080822_A_C  -6.410529e-04
+9_25080934_G_T   1.660999e-03
+9_25125409_T_A  -3.027104e-03
+9_25153961_A_G  -1.746736e-03
+9_25300559_C_A  -6.380194e-03
+9_25312553_A_G  -5.613957e-03
+9_25322843_C_T  -5.374096e-04
+9_25370170_T_A  -2.874529e-03
+9_25438315_A_G  -5.567255e-03
+9_25506079_G_T  -7.273720e-03
+9_25598668_T_G  -1.154621e-03
+9_25755012_C_G  -7.295778e-03
+9_25802604_C_G   5.950140e-03
+9_25802756_G_A   7.890643e-04
+9_25872946_A_C  -8.520752e-03
+9_25884738_T_A  -2.102049e-02
+9_25887682_T_C   1.422146e-02
+9_25936299_T_A  -1.442200e-02
+9_25973620_C_T   3.318893e-03
+9_25985516_G_A  -2.749577e-03
+9_26003293_C_A  -3.272095e-03
+9_26004538_T_A   3.918325e-03
+9_26050110_A_C   4.679857e-03
+9_26053379_T_A   4.224479e-03
+9_26069424_C_T   7.190826e-03
+9_26108457_A_G   8.363641e-03
+9_26115715_A_C  -1.336527e-02
+9_26115741_A_G  -8.781778e-03
+9_26145026_A_G   6.912155e-04
+9_26271330_T_A   1.015808e-02
+9_26275439_G_A   8.110053e-03
+9_26282368_G_T  -7.040890e-04
+9_26321538_G_A  -6.741898e-05
+9_26457438_A_G  -1.053087e-03
+9_26534605_G_A   1.472731e-02
+9_26577951_A_C   1.011709e-02
+9_26620925_G_A  -1.336370e-02
+9_26709938_T_A  -1.547664e-03
+9_26722323_T_A  -3.366593e-03
+9_26753690_C_T   1.192339e-02
+9_26756375_A_T  -1.783011e-03
+9_26862621_G_T  -1.505678e-02
+9_26867467_C_A  -3.262075e-03
+9_26961015_A_G   3.899728e-03
+9_26961216_T_A   5.911373e-03
+9_27043281_T_G   1.483681e-03
+9_27043283_T_A   1.483681e-03
+9_27043435_A_T   7.104159e-03
+9_27049104_C_T  -1.782156e-03
+9_27066855_A_C   2.080338e-03
+9_27158992_G_C  -5.856089e-03
+9_27262171_A_C  -1.071100e-02
+9_27281527_T_C   1.091046e-02
+9_27299703_A_G   2.928761e-03
+9_27337168_T_G   6.882521e-03
+9_27366325_C_T  -1.733319e-03
+9_27394134_T_A   5.608442e-03
+9_27574163_C_G   7.754005e-03
+9_27604204_C_G  -2.625691e-03
+9_27605396_G_T   6.895557e-03
+9_27685677_T_A  -1.146439e-02
+9_27717551_C_G  -1.860628e-03
+9_27717575_C_T  -1.374694e-02
+9_27751641_C_A  -4.651937e-03
+9_27759517_T_C   4.758831e-04
+9_27786206_T_C   9.223439e-03
+9_27827386_G_A  -3.939922e-03
+9_27827648_C_T   2.383988e-03
+9_27834732_G_A  -3.218751e-03
+9_27870269_T_A  -2.096067e-02
+9_27913280_G_A  -5.801004e-03
+9_27924981_G_A  -4.636192e-03
+9_27949953_C_A  -1.638340e-03
+9_28053738_C_G  -1.057662e-02
+9_28053918_T_C   1.420682e-02
+9_28082943_T_G  -1.167053e-02
+9_28083342_A_T   1.550748e-02
+9_28127648_A_G  -1.141085e-02
+9_28133543_A_G  -5.086784e-03
+9_28401774_C_T  -2.162727e-03
+9_28440879_A_T  -1.735663e-03
+9_28527462_A_G  -4.272642e-04
+9_28535518_C_G   4.973709e-03
+9_28551176_G_A   2.998012e-03
+9_28584142_A_T   6.129078e-03
+9_28584275_G_A   6.132004e-03
+9_28610771_A_G  -9.953712e-04
+9_28682855_T_G  -5.378168e-03
+9_28699840_G_C  -3.785715e-03
+9_28744133_T_C  -8.314103e-03
+9_28818654_T_G   3.276997e-03
+9_28822492_A_C   2.828784e-03
+9_28884480_A_T   2.733585e-03
+9_28901263_A_C   8.398948e-03
+9_28939246_A_G   9.537265e-03
+9_29042310_A_G  -1.230089e-02
+9_29058456_A_T  -3.352218e-03
+9_29076807_G_C  -2.460520e-02
+9_29105982_C_T  -1.427180e-02
+9_29243801_T_C  -1.867096e-03
+9_29365784_G_A  -1.696774e-03</code></pre>
 <pre class="r"><code>summary(u)</code></pre>
 <pre><code>       V1            
  Min.   :-0.0311133  
@@ -947,7 +5428,7 @@ all(rownames(u)==colnames(Z))</code></pre>
  3rd Qu.: 0.0036510  
  Max.   : 0.0288460  </code></pre>
 <pre class="r"><code>hist(u,breaks=20,main = &#39;Distribution of SNP effects&#39;)</code></pre>
-<p><img src="figure/intro_gp.Rmd/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/intro_gp.Rmd/unnamed-chunk-37-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Calculate the GEBVs using the SNP-effects (SNP-BLUPs)</p>
 <pre class="r"><code># calculate the GEBVs using the SNP-effects (SNP-BLUPs)
 g_rr&lt;-Z[names(g),]%*%u
@@ -964,7 +5445,37 @@ plot(x=g,y=g_rr,
      main = &#39;Proof that GEBV from GBLUP and RRBLUP are equal!&#39;,
      xlab=&quot;GEBV from GBLUP&quot;, ylab=&quot;GEBV from RRBLUP&quot;); 
 abline(a=0,b=1,col=&#39;red&#39;)</code></pre>
-<p><img src="figure/intro_gp.Rmd/unnamed-chunk-35-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/intro_gp.Rmd/unnamed-chunk-41-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>kinship</code></pre>
+<pre><code>function(M,type){
+  M&lt;-round(M)
+  freq &lt;- colMeans(M,na.rm=T)/2
+  P &lt;- matrix(rep(freq,nrow(M)),byrow=T,ncol=ncol(M))
+  if(type==&quot;add&quot;){
+    Z &lt;- M-2*P
+    varD&lt;-sum(2*freq*(1-freq))
+    K &lt;- tcrossprod(Z)/ varD
+    return(K)
+  }
+  if(type==&quot;domGenotypic&quot;){
+    W&lt;-M; W[which(W==2)]&lt;-0;
+    W &lt;- W-(2*P*(1-P))
+    varD&lt;-sum((2*freq*(1-freq))*(1-(2*freq*(1-freq))))
+    D &lt;- tcrossprod(W) / varD
+    return(D)
+  }
+  if(type==&quot;domClassic&quot;){
+    W&lt;-M;
+    W[which(W==1)]&lt;-2*P[which(W==1)];
+    W[which(W==2)]&lt;-(4*P[which(W==2)]-2);
+    W &lt;- W-2*(P^2)
+    varD&lt;-sum((2*freq*(1-freq))^2)
+    D &lt;- tcrossprod(W) / varD
+    return(D)
+  }
+}
+&lt;bytecode: 0x7fd33c6e0808&gt;
+&lt;environment: namespace:genomicMateSelectR&gt;</code></pre>
 </div>
 <div id="study-material" class="section level1">
 <h1>Study material</h1>

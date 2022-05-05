@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="wolfemd" />
+
+<meta name="date" content="2022-05-05" />
+
+<title>Run K-fold Cross-validation</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">GSexample2022</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="download.html">Download</a>
+</li>
+<li>
+  <a href="clean_phenos.html">Clean phenos</a>
+</li>
+<li>
+  <a href="prep_genos.html">Prep genos</a>
+</li>
+<li>
+  <a href="get_blups.html">Get BLUPs</a>
+</li>
+<li>
+  <a href="intro_gp.html">Intro to GP</a>
+</li>
+<li>
+  <a href="kfoldcrossval.html">K-fold Cross-val</a>
+</li>
+<li>
+  <a href="get_gebv.html">Get GEBVs</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Run K-fold Cross-validation</h1>
+<h4 class="author">wolfemd</h4>
+<h4 class="date">2022-05-05</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2022-05-05
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>GSexample2022/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version 1.7.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20220320code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20220320)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20220320code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20220320)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree975daa79a6e60fffa81b189ad3803dbd080b9ba4targetblank975daa7a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/975daa79a6e60fffa81b189ad3803dbd080b9ba4" target="_blank">975daa7</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree975daa79a6e60fffa81b189ad3803dbd080b9ba4targetblank975daa7a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/975daa79a6e60fffa81b189ad3803dbd080b9ba4" target="_blank">975daa7</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  .DS_Store
+    Untracked:  Icon
+    Untracked:  analysis/.DS_Store
+    Untracked:  analysis/Icon
+    Untracked:  analysis/images/Icon
+    Untracked:  analysis/images/paste-2F34C15B.png
+    Untracked:  analysis/images/paste-AD7AEEAC.png
+    Untracked:  analysis/images/paste-CB5D91AC.png
+    Untracked:  analysis/troubleshooting.Rmd
+    Untracked:  code/Icon
+    Untracked:  data/.DS_Store
+    Untracked:  data/BreedBaseGenotypesDownload.positions
+    Untracked:  data/BreedBaseGenotypesDownload.vcf
+    Untracked:  data/BreedBaseGenotypes_subset.hap.gz
+    Untracked:  data/BreedBaseGenotypes_subset.positions
+    Untracked:  data/BreedBaseGenotypes_subset.samples
+    Untracked:  data/Icon
+    Untracked:  data/metadata_cynthia.csv
+    Untracked:  data/phenotype_cynthia.csv
+    Untracked:  data/subset_unique_names_for_vcf.txt
+    Untracked:  data/unique_names_for_vcf.txt
+    Untracked:  data/vcf_colnames.txt
+    Untracked:  out.log
+    Untracked:  output/.DS_Store
+    Untracked:  output/Icon
+    Untracked:  output/models_compared.Rdata
+    Untracked:  output/standardCV.rds
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/kfoldcrossval.Rmd</code>) and HTML (<code>docs/kfoldcrossval.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/975daa79a6e60fffa81b189ad3803dbd080b9ba4/analysis/kfoldcrossval.Rmd" target="_blank">975daa7</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-05-05
+</td>
+<td>
+Publish demo for k-fold cross-val and genomic prediction of GEBV steps
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="load-packages" class="section level1">
+<h1>Load packages</h1>
+<pre class="r"><code>suppressMessages(library(tidyverse)); 
+suppressMessages(library(genomicMateSelectR)); 
+suppressMessages(library(sommer))</code></pre>
+</div>
+<div id="set-up" class="section level1">
+<h1>Set-up</h1>
+<pre class="r"><code>blups&lt;-readRDS(here::here(&quot;output&quot;,&quot;blups.rds&quot;))
+A&lt;-readRDS(file=here::here(&quot;output&quot;,&quot;kinship_add.rds&quot;))</code></pre>
+<pre class="r"><code>blups %&lt;&gt;% 
+     # need to rename the &quot;blups&quot; list to comply with the runCrossVal function
+     rename(TrainingData=blups) %&gt;% 
+     dplyr::select(Trait,TrainingData) %&gt;% 
+     # need also to remove phenotyped-but-not-genotyped lines
+     # couldn&#39;t hurt to also subset the kinship to only phenotyped lines... would save RAM
+     mutate(TrainingData=map(TrainingData,
+                             ~filter(.,germplasmName %in% rownames(A)) %&gt;% 
+                                  # rename the germplasmName column to GID
+                                  rename(GID=germplasmName))) %&gt;% 
+     # Exclude MCMDS in this example
+     filter(Trait != &quot;MCMDS&quot;)
+
+blups</code></pre>
+<pre><code># A tibble: 3 × 2
+  Trait   TrainingData      
+  &lt;chr&gt;   &lt;list&gt;            
+1 DM      &lt;tibble [962 × 6]&gt;
+2 logFYLD &lt;tibble [350 × 6]&gt;
+3 logDYLD &lt;tibble [348 × 6]&gt;</code></pre>
+<pre class="r"><code># For fastest, lightest compute of accuracy, remove non-phenotyped from kinship
+
+gids&lt;-blups %&gt;% 
+     unnest(TrainingData) %$% unique(GID)
+# dim(A) [1] 963 963
+
+A&lt;-A[gids,gids]</code></pre>
+<p>Set-up a vector of index weights.</p>
+<pre class="r"><code>SIwts&lt;-c(DM=15,
+         logFYLD=20,
+         logDYLD=20)
+SIwts</code></pre>
+<pre><code>     DM logFYLD logDYLD 
+     15      20      20 </code></pre>
+<p>Run 2 repetitions of 5-fold cross-validation.</p>
+<p>Means 10 predictions per trait overall.</p>
+<p>I’ve got a 16-core laptop so I can use ncores=10, to do all 10 predictions per trait at the same time.</p>
+<p><code>runCrossVal()</code> will process all traits and compute the selection index accuracy.</p>
+<pre class="r"><code>standardCV&lt;-runCrossVal(blups=blups,
+                        modelType=&quot;A&quot;,
+                        selInd=TRUE,SIwts=SIwts,
+                        grms=list(A=A),
+                        nrepeats=2,nfolds=5,
+                        gid=&quot;GID&quot;,seed=424242,
+                        ncores=10)</code></pre>
+<pre><code>Loading required package: rsample</code></pre>
+<pre><code>Loading required package: furrr</code></pre>
+<pre><code>Loading required package: future</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -288.132   7:56:9      2           0
+    2      -287.355   7:56:11      4           0
+    3      -287.06   7:56:14      7           0
+    4      -287.005   7:56:17      10           0
+    5      -287.002   7:56:21      14           0
+    6      -287.002   7:56:24      17           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -111.639   7:56:27      0           0
+    2      -111.512   7:56:27      0           0
+    3      -111.431   7:56:27      0           0
+    4      -111.395   7:56:27      0           0
+    5      -111.387   7:56:27      0           0
+    6      -111.384   7:56:27      0           0
+    7      -111.384   7:56:28      1           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -118.692   7:56:29      0           0
+    2      -118.638   7:56:29      0           0
+    3      -118.609   7:56:29      0           0
+    4      -118.599   7:56:29      0           0
+    5      -118.597   7:56:29      0           0
+    6      -118.597   7:56:29      0           0
+[1] &quot;GBLUP model complete - one trait&quot;
+[1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
+<pre><code>Joining, by = &quot;GID&quot;</code></pre>
+<pre><code>Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -295.037   7:56:9      2           0
+    2      -293.766   7:56:12      5           0
+    3      -293.206   7:56:15      8           0
+    4      -293.079   7:56:19      12           0
+    5      -293.068   7:56:22      15           0
+    6      -293.067   7:56:26      19           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -115.633   7:56:28      0           0
+    2      -115.611   7:56:29      1           0
+    3      -115.599   7:56:29      1           0
+    4      -115.594   7:56:29      1           0
+    5      -115.594   7:56:29      1           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -123.513   7:56:30      0           0
+    2      -123.512   7:56:30      0           0
+    3      -123.511   7:56:30      0           0
+    4      -123.511   7:56:30      0           0
+[1] &quot;GBLUP model complete - one trait&quot;
+[1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
+<pre><code>Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -279.53   7:56:10      2           0
+    2      -279.11   7:56:13      5           0
+    3      -278.935   7:56:17      9           0
+    4      -278.897   7:56:20      12           0
+    5      -278.894   7:56:23      15           0
+    6      -278.894   7:56:27      19           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -103.979   7:56:30      1           0
+    2      -103.465   7:56:30      1           0
+    3      -103.223   7:56:30      1           0
+    4      -103.189   7:56:30      1           0
+    5      -103.189   7:56:30      1           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -114.994   7:56:31      0           0
+    2      -114.814   7:56:31      0           0
+    3      -114.749   7:56:31      0           0
+    4      -114.741   7:56:31      0           0
+    5      -114.741   7:56:31      0           0
+[1] &quot;GBLUP model complete - one trait&quot;
+[1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
+<pre><code>Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -288.678   7:56:11      3           0
+    2      -286.897   7:56:14      6           0
+    3      -286.123   7:56:18      10           0
+    4      -285.932   7:56:21      13           0
+    5      -285.911   7:56:24      16           0
+    6      -285.909   7:56:28      20           0
+    7      -285.909   7:56:31      23           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -106.766   7:56:33      0           0
+    2      -106.743   7:56:33      0           0
+    3      -106.73   7:56:33      0           0
+    4      -106.726   7:56:34      1           0
+    5      -106.726   7:56:34      1           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -115.647   7:56:34      0           0
+    2      -115.632   7:56:34      0           0
+    3      -115.626   7:56:34      0           0
+    4      -115.625   7:56:34      0           0
+    5      -115.625   7:56:34      0           0
+[1] &quot;GBLUP model complete - one trait&quot;
+[1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
+<pre><code>Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -275.405   7:56:12      3           0
+    2      -275.178   7:56:15      6           0
+    3      -275.062   7:56:19      10           0
+    4      -275.029   7:56:22      13           0
+    5      -275.024   7:56:26      17           0
+    6      -275.024   7:56:29      20           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -103.863   7:56:32      0           0
+    2      -103.863   7:56:32      0           0
+    3      -103.862   7:56:32      0           0
+    4      -103.862   7:56:32      0           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -111.274   7:56:33      0           0
+    2      -111.269   7:56:33      0           0
+    3      -111.266   7:56:33      0           0
+    4      -111.265   7:56:33      0           0
+[1] &quot;GBLUP model complete - one trait&quot;
+[1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
+<pre><code>Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -288.661   7:56:13      3           0
+    2      -287.363   7:56:16      6           0
+    3      -286.795   7:56:20      10           0
+    4      -286.666   7:56:23      13           0
+    5      -286.654   7:56:27      17           0
+    6      -286.653   7:56:30      20           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -112.851   7:56:32      0           0
+    2      -112.841   7:56:32      0           0
+    3      -112.835   7:56:33      1           0
+    4      -112.832   7:56:33      1           0
+    5      -112.831   7:56:33      1           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -121.595   7:56:34      1           0
+    2      -121.56   7:56:34      1           0
+    3      -121.537   7:56:34      1           0
+    4      -121.529   7:56:34      1           0
+    5      -121.527   7:56:34      1           0
+    6      -121.527   7:56:34      1           0
+[1] &quot;GBLUP model complete - one trait&quot;
+[1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
+<pre><code>Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -262.442   7:56:14      4           0
+    2      -262.383   7:56:17      7           0
+    3      -262.359   7:56:21      11           0
+    4      -262.356   7:56:24      14           0
+    5      -262.356   7:56:27      17           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -108.053   7:56:30      0           0
+    2      -108.017   7:56:31      1           0
+    3      -107.998   7:56:31      1           0
+    4      -107.992   7:56:31      1           0
+    5      -107.992   7:56:31      1           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -113.369   7:56:32      1           0
+    2      -113.297   7:56:32      1           0
+    3      -113.269   7:56:32      1           0
+    4      -113.265   7:56:32      1           0
+    5      -113.265   7:56:32      1           0
+[1] &quot;GBLUP model complete - one trait&quot;
+[1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
+<pre><code>Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -291.508   7:56:15      4           0
+    2      -289.797   7:56:18      7           0
+    3      -288.936   7:56:22      11           0
+    4      -288.682   7:56:25      14           0
+    5      -288.648   7:56:28      17           0
+    6      -288.643   7:56:31      20           0
+    7      -288.642   7:56:34      23           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -109.372   7:56:35      0           0
+    2      -109.344   7:56:35      0           0
+    3      -109.324   7:56:35      0           0
+    4      -109.315   7:56:35      0           0
+    5      -109.312   7:56:35      0           0
+    6      -109.312   7:56:35      0           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -121.826   7:56:36      0           0
+    2      -121.822   7:56:36      0           0
+    3      -121.82   7:56:36      0           0
+    4      -121.819   7:56:36      0           0
+[1] &quot;GBLUP model complete - one trait&quot;
+[1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
+<pre><code>Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -289.254   7:56:16      4           0
+    2      -288.884   7:56:19      7           0
+    3      -288.737   7:56:23      11           0
+    4      -288.708   7:56:26      14           0
+    5      -288.706   7:56:30      18           0
+    6      -288.705   7:56:32      20           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -107.175   7:56:34      0           0
+    2      -107.148   7:56:34      0           0
+    3      -107.133   7:56:34      0           0
+    4      -107.129   7:56:34      0           0
+    5      -107.128   7:56:34      0           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -114.408   7:56:35      0           0
+    2      -114.404   7:56:35      0           0
+    3      -114.403   7:56:35      0           0
+    4      -114.403   7:56:35      0           0
+[1] &quot;GBLUP model complete - one trait&quot;
+[1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
+<pre><code>Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -293.912   7:56:17      4           0
+    2      -292.095   7:56:20      7           0
+    3      -291.371   7:56:24      11           0
+    4      -291.216   7:56:27      14           0
+    5      -291.203   7:56:31      18           0
+    6      -291.202   7:56:33      20           0
+    7      -291.202   7:56:35      22           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -105.364   7:56:36      0           0
+    2      -105.356   7:56:36      0           0
+    3      -105.351   7:56:36      0           0
+    4      -105.349   7:56:36      0           0
+    5      -105.349   7:56:36      0           0
+[1] &quot;GBLUP model complete - one trait&quot;
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -114.273   7:56:37      0           0
+    2      -114.086   7:56:37      0           0
+    3      -113.981   7:56:37      0           0
+    4      -113.946   7:56:37      0           0
+    5      -113.94   7:56:37      0           0
+    6      -113.939   7:56:37      0           0
+    7      -113.939   7:56:37      0           0
+[1] &quot;GBLUP model complete - one trait&quot;
+[1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
+<pre><code>Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;
+Joining, by = &quot;GID&quot;</code></pre>
+<pre class="r"><code>saveRDS(standardCV,file = here::here(&quot;output&quot;,&quot;standardCV.rds&quot;))</code></pre>
+</div>
+<div id="plot-results" class="section level1">
+<h1>Plot results</h1>
+<pre class="r"><code>standardCV %&gt;% 
+     unnest(accuracyEstOut) %&gt;% 
+     dplyr::select(repeats,id,predOf,Trait,Accuracy) %&gt;% 
+     ggplot(.,aes(x=Trait,y=Accuracy,fill=Trait)) + 
+     geom_boxplot() + theme_bw()</code></pre>
+<p><img src="figure/kfoldcrossval.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.1.1 (2021-08-10)
+Platform: x86_64-apple-darwin17.0 (64-bit)
+Running under: macOS Big Sur 10.16
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] furrr_0.2.3              future_1.23.0            rsample_0.1.1           
+ [4] sommer_4.1.5             crayon_1.4.2             lattice_0.20-45         
+ [7] MASS_7.3-54              Matrix_1.4-0             genomicMateSelectR_0.2.0
+[10] forcats_0.5.1            stringr_1.4.0            dplyr_1.0.7             
+[13] purrr_0.3.4              readr_2.1.1              tidyr_1.1.4             
+[16] tibble_3.1.6             ggplot2_3.3.5            tidyverse_1.3.1         
+[19] workflowr_1.7.0         
+
+loaded via a namespace (and not attached):
+ [1] fs_1.5.2          lubridate_1.8.0   httr_1.4.2        rprojroot_2.0.2  
+ [5] tools_4.1.1       backports_1.4.1   bslib_0.3.1       utf8_1.2.2       
+ [9] R6_2.5.1          DBI_1.1.2         colorspace_2.0-2  withr_2.4.3      
+[13] tidyselect_1.1.1  processx_3.5.2    compiler_4.1.1    git2r_0.29.0     
+[17] cli_3.1.0         rvest_1.0.2       xml2_1.3.3        labeling_0.4.2   
+[21] sass_0.4.0        scales_1.1.1      callr_3.7.0       digest_0.6.29    
+[25] rmarkdown_2.11    pkgconfig_2.0.3   htmltools_0.5.2   parallelly_1.30.0
+[29] highr_0.9         dbplyr_2.1.1      fastmap_1.1.0     rlang_0.4.12     
+[33] readxl_1.3.1      rstudioapi_0.13   jquerylib_0.1.4   generics_0.1.1   
+[37] farver_2.1.0      jsonlite_1.7.2    magrittr_2.0.1    Rcpp_1.0.7       
+[41] munsell_0.5.0     fansi_0.5.0       lifecycle_1.0.1   stringi_1.7.6    
+[45] whisker_0.4       yaml_2.2.1        grid_4.1.1        parallel_4.1.1   
+[49] listenv_0.8.0     promises_1.2.0.1  haven_2.4.3       hms_1.1.1        
+[53] knitr_1.37        ps_1.6.0          pillar_1.6.4      codetools_0.2-18 
+[57] reprex_2.0.1      glue_1.6.0        evaluate_0.14     getPass_0.2-2    
+[61] modelr_0.1.8      vctrs_0.3.8       tzdb_0.2.0        httpuv_1.6.5     
+[65] cellranger_1.1.0  gtable_0.3.0      assertthat_0.2.1  xfun_0.29        
+[69] broom_0.7.11      later_1.3.0       globals_0.14.0    ellipsis_0.3.2   
+[73] here_1.0.1       </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
