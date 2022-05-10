@@ -35,7 +35,8 @@ Add it to the top navigation bar, via the `_site.yml` file:
 5. [Introduction to Genomic Prediction in R](intro_gp.html): Into to using `sommer` to fit G-BLUP and RR-BLUP models, a demo of their equivalency and quickly showing how to run cross-validations with the `runCrossVal()` function of `library(genomicMateSelectR)`.
 6. [Check prediction accuracy](kfoldcrossval.html): Use what we learned previously to run a k-fold cross-validation and estimate the accuracy predicting the performance of parents on our selection index.
 7. [Predict parental GEBV](get_gebv.html): Having checked prediction accuracy and assuming we are satisfied, we can now run the full genomic prediction using `runGenomicPredictions()` and get GEBV for our population, computing the selection index performance using those GEBVs for our ultimate selections of parents.
-
+8. [Parent-wise Cross-validation](parentwise_cv.html): Check the accuracy predicting the means, variances and covariances in previously untested crosses. _Also_ verify using marker data that the pedigree is correct, before doing the parent-wise CV.
+9. [Predict crosses](pred_crosses.html): The main event. Predict the means, variances and usefulness on the selection index and select the top crosses.
 
 **TROUBLESHOOTING RMD:** [Troubleshooting each step](troubleshooting.html)
 

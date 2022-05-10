@@ -19,6 +19,10 @@ navbar:
     href: kfoldcrossval.html
   - text: Get GEBVs
     href: get_gebv.html
+  - text: Parent-wise CV
+    href: parentwise_cv.html
+  - text: Predict crosses
+    href: pred_crosses.html
   - text: About
     href: about.html
   - text: License

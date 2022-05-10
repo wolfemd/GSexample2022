@@ -1,0 +1,188 @@
+---
+title: "Predict crosses"
+author: "wolfemd"
+date: "2022-05-09"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: inline
+---
+
+# Load packages
+```{r}
+suppressMessages(library(tidyverse)); 
+suppressMessages(library(genomicMateSelectR)); 
+```
+
+# Set-up
+```{r}
+# GENOMIC RELATIONSHIP MATRIX
+grms<-list(A=readRDS(file=here::here("output","kinship_add.rds")))
+
+# BLUPs
+blups<-readRDS(here::here("output","blups.rds")) %>% 
+     # based on cross-validation, decided to exclude MCMDS from this analysis
+     filter(Trait != "MCMDS") %>% 
+     # need to rename the "blups" list to comply with the runCrossVal function
+     rename(TrainingData=blups) %>% 
+     dplyr::select(Trait,TrainingData) %>% 
+     # need also to remove phenotyped-but-not-genotyped lines
+     mutate(TrainingData=map(TrainingData,
+                             ~filter(.,germplasmName %in% rownames(grms$A)) %>% 
+                                  # rename the germplasmName column to GID
+                                  rename(GID=germplasmName)))
+
+# DOSAGE MATRIX
+## Dosages are also needed for runGenomicPredictions() when getMarkEffs=TRUE
+## Reason is that they are used to extra SNP effects from GBLUP models
+dosages<-readRDS(here::here("data","dosages.rds"))
+
+# SELECTION INDEX
+SIwts<-c(DM=15,
+         logFYLD=20,
+         logDYLD=20)
+```
+
+# Get marker effects
+
+We need to re-run `runGenomicPredictions()`, this time using the 
+`getMarkEffs=TRUE` option.
+
+Will “backsolve” the RR-BLUP marker effect solutions from the GBLUP solutions, using the `backsolveSNPeff()` function under-the-hood.
+
+```{r}
+gpreds_withMarkEffs<-runGenomicPredictions(modelType = "A", 
+                                           selInd = T, SIwts = SIwts,
+                                           getMarkEffs = TRUE,
+                                           dosages = dosages,
+                                           blups = blups, 
+                                           grms = grms,
+                                           ncores=3)
+```
+```{r}
+saveRDS(gpreds_withMarkEffs,
+        file = here::here("output","genomicPredictions_withMarkEffs.rds"))
+```
+
+Notice that there is now a additional list-type column with the label “allelesubsnpeff” indicating that, because we ran an additive-only model, these SNP-effects represent predictions of allele substitution effects.
+
+```{r}
+gpreds_withMarkEffs$genomicPredOut[[1]]
+```
+
+```{r}
+gpreds_withMarkEffs$genomicPredOut[[1]]$allelesubsnpeff[[1]][1:5,]
+```
+
+# Crosses-to-predict
+
+Will also need a data.frame indicating what pairs of parents we want to predict crosses for.
+
+As a convenience, we can use the `crosses2predict()` function. 
+Makes a data.frame from a vector of genotype ID’s.
+
+A realistic approach, is to choose a set of parents based on their GEBV, but more than we’d actually like to actually make crosses with.
+
+It is still somewhat computationally intensive to predict the variances and covariances of traits for each cross, so we can’t quite predict all possible pairwise crosses… definitely not on our laptops for this example.
+
+Here, as an example, picking the top 10 candidate parents:
+
+```{r}
+# Access the predicted GEBV
+top10parents<-gpreds_withMarkEffs$gblups[[1]] %>% 
+     # Arrange in descending order based on the SELIND
+     arrange(desc(SELIND)) %>% 
+     # I'll pick the top 10 parents
+     slice(1:10) %$%
+     # And extract their GID to a vector
+     GID
+```
+
+```{r}
+CrossesToPredict<-crosses2predict(top10parents)
+```
+
+```{r}
+CrossesToPredict %>% head
+```
+
+```{r}
+CrossesToPredict %>% nrow()
+```
+
+# Run `predictCrosses()`
+
+Additional inputs we will need: “haplotype matrix” and “recombination frequency matrix.”
+
+```{r}
+# HAPLOTYPE MATRIX
+## keep only haplos for candidate parents we want to predict crosses for
+## those which will be used in prediction, saves memory
+haploMat<-readRDS(file=here::here("data","haplotypes.rds"))
+parenthaps<-sort(c(paste0(top10parents,"_HapA"),
+                   paste0(top10parents,"_HapB")))
+haploMat<-haploMat[parenthaps,]
+
+# RECOMBINATION FREQUENCY MATRIX
+recombFreqMat<-readRDS(file=here::here("output","recombFreqMat_1minus2c.rds"))
+```
+
+Let's go!
+
+```{r}
+starttime<-proc.time()[3]
+crossPreds<-predictCrosses(modelType="A",
+                           selInd = T, SIwts = SIwts,
+                           CrossesToPredict=CrossesToPredict,
+                           snpeffs=gpreds_withMarkEffs$genomicPredOut[[1]], 
+                           haploMat=haploMat,
+                           dosages = dosages[top10parents,],
+                           recombFreqMat=recombFreqMat,
+                           ncores=10)
+elapsed<-proc.time()[3]-starttime; elapsed/60
+```
+
+Save results
+```{r}
+saveRDS(crossPreds,file = here::here("output","predictedCrosses.rds"))
+```
+
+# Select crosses
+
+```{r}
+crossPreds<-readRDS(here::here("output","predictedCrosses.rds"))
+crossPreds
+```
+
+```{r}
+crossPreds$tidyPreds[[1]] %>% str
+```
+Output of predictCrosses() is a tibble. Two columns, 1 row. Column 1 (tidyPreds) has cleaned-up “tidy” predictions. Column 2 (rawPreds) has more detailed output.
+
+
+
+Remember that the “usefulness” (predUsefulness) here, or UC for short, is equal to a prediction of the expected mean of the top fraction of progeny from each cross
+
+$$\hat{UC} = \hat{\mu} + i \times \hat{\sigma}$$
+
+This is also called the "superior progeny mean" in the literature. 
+
+Actually, the user has the option to modify the expected, standardized selection intensity 
+
+either in advance with the `stdSelInt=` argument to `predictCrosses()` or after-the-fact; 
+
+The default is a value of 2.67, corresponding to selecting the top 1% of offspring for the cross you will be making.
+
+So let's say you want to make only the top 10 of the 55 predicted crosses:
+
+```{r}
+top10crosses<-crossPreds$tidyPreds[[1]] %>% 
+     filter(Trait=="SELIND") %>% 
+     dplyr::select(-predVar) %>% 
+     arrange(desc(predUsefulness)) %>% 
+     slice(1:10)
+top10crosses
+```
+
+And thus we have a crossing plan! Congratulations!
+
+

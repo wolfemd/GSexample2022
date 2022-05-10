@@ -75,7 +75,23 @@ standardCV<-runCrossVal(blups=blups,
 ```
 
 ```{r}
+runCrossVal
+```
+
+```{r}
 saveRDS(standardCV,file = here::here("output","standardCV.rds"))
+```
+```{r}
+standardCV
+```
+```{r}
+training(standardCV$splits[[1]])
+testing(standardCV$splits[[1]])
+# 
+standardCV %>% unnest(accuracyEstOut) %>% head
+```
+```{r}
+standardCV %>% unnest(accuracyEstOut) %$% predVSobs[[4]] %>% na.omit
 ```
 
 # Plot results

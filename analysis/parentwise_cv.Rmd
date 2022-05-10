@@ -1,0 +1,318 @@
+---
+title: "Parent-wise Cross-validation"
+author: "wolfemd"
+date: "2022-05-09"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: inline
+---
+
+# Load packages
+```{r}
+suppressMessages(library(tidyverse)); 
+suppressMessages(library(genomicMateSelectR)); 
+```
+
+# Pedigree
+
+Read pedigree
+```{r}
+ped<-read_delim(here::here("data","pedigree.txt"),delim = "\t")
+```
+
+Filter: Keep only complete pedigree records.
+
+```{r}
+ped %<>% 
+     dplyr::select(-Cross_Type) %>% 
+     filter(!is.na(Female_Parent),
+            !is.na(Male_Parent),
+            Female_Parent!="?",
+            Male_Parent!="?") %>% 
+     distinct
+```
+
+```{r}
+ped %>% distinct(Female_Parent,Male_Parent) %>% nrow()
+```
+
+Summarize the pedigree
+
+```{r}
+ped %>%   
+     count(Female_Parent,Male_Parent) %>% 
+     arrange(desc(n))  %>%  
+     summary(.$n)
+```
+
+Fully genotyped trios?
+```{r}
+dosages<-readRDS(here::here("data","dosages.rds"))
+genotyped_gids<-rownames(dosages)
+```
+
+Are all of the entrees themselves genotyped?
+```{r}
+all(ped$Accession %in% genotyped_gids)
+```
+
+```{r}
+table(ped$Female_Parent %in% genotyped_gids)
+```
+
+```{r}
+table(ped$Male_Parent %in% genotyped_gids)
+```
+
+```{r}
+genotyped_ped<-ped %>% 
+     filter(Accession %in% genotyped_gids,
+            Female_Parent %in% genotyped_gids,
+            Male_Parent %in% genotyped_gids)
+genotyped_ped %>% nrow()
+```
+
+
+```{r}
+genotyped_ped %>% 
+     count(Female_Parent,Male_Parent) %>% 
+     arrange(desc(n))  %>%  
+     summary(.$n)
+```
+
+How many families have >1 offspring?
+
+```{r}
+genotyped_ped %>% 
+     count(Female_Parent,Male_Parent) %>% 
+     filter(n>1)
+```
+
+# Verify pedigree relationships
+
+My approach uses the `--genome` IBD calculator in the command-line program PLINK v1.9
+
+Go over steps in manual: 
+https://wolfemd.github.io/GenomicSelectionManual/parentwise_cross_val.html#verify-pedigree-relationships
+
+## In plink
+In the terminal (not R) change directory
+
+Go to the data/ directory where the VCF file is located
+```{bash, eval=F}
+plink --vcf BreedBaseGenotypes_subset.vcf.gz \
+     --make-bed --const-fid --keep-allele-order \
+     --out BreedBaseGenotypes_subset
+```
+
+still in the terminal
+```{bash, eval=F}
+plink --bfile BreedBaseGenotypes_subset \
+  --genome \
+  --out ../output/BreedBaseGenotypes_subset;
+```
+
+## Verify parent-offspring relationships
+
+Back in R
+
+```{r}
+genome<-read.table(here::here("output/","BreedBaseGenotypes_subset.genome"),
+                   stringsAsFactors = F,header = T) %>% 
+     as_tibble
+genome %>% head
+```
+
+```{r}
+dim(genome)
+```
+
+```{r}
+ped %>% 
+     semi_join(genome %>% rename(Accession=IID1,Female_Parent=IID2)) %>% 
+     left_join(genome %>% rename(Accession=IID1,Female_Parent=IID2))
+```
+
+```{r}
+# Confirm Female_Parent - Offspring Relationship
+## In the plink genome file
+## IID1 or IID2 could be the Accession or the Female_Parent
+conf_female_ped<-genotyped_ped %>% 
+     inner_join(genome %>% 
+                     rename(Accession=IID1,Female_Parent=IID2)) %>% 
+     bind_rows(genotyped_ped %>% 
+                    inner_join(genome %>% 
+                                    rename(Accession=IID2,
+                                           Female_Parent=IID1))) %>% 
+     # Declare confirm-reject Accession-Female_Parent
+     mutate(ConfirmFemaleParent=case_when(Z0<0.32 & Z1>0.67~"Confirm", 
+   # Relatedness coeff differ if the Accession is the result of a self-cross
+          Male_Parent==Female_Parent & PI_HAT>0.6 & Z0<0.3 & Z2>0.32~"Confirm",
+   TRUE~"Reject")) %>% 
+     dplyr::select(Accession,Female_Parent,ConfirmFemaleParent)
+```
+
+```{r}
+## Now do the same for the Accession-Male_Parent relationships
+conf_male_ped<-genotyped_ped %>% 
+     inner_join(genome %>% 
+                     rename(Accession=IID1,Male_Parent=IID2)) %>% 
+     bind_rows(genotyped_ped %>% 
+                    inner_join(genome %>% 
+                                    rename(Accession=IID2,Male_Parent=IID1))) %>% 
+     # Declare confirm-reject Accession-Female_Parent
+     mutate(ConfirmMaleParent=case_when(Z0<0.32 & Z1>0.67~"Confirm", 
+     # Relatedness coeff differ if the Accession is the result of a self-cross
+          Male_Parent==Female_Parent & PI_HAT>0.6 & Z0<0.3 & Z2>0.32~"Confirm",
+                                          TRUE~"Reject")) %>% 
+     dplyr::select(Accession,Male_Parent,ConfirmMaleParent)
+# Now join the confirmed female and male relationships
+# This regenerates the original "genotyped_ped" with two added columns
+confirmed_ped<-conf_female_ped %>% 
+     left_join(conf_male_ped) %>% 
+     relocate(Male_Parent,.before = "ConfirmFemaleParent")
+```
+
+So, how well supported are the pedigree relationships according to my approach?
+
+```{r}
+confirmed_ped %>% 
+     count(ConfirmFemaleParent,ConfirmMaleParent) %>% 
+     mutate(Prop=round(n/sum(n),2))
+```
+
+
+## Subset to fully-validated trios
+
+Remove any without both parents confirmed.
+
+
+```{r}
+valid_ped<-confirmed_ped %>% 
+     filter(ConfirmFemaleParent=="Confirm",
+         ConfirmMaleParent=="Confirm") %>% 
+     dplyr::select(-contains("Confirm"))
+```
+
+```{r}
+valid_ped %>% nrow()
+```
+
+```{r}
+valid_ped %>% 
+     count(Female_Parent,Male_Parent) %>% 
+     filter(n>1)
+```
+
+```{r}
+valid_ped %>% 
+     count(Female_Parent,Male_Parent) %>% 
+     filter(n>2)
+```
+
+## Write validated pedigree
+
+```{r}
+saveRDS(valid_ped,here::here("output","verified_ped.rds"))
+```
+
+# Parent-wise cross-validation
+
+## Set-up 
+
+```{r}
+# Load verified ped
+ped<-readRDS(here::here("output","verified_ped.rds")) %>% 
+     # Rename things to match genomicMateSelectR::runParentWiseCrossVal()
+     rename(GID=Accession,
+            sireID=Male_Parent,
+            damID=Female_Parent)
+# Keep only families with _at least_ 2 offspring
+ped %<>% 
+     semi_join(ped %>% count(sireID,damID) %>% filter(n>1) %>% ungroup())
+
+# GENOMIC RELATIONSHIP MATRIX
+grms<-list(A=readRDS(file=here::here("output","kinship_add.rds")))
+
+# BLUPs
+blups<-readRDS(here::here("output","blups.rds")) %>% 
+     # based on cross-validation, decided to exclude MCMDS from this analysis
+     filter(Trait != "MCMDS") %>% 
+     # need to rename the "blups" list to comply with the runCrossVal function
+     rename(TrainingData=blups) %>% 
+     dplyr::select(Trait,TrainingData) %>% 
+     # need also to remove phenotyped-but-not-genotyped lines
+     mutate(TrainingData=map(TrainingData,
+                             ~filter(.,germplasmName %in% rownames(grms$A)) %>% 
+                                  # rename the germplasmName column to GID
+                                  rename(GID=germplasmName))) %>% 
+     # It seems actually that runParentWiseCrossVal() wnats this column named "blups"
+     rename(blups=TrainingData)
+
+# DOSAGE MATRIX
+## Dosages are also needed inside the runParentWiseCrossVal() function
+## Reason is that they are used to extra SNP effects from GBLUP models
+dosages<-readRDS(here::here("data","dosages.rds"))
+
+# HAPLOTYPE MATRIX
+## keep only haplos for parents-in-the-pedigree
+## those which will be used in prediction, saves memory
+haploMat<-readRDS(file=here::here("data","haplotypes.rds"))
+parents<-union(ped$sireID,ped$damID) 
+parenthaps<-sort(c(paste0(parents,"_HapA"),
+                   paste0(parents,"_HapB")))
+haploMat<-haploMat[parenthaps,]
+
+# SELECTION INDEX
+SIwts<-c(DM=15,
+         logFYLD=20,
+         logDYLD=20)
+```
+
+```{r}
+# RECOMBINATION FREQUENCY MATRIX
+recombFreqMat<-readRDS(file=here::here("output","recombFreqMat_1minus2c.rds"))
+```
+
+```{r}
+starttime<-proc.time()[3]
+parentWiseCV<-runParentWiseCrossVal(nrepeats=2,nfolds=5,seed=121212,
+                                    modelType="A",
+                                    ncores=10,
+                                    ped=ped,
+                                    blups=blups,
+                                    dosages=dosages,
+                                    haploMat=haploMat,
+                                    grms=grms,
+                                    recombFreqMat = recombFreqMat,
+                                    selInd = TRUE, SIwts = SIwts)
+elapsed<-proc.time()[3]-starttime; elapsed/60
+```
+
+```{r}
+saveRDS(parentWiseCV,file = here::here("output","parentWiseCV.rds"))
+```
+
+```{r}
+parentWiseCV$meanPredAccuracy %>% head
+```
+
+```{r}
+parentWiseCV$varPredAccuracy %>% head
+```
+
+```{r}
+parentWiseCV$meanPredAccuracy %>% 
+     ggplot(.,aes(x=Trait,y=AccuracyEst,fill=Trait)) + geom_boxplot() + 
+     labs(title="Accuracy Predicting Family Means")
+```
+
+```{r}
+parentWiseCV$varPredAccuracy %>% 
+     # this will format the two column information 
+     # indicating variances and covariances
+     # into a single variable for the plot
+     mutate(VarParam=paste0(Trait1,"\n",Trait2)) %>% 
+     ggplot(.,aes(x=VarParam,y=AccuracyEst,fill=VarParam)) + geom_boxplot()
+```
+

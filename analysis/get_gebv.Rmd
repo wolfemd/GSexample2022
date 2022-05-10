@@ -82,3 +82,42 @@ gpreds$genomicPredOut[[1]]
 saveRDS(gpreds,file = here::here("output","genomicPredictions.rds"))
 ```
 
+```{r}
+gpreds$gblups[[1]] %>% 
+     arrange(desc(SELIND)) %>% 
+     slice(1:10)
+```
+
+```{r}
+
+gpreds_noindex<-runGenomicPredictions(modelType="A",
+                              blups=blups,selInd=FALSE,
+                              grms=list(A=A),
+                              ncores=3)
+gpreds_noindex$gblups[[1]]
+```
+```{r}
+gpreds$gblups[[1]]
+```
+
+```{r}
+-0.5969098734*15+2.989957e-02	*20+0.0349250858*20
+```
+
+```{r}
+dosages<-readRDS(here::here("data","dosages.rds"))
+gpreds_markeffs<-runGenomicPredictions(modelType="A",
+                                      blups=blups,selInd=FALSE,
+                                      dosages = dosages, getMarkEffs = T,
+                                      grms=list(A=A),
+                                      ncores=3)
+```
+
+```{r}
+gpreds_markeffs$genomicPredOut[[1]]
+```
+
+```{r}
+gpreds_markeffs$genomicPredOut[[1]]$allelesubsnpeff[[1]] %>% hist
+```
+
