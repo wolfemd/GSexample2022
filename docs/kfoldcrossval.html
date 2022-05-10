@@ -354,6 +354,12 @@ div.tocify {
   <a href="get_gebv.html">Get GEBVs</a>
 </li>
 <li>
+  <a href="parentwise_cv.html">Parent-wise CV</a>
+</li>
+<li>
+  <a href="pred_crosses.html">Predict crosses</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
 <li>
@@ -398,7 +404,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-05-05
+<strong>Last updated:</strong> 2022-05-09
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -489,16 +495,16 @@ This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysi
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree975daa79a6e60fffa81b189ad3803dbd080b9ba4targetblank975daa7a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/975daa79a6e60fffa81b189ad3803dbd080b9ba4" target="_blank">975daa7</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treebb2d98179db87acbe2189a400bac5d598f9119d8targetblankbb2d981a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/bb2d98179db87acbe2189a400bac5d598f9119d8" target="_blank">bb2d981</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree975daa79a6e60fffa81b189ad3803dbd080b9ba4targetblank975daa7a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treebb2d98179db87acbe2189a400bac5d598f9119d8targetblankbb2d981a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/975daa79a6e60fffa81b189ad3803dbd080b9ba4" target="_blank">975daa7</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/bb2d98179db87acbe2189a400bac5d598f9119d8" target="_blank">bb2d981</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -512,6 +518,7 @@ Untracked files:
     Untracked:  .DS_Store
     Untracked:  Icon
     Untracked:  analysis/.DS_Store
+    Untracked:  analysis/BreedBaseGenotypes_subset.log
     Untracked:  analysis/Icon
     Untracked:  analysis/images/Icon
     Untracked:  analysis/images/paste-2F34C15B.png
@@ -522,7 +529,12 @@ Untracked files:
     Untracked:  data/.DS_Store
     Untracked:  data/BreedBaseGenotypesDownload.positions
     Untracked:  data/BreedBaseGenotypesDownload.vcf
+    Untracked:  data/BreedBaseGenotypes_subset.bed
+    Untracked:  data/BreedBaseGenotypes_subset.bim
+    Untracked:  data/BreedBaseGenotypes_subset.fam
     Untracked:  data/BreedBaseGenotypes_subset.hap.gz
+    Untracked:  data/BreedBaseGenotypes_subset.log
+    Untracked:  data/BreedBaseGenotypes_subset.nosex
     Untracked:  data/BreedBaseGenotypes_subset.positions
     Untracked:  data/BreedBaseGenotypes_subset.samples
     Untracked:  data/Icon
@@ -533,9 +545,15 @@ Untracked files:
     Untracked:  data/vcf_colnames.txt
     Untracked:  out.log
     Untracked:  output/.DS_Store
+    Untracked:  output/BreedBaseGenotypes_subset.genome
+    Untracked:  output/BreedBaseGenotypes_subset.log
+    Untracked:  output/BreedBaseGenotypes_subset.nosex
     Untracked:  output/Icon
+    Untracked:  output/genomicPredictions.rds
     Untracked:  output/models_compared.Rdata
+    Untracked:  output/parentWiseCV.rds
     Untracked:  output/standardCV.rds
+    Untracked:  output/verified_ped.rds
 
 </code></pre>
 <p>
@@ -574,6 +592,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/bb2d98179db87acbe2189a400bac5d598f9119d8/analysis/kfoldcrossval.Rmd" target="_blank">bb2d981</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-05-09
+</td>
+<td>
+Add the final two sections - parent-wise cross-validation plus predicting crosses
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/260d2fed9c49fc20aa3f1b2b41d5bfa2cd99aecc/docs/kfoldcrossval.html" target="_blank">260d2fe</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-05-05
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -657,29 +709,29 @@ SIwts</code></pre>
 <pre><code>Loading required package: furrr</code></pre>
 <pre><code>Loading required package: future</code></pre>
 <pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -288.132   7:56:9      2           0
-    2      -287.355   7:56:11      4           0
-    3      -287.06   7:56:14      7           0
-    4      -287.005   7:56:17      10           0
-    5      -287.002   7:56:21      14           0
-    6      -287.002   7:56:24      17           0
+    1      -288.132   20:22:5      2           0
+    2      -287.355   20:22:9      6           0
+    3      -287.06   20:22:11      8           0
+    4      -287.005   20:22:14      11           0
+    5      -287.002   20:22:18      15           0
+    6      -287.002   20:22:21      18           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -111.639   7:56:27      0           0
-    2      -111.512   7:56:27      0           0
-    3      -111.431   7:56:27      0           0
-    4      -111.395   7:56:27      0           0
-    5      -111.387   7:56:27      0           0
-    6      -111.384   7:56:27      0           0
-    7      -111.384   7:56:28      1           0
+    1      -111.639   20:22:24      0           0
+    2      -111.512   20:22:24      0           0
+    3      -111.431   20:22:24      0           0
+    4      -111.395   20:22:24      0           0
+    5      -111.387   20:22:24      0           0
+    6      -111.384   20:22:24      0           0
+    7      -111.384   20:22:25      1           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -118.692   7:56:29      0           0
-    2      -118.638   7:56:29      0           0
-    3      -118.609   7:56:29      0           0
-    4      -118.599   7:56:29      0           0
-    5      -118.597   7:56:29      0           0
-    6      -118.597   7:56:29      0           0
+    1      -118.692   20:22:26      0           0
+    2      -118.638   20:22:26      0           0
+    3      -118.609   20:22:26      0           0
+    4      -118.599   20:22:26      0           0
+    5      -118.597   20:22:26      0           0
+    6      -118.597   20:22:26      0           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
 <pre><code>Joining, by = &quot;GID&quot;</code></pre>
@@ -687,25 +739,25 @@ iteration    LogLik     wall    cpu(sec)   restrained
 Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;</code></pre>
 <pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -295.037   7:56:9      2           0
-    2      -293.766   7:56:12      5           0
-    3      -293.206   7:56:15      8           0
-    4      -293.079   7:56:19      12           0
-    5      -293.068   7:56:22      15           0
-    6      -293.067   7:56:26      19           0
+    1      -295.037   20:22:6      3           0
+    2      -293.766   20:22:10      7           0
+    3      -293.206   20:22:12      9           0
+    4      -293.079   20:22:16      13           0
+    5      -293.068   20:22:19      16           0
+    6      -293.067   20:22:23      20           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -115.633   7:56:28      0           0
-    2      -115.611   7:56:29      1           0
-    3      -115.599   7:56:29      1           0
-    4      -115.594   7:56:29      1           0
-    5      -115.594   7:56:29      1           0
+    1      -115.633   20:22:25      0           0
+    2      -115.611   20:22:25      0           0
+    3      -115.599   20:22:26      1           0
+    4      -115.594   20:22:26      1           0
+    5      -115.594   20:22:26      1           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -123.513   7:56:30      0           0
-    2      -123.512   7:56:30      0           0
-    3      -123.511   7:56:30      0           0
-    4      -123.511   7:56:30      0           0
+    1      -123.513   20:22:27      1           0
+    2      -123.512   20:22:27      1           0
+    3      -123.511   20:22:27      1           0
+    4      -123.511   20:22:27      1           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
 <pre><code>Joining, by = &quot;GID&quot;
@@ -713,26 +765,26 @@ Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;</code></pre>
 <pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -279.53   7:56:10      2           0
-    2      -279.11   7:56:13      5           0
-    3      -278.935   7:56:17      9           0
-    4      -278.897   7:56:20      12           0
-    5      -278.894   7:56:23      15           0
-    6      -278.894   7:56:27      19           0
+    1      -279.53   20:22:8      4           0
+    2      -279.11   20:22:10      6           0
+    3      -278.935   20:22:14      10           0
+    4      -278.897   20:22:17      13           0
+    5      -278.894   20:22:20      16           0
+    6      -278.894   20:22:24      20           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -103.979   7:56:30      1           0
-    2      -103.465   7:56:30      1           0
-    3      -103.223   7:56:30      1           0
-    4      -103.189   7:56:30      1           0
-    5      -103.189   7:56:30      1           0
+    1      -103.979   20:22:27      1           0
+    2      -103.465   20:22:27      1           0
+    3      -103.223   20:22:27      1           0
+    4      -103.189   20:22:27      1           0
+    5      -103.189   20:22:27      1           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -114.994   7:56:31      0           0
-    2      -114.814   7:56:31      0           0
-    3      -114.749   7:56:31      0           0
-    4      -114.741   7:56:31      0           0
-    5      -114.741   7:56:31      0           0
+    1      -114.994   20:22:28      0           0
+    2      -114.814   20:22:28      0           0
+    3      -114.749   20:22:28      0           0
+    4      -114.741   20:22:28      0           0
+    5      -114.741   20:22:28      0           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
 <pre><code>Joining, by = &quot;GID&quot;
@@ -740,27 +792,27 @@ Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;</code></pre>
 <pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -288.678   7:56:11      3           0
-    2      -286.897   7:56:14      6           0
-    3      -286.123   7:56:18      10           0
-    4      -285.932   7:56:21      13           0
-    5      -285.911   7:56:24      16           0
-    6      -285.909   7:56:28      20           0
-    7      -285.909   7:56:31      23           0
+    1      -288.678   20:22:9      5           0
+    2      -286.897   20:22:11      7           0
+    3      -286.123   20:22:15      11           0
+    4      -285.932   20:22:18      14           0
+    5      -285.911   20:22:21      17           0
+    6      -285.909   20:22:25      21           0
+    7      -285.909   20:22:28      24           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -106.766   7:56:33      0           0
-    2      -106.743   7:56:33      0           0
-    3      -106.73   7:56:33      0           0
-    4      -106.726   7:56:34      1           0
-    5      -106.726   7:56:34      1           0
+    1      -106.766   20:22:30      0           0
+    2      -106.743   20:22:30      0           0
+    3      -106.73   20:22:30      0           0
+    4      -106.726   20:22:30      0           0
+    5      -106.726   20:22:30      0           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -115.647   7:56:34      0           0
-    2      -115.632   7:56:34      0           0
-    3      -115.626   7:56:34      0           0
-    4      -115.625   7:56:34      0           0
-    5      -115.625   7:56:34      0           0
+    1      -115.647   20:22:31      1           0
+    2      -115.632   20:22:31      1           0
+    3      -115.626   20:22:31      1           0
+    4      -115.625   20:22:31      1           0
+    5      -115.625   20:22:31      1           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
 <pre><code>Joining, by = &quot;GID&quot;
@@ -768,24 +820,24 @@ Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;</code></pre>
 <pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -275.405   7:56:12      3           0
-    2      -275.178   7:56:15      6           0
-    3      -275.062   7:56:19      10           0
-    4      -275.029   7:56:22      13           0
-    5      -275.024   7:56:26      17           0
-    6      -275.024   7:56:29      20           0
+    1      -275.405   20:22:10      5           0
+    2      -275.178   20:22:13      8           0
+    3      -275.062   20:22:16      11           0
+    4      -275.029   20:22:19      14           0
+    5      -275.024   20:22:23      18           0
+    6      -275.024   20:22:26      21           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -103.863   7:56:32      0           0
-    2      -103.863   7:56:32      0           0
-    3      -103.862   7:56:32      0           0
-    4      -103.862   7:56:32      0           0
+    1      -103.863   20:22:28      0           0
+    2      -103.863   20:22:28      0           0
+    3      -103.862   20:22:29      1           0
+    4      -103.862   20:22:29      1           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -111.274   7:56:33      0           0
-    2      -111.269   7:56:33      0           0
-    3      -111.266   7:56:33      0           0
-    4      -111.265   7:56:33      0           0
+    1      -111.274   20:22:29      0           0
+    2      -111.269   20:22:29      0           0
+    3      -111.266   20:22:29      0           0
+    4      -111.265   20:22:30      1           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
 <pre><code>Joining, by = &quot;GID&quot;
@@ -793,27 +845,27 @@ Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;</code></pre>
 <pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -288.661   7:56:13      3           0
-    2      -287.363   7:56:16      6           0
-    3      -286.795   7:56:20      10           0
-    4      -286.666   7:56:23      13           0
-    5      -286.654   7:56:27      17           0
-    6      -286.653   7:56:30      20           0
+    1      -288.661   20:22:10      4           0
+    2      -287.363   20:22:14      8           0
+    3      -286.795   20:22:17      11           0
+    4      -286.666   20:22:20      14           0
+    5      -286.654   20:22:24      18           0
+    6      -286.653   20:22:27      21           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -112.851   7:56:32      0           0
-    2      -112.841   7:56:32      0           0
-    3      -112.835   7:56:33      1           0
-    4      -112.832   7:56:33      1           0
-    5      -112.831   7:56:33      1           0
+    1      -112.851   20:22:29      0           0
+    2      -112.841   20:22:29      0           0
+    3      -112.835   20:22:29      0           0
+    4      -112.832   20:22:29      0           0
+    5      -112.831   20:22:29      0           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -121.595   7:56:34      1           0
-    2      -121.56   7:56:34      1           0
-    3      -121.537   7:56:34      1           0
-    4      -121.529   7:56:34      1           0
-    5      -121.527   7:56:34      1           0
-    6      -121.527   7:56:34      1           0
+    1      -121.595   20:22:30      0           0
+    2      -121.56   20:22:30      0           0
+    3      -121.537   20:22:30      0           0
+    4      -121.529   20:22:30      0           0
+    5      -121.527   20:22:30      0           0
+    6      -121.527   20:22:30      0           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
 <pre><code>Joining, by = &quot;GID&quot;
@@ -821,25 +873,25 @@ Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;</code></pre>
 <pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -262.442   7:56:14      4           0
-    2      -262.383   7:56:17      7           0
-    3      -262.359   7:56:21      11           0
-    4      -262.356   7:56:24      14           0
-    5      -262.356   7:56:27      17           0
+    1      -262.442   20:22:11      4           0
+    2      -262.383   20:22:14      7           0
+    3      -262.359   20:22:18      11           0
+    4      -262.356   20:22:21      14           0
+    5      -262.356   20:22:24      17           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -108.053   7:56:30      0           0
-    2      -108.017   7:56:31      1           0
-    3      -107.998   7:56:31      1           0
-    4      -107.992   7:56:31      1           0
-    5      -107.992   7:56:31      1           0
+    1      -108.053   20:22:27      0           0
+    2      -108.017   20:22:27      0           0
+    3      -107.998   20:22:27      0           0
+    4      -107.992   20:22:27      0           0
+    5      -107.992   20:22:27      0           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -113.369   7:56:32      1           0
-    2      -113.297   7:56:32      1           0
-    3      -113.269   7:56:32      1           0
-    4      -113.265   7:56:32      1           0
-    5      -113.265   7:56:32      1           0
+    1      -113.369   20:22:28      0           0
+    2      -113.297   20:22:28      0           0
+    3      -113.269   20:22:28      0           0
+    4      -113.265   20:22:28      0           0
+    5      -113.265   20:22:28      0           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
 <pre><code>Joining, by = &quot;GID&quot;
@@ -847,27 +899,27 @@ Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;</code></pre>
 <pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -291.508   7:56:15      4           0
-    2      -289.797   7:56:18      7           0
-    3      -288.936   7:56:22      11           0
-    4      -288.682   7:56:25      14           0
-    5      -288.648   7:56:28      17           0
-    6      -288.643   7:56:31      20           0
-    7      -288.642   7:56:34      23           0
+    1      -291.508   20:22:12      4           0
+    2      -289.797   20:22:15      7           0
+    3      -288.936   20:22:18      10           0
+    4      -288.682   20:22:22      14           0
+    5      -288.648   20:22:25      17           0
+    6      -288.643   20:22:28      20           0
+    7      -288.642   20:22:30      22           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -109.372   7:56:35      0           0
-    2      -109.344   7:56:35      0           0
-    3      -109.324   7:56:35      0           0
-    4      -109.315   7:56:35      0           0
-    5      -109.312   7:56:35      0           0
-    6      -109.312   7:56:35      0           0
+    1      -109.372   20:22:31      0           0
+    2      -109.344   20:22:31      0           0
+    3      -109.324   20:22:31      0           0
+    4      -109.315   20:22:32      1           0
+    5      -109.312   20:22:32      1           0
+    6      -109.312   20:22:32      1           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -121.826   7:56:36      0           0
-    2      -121.822   7:56:36      0           0
-    3      -121.82   7:56:36      0           0
-    4      -121.819   7:56:36      0           0
+    1      -121.826   20:22:32      0           0
+    2      -121.822   20:22:32      0           0
+    3      -121.82   20:22:32      0           0
+    4      -121.819   20:22:32      0           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
 <pre><code>Joining, by = &quot;GID&quot;
@@ -875,25 +927,25 @@ Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;</code></pre>
 <pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -289.254   7:56:16      4           0
-    2      -288.884   7:56:19      7           0
-    3      -288.737   7:56:23      11           0
-    4      -288.708   7:56:26      14           0
-    5      -288.706   7:56:30      18           0
-    6      -288.705   7:56:32      20           0
+    1      -289.254   20:22:13      4           0
+    2      -288.884   20:22:16      7           0
+    3      -288.737   20:22:19      10           0
+    4      -288.708   20:22:23      14           0
+    5      -288.706   20:22:26      17           0
+    6      -288.705   20:22:29      20           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -107.175   7:56:34      0           0
-    2      -107.148   7:56:34      0           0
-    3      -107.133   7:56:34      0           0
-    4      -107.129   7:56:34      0           0
-    5      -107.128   7:56:34      0           0
+    1      -107.175   20:22:30      0           0
+    2      -107.148   20:22:30      0           0
+    3      -107.133   20:22:30      0           0
+    4      -107.129   20:22:31      1           0
+    5      -107.128   20:22:31      1           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -114.408   7:56:35      0           0
-    2      -114.404   7:56:35      0           0
-    3      -114.403   7:56:35      0           0
-    4      -114.403   7:56:35      0           0
+    1      -114.408   20:22:31      0           0
+    2      -114.404   20:22:31      0           0
+    3      -114.403   20:22:31      0           0
+    4      -114.403   20:22:31      0           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
 <pre><code>Joining, by = &quot;GID&quot;
@@ -901,36 +953,403 @@ Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;</code></pre>
 <pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -293.912   7:56:17      4           0
-    2      -292.095   7:56:20      7           0
-    3      -291.371   7:56:24      11           0
-    4      -291.216   7:56:27      14           0
-    5      -291.203   7:56:31      18           0
-    6      -291.202   7:56:33      20           0
-    7      -291.202   7:56:35      22           0
+    1      -293.912   20:22:14      4           0
+    2      -292.095   20:22:17      7           0
+    3      -291.371   20:22:20      10           0
+    4      -291.216   20:22:24      14           0
+    5      -291.203   20:22:27      17           0
+    6      -291.202   20:22:29      19           0
+    7      -291.202   20:22:31      21           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -105.364   7:56:36      0           0
-    2      -105.356   7:56:36      0           0
-    3      -105.351   7:56:36      0           0
-    4      -105.349   7:56:36      0           0
-    5      -105.349   7:56:36      0           0
+    1      -105.364   20:22:32      0           0
+    2      -105.356   20:22:32      0           0
+    3      -105.351   20:22:32      0           0
+    4      -105.349   20:22:33      1           0
+    5      -105.349   20:22:33      1           0
 [1] &quot;GBLUP model complete - one trait&quot;
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -114.273   7:56:37      0           0
-    2      -114.086   7:56:37      0           0
-    3      -113.981   7:56:37      0           0
-    4      -113.946   7:56:37      0           0
-    5      -113.94   7:56:37      0           0
-    6      -113.939   7:56:37      0           0
-    7      -113.939   7:56:37      0           0
+    1      -114.273   20:22:33      0           0
+    2      -114.086   20:22:33      0           0
+    3      -113.981   20:22:33      0           0
+    4      -113.946   20:22:33      0           0
+    5      -113.94   20:22:33      0           0
+    6      -113.939   20:22:33      0           0
+    7      -113.939   20:22:33      0           0
 [1] &quot;GBLUP model complete - one trait&quot;
 [1] &quot;Genomic predictions done for all traits in one repeat-fold&quot;</code></pre>
 <pre><code>Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;
 Joining, by = &quot;GID&quot;</code></pre>
+<pre class="r"><code>runCrossVal</code></pre>
+<pre><code>function(blups,
+                      modelType,
+                      selInd,SIwts = NULL,
+                      grms,dosages=NULL,
+                      nrepeats,nfolds,
+                      ncores=1,nBLASthreads=NULL,
+                      gid=&quot;GID&quot;,seed=NULL,...){
+
+  # SET-UP CROSS-VALIDATION TRAINING-TEST FOLDS
+
+  # same train-test folds across traits
+  gids&lt;-blups %&gt;%
+    unnest(TrainingData) %&gt;%
+    distinct(!!sym(gid)) %&gt;%
+    .[[gid]]
+
+  # whether or not user inputs a master seed
+  # generate and store in output
+  # seeds to make each replicate reproducible.
+  if(!is.null(seed)){
+    set.seed(seed);
+    seeds&lt;-sample(1:1e6,replace = F,size = nrepeats)
+  } else {
+    seeds&lt;-sample(1:1e6,replace = F,size = nrepeats) }
+
+  # Set-up replicated cross-validation folds
+  # splitting by clone (if clone in training dataset, it can&#39;t be in testing)
+  require(rsample)
+  cvsamples&lt;-tibble(repeats=1:nrepeats,
+                    seeds=seeds,
+                    splits=map(seeds,function(seeds,...){
+                      set.seed(seeds);
+                      cvfolds&lt;-vfold_cv(tibble(GID=gids),v = nfolds)
+                      return(cvfolds)})) %&gt;%
+    unnest(splits)
+
+  # FIT GENOMIC PREDICTION MODELS
+
+  ## The fitModels() internal function
+  ## Now runs _across_ traits and, if requested,
+  ## computes the selection index accuracy
+  ## runCrossVal() now parallelizes over repeat-folds using ncores
+  ## Traits are handled in serial by each parallel worker
+  ## nBLASthreads controls the number of additional cores each worker
+  ## uses to speed matrix computations
+  ## Internal function
+  ## fits prediction model and calcs. accuracy for each train-test split
+
+  fitModels&lt;-function(splits,gids,
+                      modelType,
+                      blups,selInd,SIwts,
+                      gid=&quot;GID&quot;,
+                      grms,dosages=NULL,
+                      nBLASthreads){
+    # internal testing of fitModels() inputs - one rep-fold
+    # splits&lt;-cvsamples$splits[[1]]
+    # rm(splits)
+
+    if(!is.null(nBLASthreads)) { RhpcBLASctl::blas_set_num_threads(nBLASthreads) }
+    # workers in plan(multisession) need this call internal to the function, it seems.
+
+    # subset kinship (and if modelType==&quot;DirDom&quot; also the dosages) matrices
+    ### only lines with BLUPs for cross-validation
+    A&lt;-grms[[&quot;A&quot;]][gids,gids]
+    if(modelType %in% c(&quot;AD&quot;,&quot;DirDom&quot;)){ D&lt;-grms[[&quot;D&quot;]][gids,gids]  }
+    if(modelType==&quot;DirDom&quot;){
+      snps&lt;-dosages[gids,]
+      Mmat&lt;-centerDosage(snps);
+      Dmat&lt;-dose2domDevGenotypic(snps)
+      f&lt;-getPropHom(snps);
+      p&lt;-getAF(snps)
+      q&lt;-1-p
+      rm(snps);
+    }
+
+    predictOneTrait&lt;-possibly(function(TrainingData,splits,gid,
+                                       modelType,A,D=NULL,
+                                       Mmat=NULL,Dmat=NULL,f=NULL,p=NULL,q=NULL){
+      #TrainingData&lt;-blups$TrainingData[[1]]
+
+      trainingdata&lt;-TrainingData %&gt;%
+        dplyr::rename(GID=!!sym(gid)) %&gt;%
+        filter(GID %in% training(splits)[[gid]],
+               GID %in% rownames(A))
+
+      trainingdata[[paste0(gid,&quot;a&quot;)]]&lt;-factor(trainingdata[[&quot;GID&quot;]],
+                                              levels=rownames(A))
+      if(modelType %in% c(&quot;AD&quot;)){
+        trainingdata[[paste0(gid,&quot;d&quot;)]]&lt;-trainingdata[[paste0(gid,&quot;a&quot;)]] }
+      if(modelType %in% c(&quot;DirDom&quot;)){
+        trainingdata[[paste0(gid,&quot;d_star&quot;)]]&lt;-trainingdata[[paste0(gid,&quot;a&quot;)]] }
+
+      # Set-up random model statements
+      randFormula&lt;-paste0(&quot;~vs(&quot;,gid,&quot;a,Gu=A)&quot;)
+      if(modelType %in% c(&quot;AD&quot;)){
+        randFormula&lt;-paste0(randFormula,&quot;+vs(&quot;,gid,&quot;d,Gu=D)&quot;) }
+      if(modelType==&quot;DirDom&quot;){
+        randFormula&lt;-paste0(randFormula,&quot;+vs(&quot;,gid,&quot;d_star,Gu=D)&quot;)
+        trainingdata %&lt;&gt;%
+          left_join(tibble(GID=names(f),f=as.numeric(f)))
+      }
+
+      # Fixed model statements
+      fixedFormula&lt;-ifelse(modelType==&quot;DirDom&quot;,
+                           &quot;drgBLUP ~1+f&quot;,&quot;drgBLUP ~1&quot;)
+      # Fit genomic prediction model
+      suppressMessages(require(sommer))
+      fit &lt;- sommer::mmer(fixed = as.formula(fixedFormula),
+                          random = as.formula(randFormula),
+                          weights = WT,
+                          data=trainingdata,
+                          date.warning = F,
+                          getPEV = FALSE)
+
+      # reduce memory footprint
+      rm(A); if(modelType %in% c(&quot;AD&quot;,&quot;DirDom&quot;)){ rm(D); gc() }
+
+      print(paste0(&quot;GBLUP model complete - one trait&quot;))
+      if(modelType==&quot;DirDom&quot;){
+
+        # Backsolve SNP effects
+        # Compute allele sub effects
+        ## Every model has an additive random term
+        ga&lt;-as.matrix(fit$U[[paste0(&quot;u:&quot;,gid,&quot;a&quot;)]]$drgBLUP,ncol=1)
+
+        # model DirDom is a different add-dom partition,
+        ### add effects are not allele sub effects and gblups are not GEBV
+        addsnpeff&lt;-backsolveSNPeff(Z=Mmat,g=ga)
+        ### dom effects are called d*, gd_star or domstar
+        ### because of the genome-wide homoz. term included in model
+        gd_star&lt;-as.matrix(fit$U[[paste0(&quot;u:&quot;,gid,&quot;d_star&quot;)]]$drgBLUP,ncol=1)
+        domstar_snpeff&lt;-backsolveSNPeff(Z=Dmat,g=gd_star)
+        ### b = the estimate (BLUE) for the genome-wide homoz. effect
+        b&lt;-fit$Beta[fit$Beta$Effect==&quot;f&quot;,&quot;Estimate&quot;]
+        ### calc. domsnpeff including the genome-wide homoz. effect
+        ### divide the b effect up by number of SNPs and _subtract_ from domstar
+        domsnpeff&lt;-domstar_snpeff-(b/length(domstar_snpeff))
+
+        ### allele substitution effects using a+d(q-p) where d=d*-b/p
+        allelesubsnpeff&lt;-addsnpeff+(domsnpeff*(q-p))
+      }
+
+      # Gather the GBLUPs
+      if(modelType %in% c(&quot;A&quot;,&quot;AD&quot;)){
+        gblups&lt;-tibble(GID=as.character(names(fit$U[[paste0(&quot;u:&quot;,gid,&quot;a&quot;)]]$drgBLUP)),
+                       GEBV=as.numeric(fit$U[[paste0(&quot;u:&quot;,gid,&quot;a&quot;)]]$drgBLUP)) }
+      if(modelType==&quot;AD&quot;){
+        gblups %&lt;&gt;% # compute GEDD (genomic-estimated dominance deviation)
+          dplyr::mutate(GEDD=as.numeric(fit$U[[paste0(&quot;u:&quot;,gid,&quot;d&quot;)]]$drgBLUP),
+                 # compute GETGV
+                 GETGV=rowSums(.[,grepl(&quot;GE&quot;,colnames(.))])) }
+
+      if(modelType==&quot;DirDom&quot;){
+        # re-calc the GBLUP, GEdomval using dom. effects where d=d*-b/p
+        ge_domval&lt;-Dmat%*%domsnpeff
+        # calc. the GEBV using allele sub. effects where alpha=a+d(p-q), and d=d*-b/p
+        gebv&lt;-Mmat%*%allelesubsnpeff
+        # Tidy tibble of GBLUPs
+        gblups&lt;-tibble(GID=as.character(names(fit$U[[paste0(&quot;u:&quot;,gid,&quot;a&quot;)]]$drgBLUP)),
+                       GEadd=as.numeric(fit$U[[paste0(&quot;u:&quot;,gid,&quot;a&quot;)]]$drgBLUP),
+                       GEdom_star=as.numeric(fit$U[[paste0(&quot;u:&quot;,gid,&quot;d_star&quot;)]]$drgBLUP)) %&gt;%
+          left_join(tibble(GID=rownames(ge_domval),GEdomval=as.numeric(ge_domval))) %&gt;%
+          left_join(tibble(GID=rownames(gebv),GEBV=as.numeric(gebv))) %&gt;%
+          # GETGV from GEadd + GEdomval
+          dplyr::mutate(GETGV=GEadd+GEdomval)
+
+        # free up the memory footprint
+        rm(ga,addsnpeff,gd_star,domstar_snpeff,b,domsnpeff,allelesubsnpeff,
+           ge_domval,gebv,Dmat,Mmat,fit); gc()
+        print(paste0(&quot;Backsolving SNP effects for DirDom model compete - one trait&quot;))
+      }
+
+      # this is to remove conflicts with dplyr function select() downstream
+      detach(&quot;package:sommer&quot;,unload = T); detach(&quot;package:MASS&quot;,unload = T)
+
+      # Calculate accuracy for each trait
+      ## Convert predicted gblups to a long-format
+      gblups %&lt;&gt;%
+        dplyr::select(GID,any_of(c(&quot;GEBV&quot;,&quot;GETGV&quot;))) %&gt;%
+        pivot_longer(any_of(c(&quot;GEBV&quot;,&quot;GETGV&quot;)),
+                     names_to = &quot;predOf&quot;,
+                     values_to = &quot;GBLUP&quot;)
+
+      ## Grab the test set BLUPs as validation data
+      validationData&lt;-TrainingData %&gt;%
+        dplyr::rename(GID=!!sym(gid)) %&gt;%
+        dplyr::select(GID,BLUP) %&gt;%
+        filter(GID %in% testing(splits)[[gid]])
+
+      # Measure accuracy in test set
+      ## cor(GEBV,BLUP)
+      ## cor(GETGV,BLUP)
+      accuracy&lt;-gblups %&gt;%
+        left_join(validationData) %&gt;%
+        nest(predVSobs=c(GID,GBLUP,BLUP)) %&gt;%
+        dplyr::mutate(Accuracy=map_dbl(predVSobs,~cor(.$GBLUP,.$BLUP, use = &#39;complete.obs&#39;)))
+      return(accuracy)
+    },
+    otherwise = NA)
+
+    # Predict for one trait to each trait&#39;s training dataset
+    if(modelType==&quot;A&quot;){
+      predictions&lt;-blups %&gt;%
+        dplyr::mutate(modelOut=map(TrainingData,~predictOneTrait(TrainingData=.,
+                                                          splits=splits,gid=gid,
+                                                          modelType=modelType,
+                                                          A=A))) }
+    if(modelType==&quot;AD&quot;){
+      predictions&lt;-blups %&gt;%
+        dplyr::mutate(modelOut=map(TrainingData,~predictOneTrait(TrainingData=.,
+                                                          splits=splits,gid=gid,
+                                                          modelType=modelType,
+                                                          A=A,D=D))) }
+    if(modelType==&quot;DirDom&quot;){
+      predictions&lt;-blups %&gt;%
+        dplyr::mutate(modelOut=map(TrainingData,~predictOneTrait(TrainingData=.,
+                                                          splits=splits,gid=gid,
+                                                          modelType=modelType,
+                                                          A=A,D=D,
+                                                          Mmat=Mmat,Dmat=Dmat,
+                                                          f=f,p=p,q=q))) }
+
+    rm(A); if(modelType==&quot;AD&quot;){ rm(D) };
+    if(modelType==&quot;DirDom&quot;){ rm(D,Mmat,Dmat,f,p,q) }
+
+    print(paste0(&quot;Genomic predictions done for all traits in one repeat-fold&quot;))
+
+    predictions %&lt;&gt;%
+      select(-TrainingData) %&gt;%
+      unnest(modelOut,keep_empty = F)
+
+    if(selInd){
+      # calc. SELIND and SELIND accuracy
+
+      gblups&lt;-predictions %&gt;%
+        select(-Accuracy) %&gt;%
+        unnest(predVSobs) %&gt;%
+        select(-BLUP) %&gt;%
+        pivot_wider(values_from = &quot;GBLUP&quot;,
+                    names_from = &quot;Trait&quot;)
+
+      if(all(names(SIwts) %in% colnames(gblups))){
+        gblups %&lt;&gt;%
+          dplyr::mutate(GBLUP=as.numeric((gblups %&gt;%
+                                     select(names(SIwts)) %&gt;%
+                                     as.matrix(.))%*%SIwts)) %&gt;%
+          select(predOf,GID,GBLUP)
+
+        validationData&lt;-blups %&gt;%
+          unnest(TrainingData) %&gt;%
+          select(Trait,GID,BLUP) %&gt;%
+          pivot_wider(names_from = &quot;Trait&quot;, values_from = &quot;BLUP&quot;)
+        validationData %&lt;&gt;%
+          dplyr::mutate(BLUP=as.numeric((validationData %&gt;%
+                                    select(names(SIwts)) %&gt;%
+                                    as.matrix(.))%*%SIwts)) %&gt;%
+          select(GID,BLUP)
+
+        predictions %&lt;&gt;%
+          bind_rows(gblups %&gt;%
+                      left_join(validationData) %&gt;%
+                      nest(predVSobs=c(GID,GBLUP,BLUP)) %&gt;%
+                      dplyr::mutate(Trait=&quot;SELIND&quot;) %&gt;%
+                      relocate(Trait,.before = 1) %&gt;%
+                      dplyr::mutate(Accuracy=map_dbl(predVSobs,~cor(.$GBLUP,.$BLUP,
+                                                             use = &#39;na.or.complete&#39;))))
+      }
+    }
+
+    predictions %&lt;&gt;%
+      dplyr::mutate(NcompleteTestPairs=map_dbl(predVSobs,function(predVSobs){
+        if(!is.null(predVSobs)){
+          out&lt;-na.omit(.) %&gt;% nrow(.) } else { out&lt;-NA }
+        return(out) }))
+
+    return(predictions)
+
+  }
+
+  require(furrr); plan(multisession, workers = ncores)
+  options(future.globals.maxSize=+Inf); options(future.rng.onMisuse=&quot;ignore&quot;)
+  # quick test
+  #cvsamples %&lt;&gt;% slice(1:2)
+  cvsamples %&lt;&gt;%
+    dplyr::mutate(accuracyEstOut=future_map(splits,
+                                     ~fitModels(splits=.,
+                                                modelType=modelType,
+                                                blups=blups,
+                                                selInd=selInd,SIwts=SIwts,
+                                                gid=gid,grms=grms,dosages=dosages,
+                                                nBLASthreads=nBLASthreads)))
+  plan(sequential)
+  return(cvsamples)
+}
+&lt;bytecode: 0x7ff496726588&gt;
+&lt;environment: namespace:genomicMateSelectR&gt;</code></pre>
 <pre class="r"><code>saveRDS(standardCV,file = here::here(&quot;output&quot;,&quot;standardCV.rds&quot;))</code></pre>
+<pre class="r"><code>standardCV</code></pre>
+<pre><code># A tibble: 10 × 5
+   repeats  seeds splits            id    accuracyEstOut  
+     &lt;int&gt;  &lt;int&gt; &lt;list&gt;            &lt;chr&gt; &lt;list&gt;          
+ 1       1 395601 &lt;split [771/193]&gt; Fold1 &lt;tibble [4 × 5]&gt;
+ 2       1 395601 &lt;split [771/193]&gt; Fold2 &lt;tibble [4 × 5]&gt;
+ 3       1 395601 &lt;split [771/193]&gt; Fold3 &lt;tibble [4 × 5]&gt;
+ 4       1 395601 &lt;split [771/193]&gt; Fold4 &lt;tibble [4 × 5]&gt;
+ 5       1 395601 &lt;split [772/192]&gt; Fold5 &lt;tibble [4 × 5]&gt;
+ 6       2 215870 &lt;split [771/193]&gt; Fold1 &lt;tibble [4 × 5]&gt;
+ 7       2 215870 &lt;split [771/193]&gt; Fold2 &lt;tibble [4 × 5]&gt;
+ 8       2 215870 &lt;split [771/193]&gt; Fold3 &lt;tibble [4 × 5]&gt;
+ 9       2 215870 &lt;split [771/193]&gt; Fold4 &lt;tibble [4 × 5]&gt;
+10       2 215870 &lt;split [772/192]&gt; Fold5 &lt;tibble [4 × 5]&gt;</code></pre>
+<pre class="r"><code>training(standardCV$splits[[1]])</code></pre>
+<pre><code># A tibble: 771 × 1
+   GID                
+   &lt;chr&gt;              
+ 1 50395              
+ 2 BAHKYEHEMAA        
+ 3 BOUNOUA_BLANC      
+ 4 CH92108            
+ 5 DOKUNBAHKYE        
+ 6 ESAMBAHKYE         
+ 7 IITA-TMS-BAD9100455
+ 8 IITA-TMS-BAD9200061
+ 9 IITA-TMS-BAD9200068
+10 IITA-TMS-BAD92033  
+# … with 761 more rows</code></pre>
+<pre class="r"><code>testing(standardCV$splits[[1]])</code></pre>
+<pre><code># A tibble: 193 × 1
+   GID               
+   &lt;chr&gt;             
+ 1 95NA-00063        
+ 2 IITA-TMS-IBA000214
+ 3 IITA-TMS-IBA000345
+ 4 IITA-TMS-IBA000346
+ 5 IITA-TMS-IBA000355
+ 6 IITA-TMS-IBA010034
+ 7 IITA-TMS-IBA010103
+ 8 IITA-TMS-IBA010131
+ 9 IITA-TMS-IBA010171
+10 IITA-TMS-IBA010615
+# … with 183 more rows</code></pre>
+<pre class="r"><code># 
+standardCV %&gt;% unnest(accuracyEstOut) %&gt;% head</code></pre>
+<pre><code># A tibble: 6 × 9
+  repeats  seeds splits  id    Trait  predOf predVSobs Accuracy NcompleteTestPa…
+    &lt;int&gt;  &lt;int&gt; &lt;list&gt;  &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;list&gt;       &lt;dbl&gt;            &lt;dbl&gt;
+1       1 395601 &lt;split… Fold1 DM     GEBV   &lt;tibble …  0.158                  4
+2       1 395601 &lt;split… Fold1 logFY… GEBV   &lt;tibble … -0.00700                4
+3       1 395601 &lt;split… Fold1 logDY… GEBV   &lt;tibble …  0.0299                 4
+4       1 395601 &lt;split… Fold1 SELIND GEBV   &lt;tibble …  0.648                  4
+5       1 395601 &lt;split… Fold2 DM     GEBV   &lt;tibble …  0.201                  4
+6       1 395601 &lt;split… Fold2 logFY… GEBV   &lt;tibble …  0.151                  4</code></pre>
+<pre class="r"><code>standardCV %&gt;% unnest(accuracyEstOut) %$% predVSobs[[4]] %&gt;% na.omit</code></pre>
+<pre><code># A tibble: 348 × 3
+   GID                  GBLUP   BLUP
+   &lt;chr&gt;                &lt;dbl&gt;  &lt;dbl&gt;
+ 1 IITA-TMS-IBA000070   2.97   -5.70
+ 2 IITA-TMS-IBA070593 -42.1   -70.3 
+ 3 IITA-TMS-IBA30572   -5.29   -6.50
+ 4 IITA-TMS-IBA980581  -3.31   -5.04
+ 5 IITA-TMS-IBA982101  -0.814 -21.7 
+ 6 TMEB419             16.5    31.3 
+ 7 TMEB7               18.6    13.7 
+ 8 TMS13F1021P0008     -7.95  -28.1 
+ 9 TMS13F1049P0001    -25.8   -11.4 
+10 TMS13F1109P0009    -16.7   -23.3 
+# … with 338 more rows</code></pre>
 </div>
 <div id="plot-results" class="section level1">
 <h1>Plot results</h1>
@@ -939,7 +1358,7 @@ Joining, by = &quot;GID&quot;</code></pre>
      dplyr::select(repeats,id,predOf,Trait,Accuracy) %&gt;% 
      ggplot(.,aes(x=Trait,y=Accuracy,fill=Trait)) + 
      geom_boxplot() + theme_bw()</code></pre>
-<p><img src="figure/kfoldcrossval.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/kfoldcrossval.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">

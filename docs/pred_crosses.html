@@ -11,9 +11,9 @@
 
 <meta name="author" content="wolfemd" />
 
-<meta name="date" content="2022-05-05" />
+<meta name="date" content="2022-05-09" />
 
-<title>Predict parental GEBV</title>
+<title>Predict crosses</title>
 
 <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -377,9 +377,9 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Predict parental GEBV</h1>
+<h1 class="title toc-ignore">Predict crosses</h1>
 <h4 class="author">wolfemd</h4>
-<h4 class="date">2022-05-05</h4>
+<h4 class="date">2022-05-09</h4>
 
 </div>
 
@@ -568,7 +568,7 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/get_gebv.Rmd</code>) and HTML (<code>docs/get_gebv.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/pred_crosses.Rmd</code>) and HTML (<code>docs/pred_crosses.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -597,7 +597,7 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/wolfemd/GSexample2022/blob/bb2d98179db87acbe2189a400bac5d598f9119d8/analysis/get_gebv.Rmd" target="_blank">bb2d981</a>
+<a href="https://github.com/wolfemd/GSexample2022/blob/bb2d98179db87acbe2189a400bac5d598f9119d8/analysis/pred_crosses.Rmd" target="_blank">bb2d981</a>
 </td>
 <td>
 wolfemd
@@ -607,40 +607,6 @@ wolfemd
 </td>
 <td>
 Add the final two sections - parent-wise cross-validation plus predicting crosses
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/260d2fed9c49fc20aa3f1b2b41d5bfa2cd99aecc/docs/get_gebv.html" target="_blank">260d2fe</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-05-05
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/wolfemd/GSexample2022/blob/975daa79a6e60fffa81b189ad3803dbd080b9ba4/analysis/get_gebv.Rmd" target="_blank">975daa7</a>
-</td>
-<td>
-wolfemd
-</td>
-<td>
-2022-05-05
-</td>
-<td>
-Publish demo for k-fold cross-val and genomic prediction of GEBV steps
 </td>
 </tr>
 </tbody>
@@ -653,14 +619,15 @@ Publish demo for k-fold cross-val and genomic prediction of GEBV steps
 <div id="load-packages" class="section level1">
 <h1>Load packages</h1>
 <pre class="r"><code>suppressMessages(library(tidyverse)); 
-suppressMessages(library(genomicMateSelectR)); 
-suppressMessages(library(sommer))</code></pre>
+suppressMessages(library(genomicMateSelectR)); </code></pre>
 </div>
 <div id="set-up" class="section level1">
 <h1>Set-up</h1>
-<pre class="r"><code>blups&lt;-readRDS(here::here(&quot;output&quot;,&quot;blups.rds&quot;))
-A&lt;-readRDS(file=here::here(&quot;output&quot;,&quot;kinship_add.rds&quot;))</code></pre>
-<pre class="r"><code>blups %&lt;&gt;% 
+<pre class="r"><code># GENOMIC RELATIONSHIP MATRIX
+grms&lt;-list(A=readRDS(file=here::here(&quot;output&quot;,&quot;kinship_add.rds&quot;)))
+
+# BLUPs
+blups&lt;-readRDS(here::here(&quot;output&quot;,&quot;blups.rds&quot;)) %&gt;% 
      # based on cross-validation, decided to exclude MCMDS from this analysis
      filter(Trait != &quot;MCMDS&quot;) %&gt;% 
      # need to rename the &quot;blups&quot; list to comply with the runCrossVal function
@@ -668,192 +635,174 @@ A&lt;-readRDS(file=here::here(&quot;output&quot;,&quot;kinship_add.rds&quot;))</
      dplyr::select(Trait,TrainingData) %&gt;% 
      # need also to remove phenotyped-but-not-genotyped lines
      mutate(TrainingData=map(TrainingData,
-                             ~filter(.,germplasmName %in% rownames(A)) %&gt;% 
+                             ~filter(.,germplasmName %in% rownames(grms$A)) %&gt;% 
                                   # rename the germplasmName column to GID
-                                  rename(GID=germplasmName))) %&gt;% 
-     # Exclude MCMDS in this example
-     filter(Trait != &quot;MCMDS&quot;)
+                                  rename(GID=germplasmName)))
 
-blups</code></pre>
-<pre><code># A tibble: 3 × 2
-  Trait   TrainingData      
-  &lt;chr&gt;   &lt;list&gt;            
-1 DM      &lt;tibble [962 × 6]&gt;
-2 logFYLD &lt;tibble [350 × 6]&gt;
-3 logDYLD &lt;tibble [348 × 6]&gt;</code></pre>
-<p>Selection index:</p>
-<pre class="r"><code>SIwts&lt;-c(DM=15,
+# DOSAGE MATRIX
+## Dosages are also needed for runGenomicPredictions() when getMarkEffs=TRUE
+## Reason is that they are used to extra SNP effects from GBLUP models
+dosages&lt;-readRDS(here::here(&quot;data&quot;,&quot;dosages.rds&quot;))
+
+# SELECTION INDEX
+SIwts&lt;-c(DM=15,
          logFYLD=20,
-         logDYLD=20)
-SIwts</code></pre>
-<pre><code>     DM logFYLD logDYLD 
-     15      20      20 </code></pre>
+         logDYLD=20)</code></pre>
 </div>
-<div id="run-genomic-predictions" class="section level1">
-<h1>Run genomic predictions</h1>
-<pre class="r"><code>gpreds&lt;-runGenomicPredictions(modelType=&quot;A&quot;,
-                              selInd=TRUE, SIwts=SIwts,
-                              blups=blups,
-                              grms=list(A=A),
-                              ncores=3)</code></pre>
+<div id="get-marker-effects" class="section level1">
+<h1>Get marker effects</h1>
+<p>We need to re-run <code>runGenomicPredictions()</code>, this time using the <code>getMarkEffs=TRUE</code> option.</p>
+<p>Will “backsolve” the RR-BLUP marker effect solutions from the GBLUP solutions, using the <code>backsolveSNPeff()</code> function under-the-hood.</p>
+<pre class="r"><code>gpreds_withMarkEffs&lt;-runGenomicPredictions(modelType = &quot;A&quot;, 
+                                           selInd = T, SIwts = SIwts,
+                                           getMarkEffs = TRUE,
+                                           dosages = dosages,
+                                           blups = blups, 
+                                           grms = grms,
+                                           ncores=3)</code></pre>
 <pre><code>Loading required package: furrr</code></pre>
 <pre><code>Loading required package: future</code></pre>
 <pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -356.471   20:20:52      4           0
-    2      -355.724   20:20:55      7           0
-    3      -355.405   20:20:57      9           0
-    4      -355.333   20:20:59      11           0
-    5      -355.327   20:21:2      14           0
-    6      -355.326   20:21:4      16           0
+    1      -356.471   20:26:31      4           0
+    2      -355.724   20:26:34      7           0
+    3      -355.405   20:26:37      10           0
+    4      -355.333   20:26:40      13           0
+    5      -355.327   20:26:42      15           0
+    6      -355.326   20:26:45      18           0
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -135.425   20:20:49      0           0
-    2      -135.407   20:20:49      0           0
-    3      -135.395   20:20:49      0           0
-    4      -135.391   20:20:49      0           0
-    5      -135.39   20:20:50      1           0
+    1      -135.425   20:26:28      0           0
+    2      -135.407   20:26:28      0           0
+    3      -135.395   20:26:28      0           0
+    4      -135.391   20:26:28      0           0
+    5      -135.39   20:26:28      0           0
 iteration    LogLik     wall    cpu(sec)   restrained
-    1      -146.037   20:20:49      0           0
-    2      -146.031   20:20:50      1           0
-    3      -146.028   20:20:50      1           0
-    4      -146.027   20:20:50      1           0</code></pre>
-</div>
-<div id="extract-gebv" class="section level1">
-<h1>Extract GEBV</h1>
-<pre class="r"><code>gpreds</code></pre>
-<pre><code># A tibble: 1 × 2
-  gblups               genomicPredOut  
-  &lt;list&gt;               &lt;list&gt;          
-1 &lt;tibble [1,007 × 6]&gt; &lt;tibble [3 × 4]&gt;</code></pre>
-<p>We have a single-row <code>tibble</code>.</p>
-<p>To access a simple table listing GEBV for each trait and the selection index:</p>
-<pre class="r"><code>gpreds$gblups[[1]]</code></pre>
-<pre><code># A tibble: 1,007 × 6
-   GID                 predOf SELIND     DM  logFYLD  logDYLD
-   &lt;chr&gt;               &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
- 1 IITA-TMS-IBA30572   GEBV    -7.66 -0.597  0.0299   0.0349 
- 2 IITA-TMS-IBA940237  GEBV     4.99  0.363 -0.0128  -0.00951
- 3 IITA-TMS-IBA961642  GEBV    20.0   1.14   0.0737   0.0714 
- 4 IITA-TMS-ONN8700813 GEBV    27.4   1.81   0.00236  0.00621
- 5 IITA-TMS-ONN920168  GEBV    17.9   1.23  -0.0133  -0.0171 
- 6 IITA-TMS-JOS920230  GEBV   -17.1  -1.25   0.0585   0.0259 
- 7 IITA-TMS-WAR4080    GEBV    -5.34 -0.449  0.0309   0.0392 
- 8 IITA-TMS-WAR4092    GEBV    -5.57 -0.466  0.0301   0.0405 
- 9 IITA-TMS-WAR820249  GEBV     8.50  0.374  0.0748   0.0700 
-10 IITA-TMS-WAR820422  GEBV    10.3   0.474  0.0827   0.0747 
-# … with 997 more rows</code></pre>
-<p>At this point, you can use the <strong>SELIND</strong> predictions directly to rank and select parents.</p>
-<p>Example: sort by <strong>SELIND</strong> and pick the top 10.</p>
-<pre class="r"><code>gpreds$genomicPredOut[[1]]</code></pre>
-<pre><code># A tibble: 3 × 4
-  Trait   gblups               varcomps     fixeffs     
-  &lt;chr&gt;   &lt;list&gt;               &lt;list&gt;       &lt;list&gt;      
-1 DM      &lt;tibble [1,007 × 2]&gt; &lt;df [2 × 4]&gt; &lt;df [1 × 5]&gt;
-2 logFYLD &lt;tibble [1,007 × 2]&gt; &lt;df [2 × 4]&gt; &lt;df [1 × 5]&gt;
-3 logDYLD &lt;tibble [1,007 × 2]&gt; &lt;df [2 × 4]&gt; &lt;df [1 × 5]&gt;</code></pre>
-<pre class="r"><code>saveRDS(gpreds,file = here::here(&quot;output&quot;,&quot;genomicPredictions.rds&quot;))</code></pre>
-<pre class="r"><code>gpreds$gblups[[1]] %&gt;% 
-     arrange(desc(SELIND)) %&gt;% 
-     slice(1:10)</code></pre>
-<pre><code># A tibble: 10 × 6
-   GID                predOf SELIND    DM logFYLD logDYLD
-   &lt;chr&gt;              &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
- 1 TMEB117(4X)        GEBV     39.0  2.39  0.0696  0.0892
- 2 TMEB693            GEBV     39.0  2.40  0.0657  0.0840
- 3 TMEB789            GEBV     38.4  2.35  0.0678  0.0890
- 4 IITA-TMS-IBA970103 GEBV     37.6  2.44  0.0211  0.0291
- 5 IITA-TMS-IBA970255 GEBV     37.6  2.44  0.0189  0.0287
- 6 NANCHINYAYA        GEBV     36.2  2.22  0.0636  0.0827
- 7 SIMONYE            GEBV     35.6  2.18  0.0633  0.0825
- 8 TMS14F1035P0004    GEBV     34.7  2.18  0.0260  0.0775
- 9 TMS14F1262P0002    GEBV     33.7  1.98  0.0873  0.110 
-10 TMS13F1307P0008    GEBV     32.4  1.97  0.0536  0.0881</code></pre>
-<pre class="r"><code>gpreds_noindex&lt;-runGenomicPredictions(modelType=&quot;A&quot;,
-                              blups=blups,selInd=FALSE,
-                              grms=list(A=A),
-                              ncores=3)</code></pre>
-<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -356.471   20:21:12      4           0
-    2      -355.724   20:21:14      6           0
-    3      -355.405   20:21:17      9           0
-    4      -355.333   20:21:19      11           0
-    5      -355.327   20:21:22      14           0
-    6      -355.326   20:21:24      16           0
-iteration    LogLik     wall    cpu(sec)   restrained
-    1      -135.425   20:21:9      0           0
-    2      -135.407   20:21:9      0           0
-    3      -135.395   20:21:9      0           0
-    4      -135.391   20:21:9      0           0
-    5      -135.39   20:21:9      0           0
-iteration    LogLik     wall    cpu(sec)   restrained
-    1      -146.037   20:21:9      0           0
-    2      -146.031   20:21:9      0           0
-    3      -146.028   20:21:10      1           0
-    4      -146.027   20:21:10      1           0</code></pre>
-<pre class="r"><code>gpreds_noindex$gblups[[1]]</code></pre>
-<pre><code># A tibble: 1,007 × 5
-   GID                 predOf     DM  logFYLD  logDYLD
-   &lt;chr&gt;               &lt;chr&gt;   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
- 1 IITA-TMS-IBA30572   GEBV   -0.597  0.0299   0.0349 
- 2 IITA-TMS-IBA940237  GEBV    0.363 -0.0128  -0.00951
- 3 IITA-TMS-IBA961642  GEBV    1.14   0.0737   0.0714 
- 4 IITA-TMS-ONN8700813 GEBV    1.81   0.00236  0.00621
- 5 IITA-TMS-ONN920168  GEBV    1.23  -0.0133  -0.0171 
- 6 IITA-TMS-JOS920230  GEBV   -1.25   0.0585   0.0259 
- 7 IITA-TMS-WAR4080    GEBV   -0.449  0.0309   0.0392 
- 8 IITA-TMS-WAR4092    GEBV   -0.466  0.0301   0.0405 
- 9 IITA-TMS-WAR820249  GEBV    0.374  0.0748   0.0700 
-10 IITA-TMS-WAR820422  GEBV    0.474  0.0827   0.0747 
-# … with 997 more rows</code></pre>
-<pre class="r"><code>gpreds$gblups[[1]]</code></pre>
-<pre><code># A tibble: 1,007 × 6
-   GID                 predOf SELIND     DM  logFYLD  logDYLD
-   &lt;chr&gt;               &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
- 1 IITA-TMS-IBA30572   GEBV    -7.66 -0.597  0.0299   0.0349 
- 2 IITA-TMS-IBA940237  GEBV     4.99  0.363 -0.0128  -0.00951
- 3 IITA-TMS-IBA961642  GEBV    20.0   1.14   0.0737   0.0714 
- 4 IITA-TMS-ONN8700813 GEBV    27.4   1.81   0.00236  0.00621
- 5 IITA-TMS-ONN920168  GEBV    17.9   1.23  -0.0133  -0.0171 
- 6 IITA-TMS-JOS920230  GEBV   -17.1  -1.25   0.0585   0.0259 
- 7 IITA-TMS-WAR4080    GEBV    -5.34 -0.449  0.0309   0.0392 
- 8 IITA-TMS-WAR4092    GEBV    -5.57 -0.466  0.0301   0.0405 
- 9 IITA-TMS-WAR820249  GEBV     8.50  0.374  0.0748   0.0700 
-10 IITA-TMS-WAR820422  GEBV    10.3   0.474  0.0827   0.0747 
-# … with 997 more rows</code></pre>
-<pre class="r"><code>-0.5969098734*15+2.989957e-02   *20+0.0349250858*20</code></pre>
-<pre><code>[1] -7.657155</code></pre>
-<pre class="r"><code>dosages&lt;-readRDS(here::here(&quot;data&quot;,&quot;dosages.rds&quot;))
-gpreds_markeffs&lt;-runGenomicPredictions(modelType=&quot;A&quot;,
-                                      blups=blups,selInd=FALSE,
-                                      dosages = dosages, getMarkEffs = T,
-                                      grms=list(A=A),
-                                      ncores=3)</code></pre>
-<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
-    1      -356.471   20:21:31      3           0
-    2      -355.724   20:21:34      6           0
-    3      -355.405   20:21:37      9           0
-    4      -355.333   20:21:40      12           0
-    5      -355.327   20:21:42      14           0
-    6      -355.326   20:21:45      17           0
-iteration    LogLik     wall    cpu(sec)   restrained
-    1      -135.425   20:21:29      1           0
-    2      -135.407   20:21:29      1           0
-    3      -135.395   20:21:29      1           0
-    4      -135.391   20:21:29      1           0
-    5      -135.39   20:21:29      1           0
-iteration    LogLik     wall    cpu(sec)   restrained
-    1      -146.037   20:21:29      0           0
-    2      -146.031   20:21:29      0           0
-    3      -146.028   20:21:29      0           0
-    4      -146.027   20:21:29      0           0</code></pre>
-<pre class="r"><code>gpreds_markeffs$genomicPredOut[[1]]</code></pre>
+    1      -146.037   20:26:28      0           0
+    2      -146.031   20:26:29      1           0
+    3      -146.028   20:26:29      1           0
+    4      -146.027   20:26:29      1           0</code></pre>
+<pre class="r"><code>saveRDS(gpreds_withMarkEffs,
+        file = here::here(&quot;output&quot;,&quot;genomicPredictions_withMarkEffs.rds&quot;))</code></pre>
+<p>Notice that there is now a additional list-type column with the label “allelesubsnpeff” indicating that, because we ran an additive-only model, these SNP-effects represent predictions of allele substitution effects.</p>
+<pre class="r"><code>gpreds_withMarkEffs$genomicPredOut[[1]]</code></pre>
 <pre><code># A tibble: 3 × 5
   Trait   gblups               varcomps     fixeffs      allelesubsnpeff  
   &lt;chr&gt;   &lt;list&gt;               &lt;list&gt;       &lt;list&gt;       &lt;list&gt;           
 1 DM      &lt;tibble [1,007 × 2]&gt; &lt;df [2 × 4]&gt; &lt;df [1 × 5]&gt; &lt;dbl [3,987 × 1]&gt;
 2 logFYLD &lt;tibble [1,007 × 2]&gt; &lt;df [2 × 4]&gt; &lt;df [1 × 5]&gt; &lt;dbl [3,987 × 1]&gt;
 3 logDYLD &lt;tibble [1,007 × 2]&gt; &lt;df [2 × 4]&gt; &lt;df [1 × 5]&gt; &lt;dbl [3,987 × 1]&gt;</code></pre>
-<pre class="r"><code>gpreds_markeffs$genomicPredOut[[1]]$allelesubsnpeff[[1]] %&gt;% hist</code></pre>
-<p><img src="figure/get_gebv.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>gpreds_withMarkEffs$genomicPredOut[[1]]$allelesubsnpeff[[1]][1:5,]</code></pre>
+<pre><code> 1_652699_G_C  1_868970_G_T  1_943129_T_A 1_1132830_A_T 1_1310706_A_T 
+-0.0035035330  0.0001138839  0.0002113849  0.0027187074 -0.0041179418 </code></pre>
+</div>
+<div id="crosses-to-predict" class="section level1">
+<h1>Crosses-to-predict</h1>
+<p>Will also need a data.frame indicating what pairs of parents we want to predict crosses for.</p>
+<p>As a convenience, we can use the <code>crosses2predict()</code> function. Makes a data.frame from a vector of genotype ID’s.</p>
+<p>A realistic approach, is to choose a set of parents based on their GEBV, but more than we’d actually like to actually make crosses with.</p>
+<p>It is still somewhat computationally intensive to predict the variances and covariances of traits for each cross, so we can’t quite predict all possible pairwise crosses… definitely not on our laptops for this example.</p>
+<p>Here, as an example, picking the top 10 candidate parents:</p>
+<pre class="r"><code># Access the predicted GEBV
+top10parents&lt;-gpreds_withMarkEffs$gblups[[1]] %&gt;% 
+     # Arrange in descending order based on the SELIND
+     arrange(desc(SELIND)) %&gt;% 
+     # I&#39;ll pick the top 10 parents
+     slice(1:10) %$%
+     # And extract their GID to a vector
+     GID</code></pre>
+<pre class="r"><code>CrossesToPredict&lt;-crosses2predict(top10parents)</code></pre>
+<pre class="r"><code>CrossesToPredict %&gt;% head</code></pre>
+<pre><code># A tibble: 6 × 2
+  sireID      damID             
+  &lt;chr&gt;       &lt;chr&gt;             
+1 TMEB117(4X) TMEB117(4X)       
+2 TMEB117(4X) TMEB693           
+3 TMEB117(4X) TMEB789           
+4 TMEB117(4X) IITA-TMS-IBA970103
+5 TMEB117(4X) IITA-TMS-IBA970255
+6 TMEB117(4X) NANCHINYAYA       </code></pre>
+<pre class="r"><code>CrossesToPredict %&gt;% nrow()</code></pre>
+<pre><code>[1] 55</code></pre>
+</div>
+<div id="run-predictcrosses" class="section level1">
+<h1>Run <code>predictCrosses()</code></h1>
+<p>Additional inputs we will need: “haplotype matrix” and “recombination frequency matrix.”</p>
+<pre class="r"><code># HAPLOTYPE MATRIX
+## keep only haplos for candidate parents we want to predict crosses for
+## those which will be used in prediction, saves memory
+haploMat&lt;-readRDS(file=here::here(&quot;data&quot;,&quot;haplotypes.rds&quot;))
+parenthaps&lt;-sort(c(paste0(top10parents,&quot;_HapA&quot;),
+                   paste0(top10parents,&quot;_HapB&quot;)))
+haploMat&lt;-haploMat[parenthaps,]
+
+# RECOMBINATION FREQUENCY MATRIX
+recombFreqMat&lt;-readRDS(file=here::here(&quot;output&quot;,&quot;recombFreqMat_1minus2c.rds&quot;))</code></pre>
+<p>Let’s go!</p>
+<pre class="r"><code>starttime&lt;-proc.time()[3]
+crossPreds&lt;-predictCrosses(modelType=&quot;A&quot;,
+                           selInd = T, SIwts = SIwts,
+                           CrossesToPredict=CrossesToPredict,
+                           snpeffs=gpreds_withMarkEffs$genomicPredOut[[1]], 
+                           haploMat=haploMat,
+                           dosages = dosages[top10parents,],
+                           recombFreqMat=recombFreqMat,
+                           ncores=10)</code></pre>
+<pre><code>[1] &quot;Predicting cross variance parameters&quot;
+[1] &quot;Done predicting fam vars. Took 0.22 mins for 54 crosses&quot;
+[1] &quot;Predicting cross means&quot;
+[1] &quot;Computing SELECTION INDEX means and variances.&quot;</code></pre>
+<pre class="r"><code>elapsed&lt;-proc.time()[3]-starttime; elapsed/60</code></pre>
+<pre><code>elapsed 
+ 0.3935 </code></pre>
+<p>Save results</p>
+<pre class="r"><code>saveRDS(crossPreds,file = here::here(&quot;output&quot;,&quot;predictedCrosses.rds&quot;))</code></pre>
+</div>
+<div id="select-crosses" class="section level1">
+<h1>Select crosses</h1>
+<pre class="r"><code>crossPreds&lt;-readRDS(here::here(&quot;output&quot;,&quot;predictedCrosses.rds&quot;))
+crossPreds</code></pre>
+<pre><code># A tibble: 1 × 2
+  tidyPreds          rawPreds        
+  &lt;list&gt;             &lt;list&gt;          
+1 &lt;tibble [216 × 9]&gt; &lt;named list [2]&gt;</code></pre>
+<pre class="r"><code>crossPreds$tidyPreds[[1]] %&gt;% str</code></pre>
+<pre><code>tibble [216 × 9] (S3: tbl_df/tbl/data.frame)
+ $ sireID        : chr [1:216] &quot;TMEB117(4X)&quot; &quot;TMEB117(4X)&quot; &quot;TMEB117(4X)&quot; &quot;TMEB117(4X)&quot; ...
+ $ damID         : chr [1:216] &quot;TMEB693&quot; &quot;TMEB693&quot; &quot;TMEB693&quot; &quot;TMEB693&quot; ...
+ $ Nsegsnps      : int [1:216] 1663 1663 1663 1663 1669 1669 1669 1669 1756 1756 ...
+ $ predOf        : chr [1:216] &quot;BV&quot; &quot;BV&quot; &quot;BV&quot; &quot;BV&quot; ...
+ $ Trait         : chr [1:216] &quot;SELIND&quot; &quot;DM&quot; &quot;logFYLD&quot; &quot;logDYLD&quot; ...
+ $ predMean      : num [1:216] 17.6893 1.1104 0.0116 0.04 17.3643 ...
+ $ predVar       : num [1:216] 1.96e+01 8.62e-02 1.56e-04 1.49e-04 1.15e+01 ...
+ $ predSD        : num [1:216] 4.4264 0.2937 0.0125 0.0122 3.3915 ...
+ $ predUsefulness: num [1:216] 29.5078 1.8945 0.0449 0.0727 26.4196 ...</code></pre>
+<p>Output of predictCrosses() is a tibble. Two columns, 1 row. Column 1 (tidyPreds) has cleaned-up “tidy” predictions. Column 2 (rawPreds) has more detailed output.</p>
+<p>Remember that the “usefulness” (predUsefulness) here, or UC for short, is equal to a prediction of the expected mean of the top fraction of progeny from each cross</p>
+<p><span class="math display">\[\hat{UC} = \hat{\mu} + i \times \hat{\sigma}\]</span></p>
+<p>This is also called the “superior progeny mean” in the literature.</p>
+<p>Actually, the user has the option to modify the expected, standardized selection intensity</p>
+<p>either in advance with the <code>stdSelInt=</code> argument to <code>predictCrosses()</code> or after-the-fact;</p>
+<p>The default is a value of 2.67, corresponding to selecting the top 1% of offspring for the cross you will be making.</p>
+<p>So let’s say you want to make only the top 10 of the 55 predicted crosses:</p>
+<pre class="r"><code>top10crosses&lt;-crossPreds$tidyPreds[[1]] %&gt;% 
+     filter(Trait==&quot;SELIND&quot;) %&gt;% 
+     dplyr::select(-predVar) %&gt;% 
+     arrange(desc(predUsefulness)) %&gt;% 
+     slice(1:10)
+top10crosses</code></pre>
+<pre><code># A tibble: 10 × 8
+   sireID          damID    Nsegsnps predOf Trait predMean predSD predUsefulness
+   &lt;chr&gt;           &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;          &lt;dbl&gt;
+ 1 TMEB693         TMEB693      1041 BV     SELI…     17.7   4.45           29.5
+ 2 TMEB117(4X)     TMEB693      1663 BV     SELI…     17.7   4.43           29.5
+ 3 TMEB693         TMS14F1…     2327 BV     SELI…     15.5   4.87           28.5
+ 4 TMEB693         TMEB789      1682 BV     SELI…     17.3   4.19           28.5
+ 5 TMEB693         IITA-TM…     2083 BV     SELI…     16.9   4.27           28.3
+ 6 TMEB693         IITA-TM…     2077 BV     SELI…     17.0   4.25           28.3
+ 7 TMEB693         NANCHIN…     1699 BV     SELI…     16.3   4.25           27.6
+ 8 TMEB789         TMS14F1…     2398 BV     SELI…     15.2   4.63           27.6
+ 9 TMEB789         TMEB789      1157 BV     SELI…     17.0   3.91           27.5
+10 TMS14F1035P0004 TMS14F1…     1429 BV     SELI…     13.4   5.26           27.4</code></pre>
+<p>And thus we have a crossing plan! Congratulations!</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -877,32 +826,31 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] furrr_0.2.3              future_1.23.0            sommer_4.1.5            
- [4] crayon_1.4.2             lattice_0.20-45          MASS_7.3-54             
- [7] Matrix_1.4-0             genomicMateSelectR_0.2.0 forcats_0.5.1           
-[10] stringr_1.4.0            dplyr_1.0.7              purrr_0.3.4             
-[13] readr_2.1.1              tidyr_1.1.4              tibble_3.1.6            
-[16] ggplot2_3.3.5            tidyverse_1.3.1          workflowr_1.7.0         
+ [1] furrr_0.2.3              future_1.23.0            genomicMateSelectR_0.2.0
+ [4] forcats_0.5.1            stringr_1.4.0            dplyr_1.0.7             
+ [7] purrr_0.3.4              readr_2.1.1              tidyr_1.1.4             
+[10] tibble_3.1.6             ggplot2_3.3.5            tidyverse_1.3.1         
+[13] workflowr_1.7.0         
 
 loaded via a namespace (and not attached):
- [1] httr_1.4.2        sass_0.4.0        jsonlite_1.7.2    here_1.0.1       
- [5] modelr_0.1.8      bslib_0.3.1       assertthat_0.2.1  getPass_0.2-2    
- [9] highr_0.9         cellranger_1.1.0  yaml_2.2.1        globals_0.14.0   
-[13] pillar_1.6.4      backports_1.4.1   glue_1.6.0        digest_0.6.29    
-[17] promises_1.2.0.1  rvest_1.0.2       colorspace_2.0-2  htmltools_0.5.2  
-[21] httpuv_1.6.5      pkgconfig_2.0.3   broom_0.7.11      listenv_0.8.0    
-[25] haven_2.4.3       scales_1.1.1      processx_3.5.2    whisker_0.4      
-[29] later_1.3.0       tzdb_0.2.0        git2r_0.29.0      generics_0.1.1   
-[33] ellipsis_0.3.2    withr_2.4.3       cli_3.1.0         magrittr_2.0.1   
-[37] readxl_1.3.1      evaluate_0.14     ps_1.6.0          parallelly_1.30.0
-[41] fs_1.5.2          fansi_0.5.0       xml2_1.3.3        tools_4.1.1      
-[45] hms_1.1.1         lifecycle_1.0.1   munsell_0.5.0     reprex_2.0.1     
-[49] callr_3.7.0       compiler_4.1.1    jquerylib_0.1.4   rlang_0.4.12     
-[53] grid_4.1.1        rstudioapi_0.13   rmarkdown_2.11    gtable_0.3.0     
-[57] codetools_0.2-18  DBI_1.1.2         R6_2.5.1          lubridate_1.8.0  
-[61] knitr_1.37        fastmap_1.1.0     utf8_1.2.2        rprojroot_2.0.2  
-[65] stringi_1.7.6     parallel_4.1.1    Rcpp_1.0.7        vctrs_0.3.8      
-[69] dbplyr_2.1.1      tidyselect_1.1.1  xfun_0.29        </code></pre>
+ [1] Rcpp_1.0.7        here_1.0.1        lubridate_1.8.0   listenv_0.8.0    
+ [5] getPass_0.2-2     ps_1.6.0          assertthat_0.2.1  rprojroot_2.0.2  
+ [9] digest_0.6.29     utf8_1.2.2        parallelly_1.30.0 R6_2.5.1         
+[13] cellranger_1.1.0  backports_1.4.1   reprex_2.0.1      evaluate_0.14    
+[17] httr_1.4.2        pillar_1.6.4      rlang_0.4.12      readxl_1.3.1     
+[21] rstudioapi_0.13   whisker_0.4       callr_3.7.0       jquerylib_0.1.4  
+[25] rmarkdown_2.11    munsell_0.5.0     broom_0.7.11      compiler_4.1.1   
+[29] httpuv_1.6.5      modelr_0.1.8      xfun_0.29         pkgconfig_2.0.3  
+[33] globals_0.14.0    htmltools_0.5.2   tidyselect_1.1.1  codetools_0.2-18 
+[37] fansi_0.5.0       crayon_1.4.2      tzdb_0.2.0        dbplyr_2.1.1     
+[41] withr_2.4.3       later_1.3.0       grid_4.1.1        jsonlite_1.7.2   
+[45] gtable_0.3.0      lifecycle_1.0.1   DBI_1.1.2         git2r_0.29.0     
+[49] magrittr_2.0.1    scales_1.1.1      cli_3.1.0         stringi_1.7.6    
+[53] fs_1.5.2          promises_1.2.0.1  xml2_1.3.3        bslib_0.3.1      
+[57] ellipsis_0.3.2    generics_0.1.1    vctrs_0.3.8       tools_4.1.1      
+[61] glue_1.6.0        hms_1.1.1         parallel_4.1.1    processx_3.5.2   
+[65] fastmap_1.1.0     yaml_2.2.1        colorspace_2.0-2  rvest_1.0.2      
+[69] knitr_1.37        haven_2.4.3       sass_0.4.0       </code></pre>
 </div>
 </div>
 

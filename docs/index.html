@@ -276,6 +276,12 @@ $(document).ready(function () {
   <a href="get_gebv.html">Get GEBVs</a>
 </li>
 <li>
+  <a href="parentwise_cv.html">Parent-wise CV</a>
+</li>
+<li>
+  <a href="pred_crosses.html">Predict crosses</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
 <li>
@@ -318,7 +324,7 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-05-05
+<strong>Last updated:</strong> 2022-05-09
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -409,16 +415,16 @@ This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a> analysi
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree975daa79a6e60fffa81b189ad3803dbd080b9ba4targetblank975daa7a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/975daa79a6e60fffa81b189ad3803dbd080b9ba4" target="_blank">975daa7</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treebb2d98179db87acbe2189a400bac5d598f9119d8targetblankbb2d981a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/wolfemd/GSexample2022/tree/bb2d98179db87acbe2189a400bac5d598f9119d8" target="_blank">bb2d981</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022tree975daa79a6e60fffa81b189ad3803dbd080b9ba4targetblank975daa7a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomwolfemdGSexample2022treebb2d98179db87acbe2189a400bac5d598f9119d8targetblankbb2d981a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/975daa79a6e60fffa81b189ad3803dbd080b9ba4" target="_blank">975daa7</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/wolfemd/GSexample2022/tree/bb2d98179db87acbe2189a400bac5d598f9119d8" target="_blank">bb2d981</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -432,6 +438,7 @@ Untracked files:
     Untracked:  .DS_Store
     Untracked:  Icon
     Untracked:  analysis/.DS_Store
+    Untracked:  analysis/BreedBaseGenotypes_subset.log
     Untracked:  analysis/Icon
     Untracked:  analysis/images/Icon
     Untracked:  analysis/images/paste-2F34C15B.png
@@ -442,7 +449,12 @@ Untracked files:
     Untracked:  data/.DS_Store
     Untracked:  data/BreedBaseGenotypesDownload.positions
     Untracked:  data/BreedBaseGenotypesDownload.vcf
+    Untracked:  data/BreedBaseGenotypes_subset.bed
+    Untracked:  data/BreedBaseGenotypes_subset.bim
+    Untracked:  data/BreedBaseGenotypes_subset.fam
     Untracked:  data/BreedBaseGenotypes_subset.hap.gz
+    Untracked:  data/BreedBaseGenotypes_subset.log
+    Untracked:  data/BreedBaseGenotypes_subset.nosex
     Untracked:  data/BreedBaseGenotypes_subset.positions
     Untracked:  data/BreedBaseGenotypes_subset.samples
     Untracked:  data/Icon
@@ -453,9 +465,15 @@ Untracked files:
     Untracked:  data/vcf_colnames.txt
     Untracked:  out.log
     Untracked:  output/.DS_Store
+    Untracked:  output/BreedBaseGenotypes_subset.genome
+    Untracked:  output/BreedBaseGenotypes_subset.log
+    Untracked:  output/BreedBaseGenotypes_subset.nosex
     Untracked:  output/Icon
+    Untracked:  output/genomicPredictions.rds
     Untracked:  output/models_compared.Rdata
+    Untracked:  output/parentWiseCV.rds
     Untracked:  output/standardCV.rds
+    Untracked:  output/verified_ped.rds
 
 </code></pre>
 <p>
@@ -494,6 +512,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/wolfemd/GSexample2022/blob/bb2d98179db87acbe2189a400bac5d598f9119d8/analysis/index.Rmd" target="_blank">bb2d981</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-05-09
+</td>
+<td>
+Add the final two sections - parent-wise cross-validation plus predicting crosses
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/wolfemd/GSexample2022/260d2fed9c49fc20aa3f1b2b41d5bfa2cd99aecc/docs/index.html" target="_blank">260d2fe</a>
+</td>
+<td>
+wolfemd
+</td>
+<td>
+2022-05-05
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -895,6 +947,8 @@ Start workflowr project.
 <li><a href="intro_gp.html">Introduction to Genomic Prediction in R</a>: Into to using <code>sommer</code> to fit G-BLUP and RR-BLUP models, a demo of their equivalency and quickly showing how to run cross-validations with the <code>runCrossVal()</code> function of <code>library(genomicMateSelectR)</code>.</li>
 <li><a href="kfoldcrossval.html">Check prediction accuracy</a>: Use what we learned previously to run a k-fold cross-validation and estimate the accuracy predicting the performance of parents on our selection index.</li>
 <li><a href="get_gebv.html">Predict parental GEBV</a>: Having checked prediction accuracy and assuming we are satisfied, we can now run the full genomic prediction using <code>runGenomicPredictions()</code> and get GEBV for our population, computing the selection index performance using those GEBVs for our ultimate selections of parents.</li>
+<li><a href="parentwise_cv.html">Parent-wise Cross-validation</a>: Check the accuracy predicting the means, variances and covariances in previously untested crosses. <em>Also</em> verify using marker data that the pedigree is correct, before doing the parent-wise CV.</li>
+<li><a href="pred_crosses.html">Predict crosses</a>: The main event. Predict the means, variances and usefulness on the selection index and select the top crosses.</li>
 </ol>
 <p><strong>TROUBLESHOOTING RMD:</strong> <a href="troubleshooting.html">Troubleshooting each step</a></p>
 </div>
